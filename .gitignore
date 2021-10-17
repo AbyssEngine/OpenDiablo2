@@ -50,3 +50,13 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Mac and temporary folders
+.DS_Store
+.vs/
+.vscode/
+.idea/
+
+
+d2*.mpq
+*_d2.mpq
