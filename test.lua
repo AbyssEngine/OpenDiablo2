@@ -41,7 +41,7 @@ end
 
 showSystemCursor(false)
 
-cursor = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
+-- cursor = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
 exitBootMode()
 -- setCursor(cursor, 1, -24)
 -- mainMenu = mainmenu:new()
