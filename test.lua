@@ -18,7 +18,7 @@ require("util")
 
 local resDefs = require("common/resource-defs")
 
--- showSystemCursor(true)
+showSystemCursor(true)
 -- testing stuff...
 basePath = getConfig("#Abyss", "BasePath")
 mpqRoot = getConfig("System", "MPQRoot")
@@ -39,7 +39,7 @@ for _, name in ipairs(resDefs.Palettes) do
     loadPalette(name[1], name[2])
 end
 
--- showSystemCursor(false)
+showSystemCursor(false)
 
 cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
 exitBootMode()
