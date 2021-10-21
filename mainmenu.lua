@@ -43,27 +43,27 @@ function MainMenu:initResources()
     self.d2LogoLeftBlackBg = loadSprite(resDefs.Diablo2LogoBlackLeft, resDefs.Palette.Sky)
     self.d2LogoLeftBlackBg:position(400, 120)
     self.d2LogoLeftBlackBg:bottomOrigin(true)
-    -- self.d2LogoLeftBlackBg:playForward()
+    self.d2LogoLeftBlackBg:playMode("forwards")
 
     -- D2 Logo Right Black BG
     self.d2LogoRightBlackBg = loadSprite(resDefs.Diablo2LogoBlackRight, resDefs.Palette.Sky)
     self.d2LogoRightBlackBg:position(400, 120)
     self.d2LogoRightBlackBg:bottomOrigin(true)
-    -- self.d2LogoRightBlackBg:playForward()
+    self.d2LogoRightBlackBg:playMode("forwards")
 
     -- D2 Logo Left
     self.d2LogoLeft = loadSprite(resDefs.Diablo2LogoFireLeft, resDefs.Palette.Sky)
     self.d2LogoLeft:position(400, 120)
     self.d2LogoLeft:blendMode("additive")
     self.d2LogoLeft:bottomOrigin(true)
-    -- self.d2LogoLeft:playForward()
+    self.d2LogoLeft:playMode("forwards")
 
     -- D2 Logo Right
     self.d2LogoRight = loadSprite(resDefs.Diablo2LogoFireRight, resDefs.Palette.Sky)
     self.d2LogoRight:position(400, 120)
     self.d2LogoRight:blendMode("additive")
     self.d2LogoRight:bottomOrigin(true)
-    -- self.d2LogoRight:playForward()
+    self.d2LogoRight:playMode("forwards")
 
     -- Append all nodes to the scene graph
     self.rootNode:appendChild(self.trademarkBg)
