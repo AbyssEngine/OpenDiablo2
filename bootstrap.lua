@@ -15,15 +15,18 @@
 -- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
 --
 require("util")
-
 local resDefs = require("common/resource-defs")
+local mainmenu = require("mainmenu")
 
-showSystemCursor(true)
--- testing stuff...
+-- Load global configuration values
 basePath = getConfig("#Abyss", "BasePath")
 mpqRoot = getConfig("System", "MPQRoot")
 mpqs = split(getConfig("System", "MPQs"), ",")
 
+-- Hide the OS Cursor
+showSystemCursor(false)
+
+-- Create load providers for all of the available MPQs
 for i in pairs(mpqs) do
     mpqPath = basePath .. "/" .. mpqRoot .. "/" .. mpqs[i]
     loadStr = string.format("Loading Provider %s...", mpqPath)
@@ -32,6 +35,7 @@ for i in pairs(mpqs) do
     addLoaderProvider("mpq", mpqPath)
 end
 
+-- Load in all of the palettes
 for _, name in ipairs(resDefs.Palettes) do
     local lineLog = string.format("Loading Palette: %s...", name[1])
     setBootText(lineLog)
@@ -39,10 +43,11 @@ for _, name in ipairs(resDefs.Palettes) do
     loadPalette(name[1], name[2])
 end
 
-showSystemCursor(false)
-
+-- Set the cursor sprite
 cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
-exitBootMode()
 setCursor(cursorSprite, 1, -24)
--- mainMenu = mainmenu:new()
--- mainMenu:start()
+
+-- Exit boot mode and start the main menu
+exitBootMode()
+mainMenu = mainmenu:new()
+mainMenu:start()
