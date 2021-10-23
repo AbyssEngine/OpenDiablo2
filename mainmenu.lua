@@ -33,6 +33,10 @@ function MainMenu:initResources()
     -- Trademark Screen
     self.trademarkBg = loadSprite(resDefs.TrademarkScreen, resDefs.Palette.Sky)
     self.trademarkBg:cellSize(4, 3)
+    self.trademarkBg:onMouseButtonDown(function(buttons)
+        self.trademarkBg:active(false)
+        self.mainBg:active(true)
+    end)
 
     -- Main Background
     self.mainBg = loadSprite(resDefs.GameSelectScreen, resDefs.Palette.Sky)
