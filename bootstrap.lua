@@ -49,5 +49,7 @@ setCursor(cursorSprite, 1, -24)
 
 -- Exit boot mode and start the main menu
 exitBootMode()
+playVideo("data/local/video/New_Bliz640x480.bik", true)
+playVideo("data/local/video/Eng/d2intro640x292.bik", true)
 mainMenu = mainmenu:new()
 mainMenu:start()
