@@ -17,6 +17,7 @@
 require("util")
 local resDefs = require("common/resource-defs")
 local mainmenu = require("mainmenu")
+local language = require("common/language")
 
 -- Load global configuration values
 basePath = getConfig("#Abyss", "BasePath")
@@ -43,12 +44,25 @@ for _, name in ipairs(resDefs.Palettes) do
     loadPalette(name[1], name[2])
 end
 
+-- Detect the language
+local configLanguage = getConfig("System", "Language")
+
+if configLanguage ~= "auto" then
+    language.set(configLanguage)
+else
+    language.autoDetect()
+
+    log("info", "Language automatically detected as " .. language.name())
+end
+
 -- Exit boot mode
 exitBootMode()
 
 -- Play the videos
-playVideo("data/local/video/New_Bliz640x480.bik", true)
-playVideo("data/local/video/Eng/d2intro640x292.bik", true)
+if getConfig("System", "SkipStartupVideos") ~= "1" then
+    playVideo("/data/local/video/New_Bliz640x480.bik", true)
+    playVideo("/data/local/video/Eng/d2intro640x292.bik", true)
+end
 
 -- Set the cursor sprite
 cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
