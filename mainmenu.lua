@@ -17,6 +17,7 @@
 local MainMenu = {}
 
 local resDefs = require("common/resource-defs")
+local language = require("common/language")
 
 function MainMenu:new(c)
     c = c or {}
@@ -30,6 +31,23 @@ function MainMenu:start()
 end
 
 function MainMenu:initResources()
+    self.fntFormal12 = loadSpriteFont(language.i18nPath(resDefs.FontFormal12), resDefs.Palette.Static)
+    self.fntFormal10 = loadSpriteFont(language.i18nPath(resDefs.FontFormal10), resDefs.Palette.Static)
+
+    -- OpenDiablo Version Label
+    self.lblVersion = createLabel(self.fntFormal12)
+    self.lblVersion:position(790, 0)
+    self.lblVersion:caption("OpenDiablo II v0.01")
+    self.lblVersion:hAlign("end")
+
+    -- Disclaimer Label
+    self.lblDisclaimer = createLabel(self.fntFormal10)
+    self.lblDisclaimer:caption(
+        "OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision")
+    self.lblDisclaimer:position(400, 580)
+    self.lblDisclaimer:hAlign("middle")
+    self.lblDisclaimer:colorMod(0xFF, 0xFF, 0x8C)
+
     -- Trademark Screen
     self.trademarkBg = loadSprite(resDefs.TrademarkScreen, resDefs.Palette.Sky)
     self.trademarkBg:cellSize(4, 3)
@@ -76,6 +94,8 @@ function MainMenu:initResources()
     self.rootNode:appendChild(self.d2LogoRightBlackBg)
     self.rootNode:appendChild(self.d2LogoLeft)
     self.rootNode:appendChild(self.d2LogoRight)
+    self.mainBg:appendChild(self.lblVersion)
+    self.mainBg:appendChild(self.lblDisclaimer)
 
 end
 

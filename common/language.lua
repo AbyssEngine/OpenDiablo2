@@ -61,10 +61,17 @@ function code()
     return languageSpec.code
 end
 
+function i18nPath(originalPath)
+    newPath = originalPath:gsub("{LANG_FONT}", languageDefs.LanguageFontNames[languageSpec.id])
+    newPath = newPath:gsub("{LANG}", languageDefs.LanguageCodes[languageSpec.id])
+    return newPath
+end
+
 return {
     code = code,
     name = name,
     id = id,
     autoDetect = autoDetect,
-    set = set
+    set = set,
+    i18nPath = i18nPath
 }

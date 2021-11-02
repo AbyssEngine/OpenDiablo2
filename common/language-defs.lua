@@ -53,5 +53,18 @@ return {
         [0x09] = "Chinese",
         [0x0A] = "Polish",
         [0x0B] = "Russian"
+    },
+    LanguageFontNames = {
+        [0x00] = "LATIN",
+        [0x01] = "LATIN", -- TODO: Confirm for Spanish
+        [0x02] = "LATIN", -- TODO: Confirm for German
+        [0x03] = "LATIN", -- TODO: Confirm for French
+        [0x04] = "LATIN", -- TODO: Confirm for Portuguese
+        [0x05] = "LATIN", -- TODO: Confirm for Italian
+        [0x06] = "LATIN", -- TODO: Confirm for Japanese
+        [0x07] = "LATIN", -- TODO: Confirm for Korean
+        [0x09] = "LATIN", -- TODO: Confirm for Chinese
+        [0x0A] = "LATIN", -- TODO: Confirm for Polish
+        [0x0B] = "LATIN" -- TODO: Confirm for Russian    
     }
 }

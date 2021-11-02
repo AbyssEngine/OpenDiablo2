@@ -506,12 +506,14 @@ return {
                 {"PaletteEndGame", "/data/global/palette/endgame/pal.pl2"},
                 {"PaletteEndGame2", "/data/global/palette/endgame2/pal.pl2"},
                 {"PaletteFechar", "/data/global/palette/fechar/pal.pl2"},
-    -- messed up somehow? {"PaletteLoading", "/data/global/palette/loading/pal.pl2"},
+    --  {"PaletteLoading", "/data/global/palette/loading/pal.pl2"},
                 {"PaletteMenu0", "/data/global/palette/menu0/pal.pl2"},
                 {"PaletteMenu1", "/data/global/palette/menu1/pal.pl2"},
                 {"PaletteMenu2", "/data/global/palette/menu2/pal.pl2"},
                 {"PaletteMenu3", "/data/global/palette/menu3/pal.pl2"},
                 {"PaletteMenu4", "/data/global/palette/menu4/pal.pl2"},
                 {"PaletteSky", "/data/global/palette/sky/pal.pl2"},
-                {"PaletteTrademark", "/data/global/palette/trademark/pal.pl2"}}
+                {"PaletteStatic", "/data/global/palette/static/pal.dat"},
+                {"PaletteTrademark", "/data/global/palette/trademark/pal.pl2"},
+                {"PaletteUnits", "/data/global/palette/units/pal.dat"}}
 }
