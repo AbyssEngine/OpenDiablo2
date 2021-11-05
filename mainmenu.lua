@@ -30,9 +30,31 @@ function MainMenu:start()
     self:initResources()
 end
 
+function MainMenu:createMainMenuButton(text, x, y)
+    local result = createButton(self.FontExocet10, resDefs.WideButtonBlank, resDefs.Palette.Sky)
+    result:segments(2, 1)
+    result:size(272, 45)
+    result:caption(text:upper())
+    result:position(x, y)
+    result:textOffset(0, -6)
+    return result
+end
+
+function MainMenu:createMainMenuMinibutton(text, x, y)
+    local result = createButton(self.FontRediculous, resDefs.ShortButtonBlank, resDefs.Palette.Sky)
+    result:segments(1, 1)
+    result:size(135, 25)
+    result:caption(text:upper())
+    result:position(x, y)
+    result:textOffset(0, -5)
+    return result
+end
+
 function MainMenu:initResources()
     self.fntFormal12 = loadSpriteFont(language.i18nPath(resDefs.FontFormal12), resDefs.Palette.Static)
     self.fntFormal10 = loadSpriteFont(language.i18nPath(resDefs.FontFormal10), resDefs.Palette.Static)
+    self.FontExocet10 = loadSpriteFont(language.i18nPath(resDefs.FontExocet10), resDefs.Palette.Static)
+    self.FontRediculous = loadSpriteFont(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
 
     -- OpenDiablo Version Label
     self.lblVersion = createLabel(self.fntFormal12)
@@ -87,6 +109,14 @@ function MainMenu:initResources()
     self.d2LogoRight:bottomOrigin(true)
     self.d2LogoRight:playMode("forwards")
 
+    -- Menu Buttons
+    self.btnSinglePlayer = self:createMainMenuButton("Single Player", 264, 290)
+    self.btnLocalNetplay = self:createMainMenuButton("Local NetPlay", 264, 330)
+    self.btnMapEngineDebug = self:createMainMenuButton("Map Engine Debug", 264, 400)
+    self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
+    self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
+    self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
+
     -- Append all nodes to the scene graph
     self.rootNode:appendChild(self.trademarkBg)
     self.rootNode:appendChild(self.mainBg)
@@ -96,6 +126,12 @@ function MainMenu:initResources()
     self.rootNode:appendChild(self.d2LogoRight)
     self.mainBg:appendChild(self.lblVersion)
     self.mainBg:appendChild(self.lblDisclaimer)
+    self.mainBg:appendChild(self.btnSinglePlayer)
+    self.mainBg:appendChild(self.btnLocalNetplay)
+    self.mainBg:appendChild(self.btnExitGame)
+    self.mainBg:appendChild(self.btnCredits)
+    self.mainBg:appendChild(self.btnCinematics)
+    self.mainBg:appendChild(self.btnMapEngineDebug)
 
 end
 

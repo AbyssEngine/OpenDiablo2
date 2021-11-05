@@ -24,8 +24,8 @@ basePath = getConfig("#Abyss", "BasePath")
 mpqRoot = getConfig("System", "MPQRoot")
 mpqs = split(getConfig("System", "MPQs"), ",")
 
--- Hide the OS Cursor
-showSystemCursor(false)
+-- Show the Cursor
+showSystemCursor(true)
 
 -- Create load providers for all of the available MPQs
 for i in pairs(mpqs) do
