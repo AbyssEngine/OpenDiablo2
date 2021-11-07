@@ -33,10 +33,12 @@ end
 function MainMenu:createMainMenuButton(text, x, y)
     local result = createButton(self.FontExocet10, resDefs.WideButtonBlank, resDefs.Palette.Sky)
     result:segments(2, 1)
-    result:size(272, 45)
+    result:size(272, 35)
     result:caption(text:upper())
     result:position(x, y)
-    result:textOffset(0, -6)
+    result:textOffset(0, -2)
+    result:frameIndex("normal", 0)
+    result:frameIndex("pressed", 2)
     return result
 end
 
@@ -47,6 +49,8 @@ function MainMenu:createMainMenuMinibutton(text, x, y)
     result:caption(text:upper())
     result:position(x, y)
     result:textOffset(0, -5)
+    result:frameIndex("normal", 0)
+    result:frameIndex("pressed", 1)
     return result
 end
 
@@ -74,6 +78,7 @@ function MainMenu:initResources()
     self.trademarkBg = loadSprite(resDefs.TrademarkScreen, resDefs.Palette.Sky)
     self.trademarkBg:cellSize(4, 3)
     self.trademarkBg:onMouseButtonDown(function(buttons)
+	    resetMouseState()
         self.trademarkBg:active(false)
         self.mainBg:active(true)
     end)
@@ -113,7 +118,12 @@ function MainMenu:initResources()
     self.btnSinglePlayer = self:createMainMenuButton("Single Player", 264, 290)
     self.btnLocalNetplay = self:createMainMenuButton("Local NetPlay", 264, 330)
     self.btnMapEngineDebug = self:createMainMenuButton("Map Engine Debug", 264, 400)
+    
     self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
+    self.btnExitGame:onActivate(function()
+		shutdown()
+    end)
+        
     self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
     self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
 
