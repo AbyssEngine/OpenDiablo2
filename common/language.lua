@@ -40,10 +40,10 @@ end
 function autoDetect()
     languageSpec.id = 0x00
     for langName, langId in pairs(languageDefs.Languages) do
-        if fileExists("/data/local/lng/" .. languageSpec.code .. "/string.tbl") then
+        if fileExists("/data/local/ui/" .. languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
             languageSpec.id = langId
-            languageSpec.code = languageDefs.LanguageCodes[languageSpec.id]
-            languageSpec.name = languageDefs.LanguageNames[languageSpec.id]
+            languageSpec.code = languageDefs.LanguageCodes[langId]
+            languageSpec.name = languageDefs.LanguageNames[langId]
             return
         end
     end
