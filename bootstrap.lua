@@ -17,6 +17,7 @@
 require("util")
 local resDefs = require("common/resource-defs")
 local language = require("common/language")
+require("globals")
 
 -- Load global configuration values
 basePath = getConfig("#Abyss", "BasePath")
@@ -54,13 +55,7 @@ else
     log("info", "Language automatically detected as " .. language.name())
 end
 
--- Load the fonts
-systemFonts = {
-	fntFormal12   = loadSpriteFont(language.i18nPath(resDefs.FontFormal12  ), resDefs.Palette.Static),
-	fntFormal10   = loadSpriteFont(language.i18nPath(resDefs.FontFormal10  ), resDefs.Palette.Static),
-	fntExocet10   = loadSpriteFont(language.i18nPath(resDefs.FontExocet10  ), resDefs.Palette.Static),
-	fntRediculous = loadSpriteFont(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
-}
+globalsInit()
 
 -- Exit boot mode
 exitBootMode()
@@ -71,8 +66,6 @@ if getConfig("System", "SkipStartupVideos") ~= "1" then
     playVideo("/data/local/video/BlizNorth640x480.bik", true)
 end
 
--- Set the cursor sprite
-cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
 setCursor(cursorSprite, 1, -24)
 
 -- Start the main menu

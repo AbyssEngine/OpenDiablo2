@@ -145,6 +145,7 @@ function MainMenu:initResources()
     
     self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
     self.btnExitGame:onActivate(function()
+        globalsDestroy()
 		shutdown()
     end)
 
