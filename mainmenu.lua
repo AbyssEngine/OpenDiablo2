@@ -25,13 +25,20 @@ function MainMenu:new(c)
     return setmetatable(c, self)
 end
 
-function MainMenu:start()
+function MainMenu:start(showSplash)
     self.rootNode = getRootNode()
+   	self.rootNode:removeAllChildren()
+   	resetMouseState()
     self:initResources()
+    
+    if showSplash == false then
+		self.trademarkBg:active(false)
+		self.mainBg:active(true)
+    end
 end
 
 function MainMenu:createMainMenuButton(text, x, y)
-    local result = createButton(self.FontExocet10, resDefs.WideButtonBlank, resDefs.Palette.Sky)
+    local result = createButton(systemFonts.fntExocet10, resDefs.WideButtonBlank, resDefs.Palette.Sky)
     result:segments(2, 1)
     result:size(272, 35)
     result:caption(text:upper())
@@ -43,7 +50,7 @@ function MainMenu:createMainMenuButton(text, x, y)
 end
 
 function MainMenu:createMainMenuMinibutton(text, x, y)
-    local result = createButton(self.FontRediculous, resDefs.ShortButtonBlank, resDefs.Palette.Sky)
+    local result = createButton(systemFonts.fntRediculous, resDefs.ShortButtonBlank, resDefs.Palette.Sky)
     result:segments(1, 1)
     result:size(135, 25)
     result:caption(text:upper())
@@ -55,19 +62,14 @@ function MainMenu:createMainMenuMinibutton(text, x, y)
 end
 
 function MainMenu:initResources()
-    self.fntFormal12 = loadSpriteFont(language.i18nPath(resDefs.FontFormal12), resDefs.Palette.Static)
-    self.fntFormal10 = loadSpriteFont(language.i18nPath(resDefs.FontFormal10), resDefs.Palette.Static)
-    self.FontExocet10 = loadSpriteFont(language.i18nPath(resDefs.FontExocet10), resDefs.Palette.Static)
-    self.FontRediculous = loadSpriteFont(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
-
     -- OpenDiablo Version Label
-    self.lblVersion = createLabel(self.fntFormal12)
+    self.lblVersion = createLabel(systemFonts.fntFormal12)
     self.lblVersion:position(790, 0)
     self.lblVersion:caption("OpenDiablo II v0.01")
     self.lblVersion:hAlign("end")
 
     -- Disclaimer Label
-    self.lblDisclaimer = createLabel(self.fntFormal10)
+    self.lblDisclaimer = createLabel(systemFonts.fntFormal10)
     self.lblDisclaimer:caption(
         "OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision")
     self.lblDisclaimer:position(400, 580)
@@ -116,16 +118,35 @@ function MainMenu:initResources()
 
     -- Menu Buttons
     self.btnSinglePlayer = self:createMainMenuButton("Single Player", 264, 290)
+    self.btnSinglePlayer:onActivate(function()
+    	-- TODO
+    end)
+    
     self.btnLocalNetplay = self:createMainMenuButton("Local NetPlay", 264, 330)
+    self.btnLocalNetplay:onActivate(function()
+    	-- TODO
+    end)
+    
     self.btnMapEngineDebug = self:createMainMenuButton("Map Engine Debug", 264, 400)
+    self.btnMapEngineDebug:onActivate(function()
+    	-- TODO
+    end)
+            
+    self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
+    self.btnCredits:onActivate(function()
+		credits = require("credits"):new()
+		credits:start()
+    end)
+    
+    self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
+    self.btnCinematics:onActivate(function()
+    	-- TODO
+    end)
     
     self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
     self.btnExitGame:onActivate(function()
 		shutdown()
     end)
-        
-    self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
-    self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
 
     -- Append all nodes to the scene graph
     self.rootNode:appendChild(self.trademarkBg)

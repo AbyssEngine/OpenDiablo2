@@ -58,5 +58,6 @@ local buttonTypeShort = defineButton(1, 1, -1, lightGreyAlpha75, 0, -1, resDefs.
 
 return {
     ButtonTypeWide = buttonTypeWide,
-    ButtonTypeShort = buttonTypeShort
+    ButtonTypeShort = buttonTypeShort,
+    createWideButton
 }

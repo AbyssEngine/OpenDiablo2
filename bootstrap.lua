@@ -16,7 +16,6 @@
 --
 require("util")
 local resDefs = require("common/resource-defs")
-local mainmenu = require("mainmenu")
 local language = require("common/language")
 
 -- Load global configuration values
@@ -55,6 +54,14 @@ else
     log("info", "Language automatically detected as " .. language.name())
 end
 
+-- Load the fonts
+systemFonts = {
+	fntFormal12   = loadSpriteFont(language.i18nPath(resDefs.FontFormal12  ), resDefs.Palette.Static),
+	fntFormal10   = loadSpriteFont(language.i18nPath(resDefs.FontFormal10  ), resDefs.Palette.Static),
+	fntExocet10   = loadSpriteFont(language.i18nPath(resDefs.FontExocet10  ), resDefs.Palette.Static),
+	fntRediculous = loadSpriteFont(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
+}
+
 -- Exit boot mode
 exitBootMode()
 
@@ -69,5 +76,5 @@ cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
 setCursor(cursorSprite, 1, -24)
 
 -- Start the main menu
-mainMenu = mainmenu:new()
-mainMenu:start()
+mainMenu = require("mainmenu"):new()
+mainMenu:start(true)
