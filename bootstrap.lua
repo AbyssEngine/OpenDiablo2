@@ -15,9 +15,9 @@
 -- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
 --
 require("util")
+require("globals")
 local resDefs = require("common/resource-defs")
 local language = require("common/language")
-require("globals")
 
 -- Load global configuration values
 basePath = getConfig("#Abyss", "BasePath")
