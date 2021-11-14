@@ -21,3 +21,7 @@ function split(s, delimiter)
     end
     return result;
 end
+
+function utf16ToString(b)
+    return b -- Todo
+end

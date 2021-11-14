@@ -38,25 +38,25 @@ function Credits:createCreditsButton(text, x, y)
 end
 
 function Credits:start()
+    self.creditsLines = utf16to8(loadString(language.i18nPath(resDefs.CreditsText)))
+    log("info", self.creditsLines)
     self.rootNode = getRootNode()
-	self.rootNode:removeAllChildren()
-	resetMouseState()
-	
+    self.rootNode:removeAllChildren()
+    resetMouseState()
+
     self.btnExit = self:createCreditsButton("Exit", 33, 543)
     self.btnExit:onActivate(function()
-		mainmenu = require("mainmenu"):new()
-		mainmenu:start(false)
+        mainmenu = require("mainmenu"):new()
+        mainmenu:start(false)
     end)
-    
+
     -- Main Background
     self.mainBg = loadSprite(resDefs.CreditsBackground, resDefs.Palette.Sky)
     self.mainBg:cellSize(4, 3)
 
-	    
     self.rootNode:appendChild(self.mainBg)
     self.mainBg:appendChild(self.btnExit)
-    
-end
 
+end
 
 return Credits
