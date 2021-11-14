@@ -38,8 +38,8 @@ function Credits:createCreditsButton(text, x, y)
 end
 
 function Credits:start()
-    -- self.creditsLines = utf16to8(loadString(language.i18nPath(resDefs.CreditsText)))
-    -- log("info", self.creditsLines)
+    self.creditsLines = loadString(language.i18nPath(resDefs.CreditsText))
+
     self.rootNode = getRootNode()
     self.rootNode:removeAllChildren()
     resetMouseState()

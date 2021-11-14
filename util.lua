@@ -14,14 +14,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
 --
+require("string")
 function split(s, delimiter)
     result = {};
     for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do
         table.insert(result, match);
     end
     return result;
-end
-
-function utf16ToString(b)
-    return b -- Todo
 end
