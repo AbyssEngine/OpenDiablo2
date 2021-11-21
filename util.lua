@@ -15,6 +15,7 @@
 -- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
 --
 require("string")
+
 function split(s, delimiter)
     result = {};
     for match in (s .. delimiter):gmatch("(.-)" .. delimiter) do

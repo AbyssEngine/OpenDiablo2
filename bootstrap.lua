@@ -29,7 +29,7 @@ showSystemCursor(true)
 
 -- Create load providers for all of the available MPQs
 for i in pairs(mpqs) do
-    mpqPath = basePath .. "/" .. mpqRoot .. "/" .. mpqs[i]
+    mpqPath = basePath .. mpqRoot .. "/" .. mpqs[i]
     loadStr = string.format("Loading Provider %s...", mpqPath)
     log("info", loadStr)
     setBootText("\\#FFFF00 " .. loadStr)
