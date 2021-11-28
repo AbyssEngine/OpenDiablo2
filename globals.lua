@@ -20,10 +20,10 @@ local resDefs = require("common/resource-defs")
 function globalsInit()
     -- Load the fonts
     systemFonts = {
-        fntFormal12 = loadSpriteFont(language.i18nPath(resDefs.FontFormal12), resDefs.Palette.Static),
-        fntFormal10 = loadSpriteFont(language.i18nPath(resDefs.FontFormal10), resDefs.Palette.Static),
-        fntExocet10 = loadSpriteFont(language.i18nPath(resDefs.FontExocet10), resDefs.Palette.Static),
-        fntRediculous = loadSpriteFont(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
+        fntFormal12 = SpriteFont:new(language.i18nPath(resDefs.FontFormal12), resDefs.Palette.Static),
+        fntFormal10 = SpriteFont:new(language.i18nPath(resDefs.FontFormal10), resDefs.Palette.Static),
+        fntExocet10 = SpriteFont:new(language.i18nPath(resDefs.FontExocet10), resDefs.Palette.Static),
+        fntRediculous = SpriteFont:new(language.i18nPath(resDefs.FontRediculous), resDefs.Palette.Static)
     }
 
     -- Set the cursor sprite

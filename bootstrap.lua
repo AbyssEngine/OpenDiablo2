@@ -24,22 +24,17 @@ basePath = getConfig("#Abyss", "BasePath")
 mpqRoot = getConfig("System", "MPQRoot")
 mpqs = split(getConfig("System", "MPQs"), ",")
 
--- Show the Cursor
-showSystemCursor(true)
-
 -- Create load providers for all of the available MPQs
 for i in pairs(mpqs) do
     mpqPath = basePath .. mpqRoot .. "/" .. mpqs[i]
     loadStr = string.format("Loading Provider %s...", mpqPath)
     log("info", loadStr)
-    setBootText("\\#FFFF00 " .. loadStr)
     addLoaderProvider("mpq", mpqPath)
 end
 
 -- Load in all of the palettes
 for _, name in ipairs(resDefs.Palettes) do
     local lineLog = string.format("Loading Palette: %s...", name[1])
-    setBootText(lineLog)
     log("info", lineLog)
     loadPalette(name[1], name[2])
 end
@@ -57,17 +52,16 @@ end
 
 globalsInit()
 
--- Exit boot mode
-exitBootMode()
+-- Show the Cursor
+setCursor(cursorSprite, 1, -24)
+showSystemCursor(true)
 
 -- Play the videos
-if getConfig("System", "SkipStartupVideos") ~= "1" then
-    playVideo("/data/local/video/New_Bliz640x480.bik", true)
-    playVideo("/data/local/video/BlizNorth640x480.bik", true)
-end
-
-setCursor(cursorSprite, 1, -24)
+-- if getConfig("System", "SkipStartupVideos") ~= "1" then
+--     playVideo("/data/local/video/New_Bliz640x480.bik", true)
+--     playVideo("/data/local/video/BlizNorth640x480.bik", true)
+-- end
 
 -- Start the main menu
-mainMenu = require("mainmenu"):new()
-mainMenu:start(true)
+-- mainMenu = require("mainmenu"):new()
+-- mainMenu:start(true)
