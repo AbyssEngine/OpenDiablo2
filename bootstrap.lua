@@ -57,10 +57,10 @@ setCursor(cursorSprite, 1, -24)
 showSystemCursor(true)
 
 -- Play the videos
--- if getConfig("System", "SkipStartupVideos") ~= "1" then
---     playVideo("/data/local/video/New_Bliz640x480.bik", true)
---     playVideo("/data/local/video/BlizNorth640x480.bik", true)
--- end
+if getConfig("System", "SkipStartupVideos") ~= "1" then
+    playVideo("/data/local/video/New_Bliz640x480.bik", true)
+    playVideo("/data/local/video/BlizNorth640x480.bik", true)
+end
 
 -- Start the main menu
 -- mainMenu = require("mainmenu"):new()
