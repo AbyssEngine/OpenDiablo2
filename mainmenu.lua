@@ -18,6 +18,7 @@ local MainMenu = {}
 
 local resDefs = require("common/resource-defs")
 local language = require("common/language")
+local buttonDefs = require("common/button-defs")
 
 function MainMenu:new(c)
     c = c or {}
@@ -27,126 +28,126 @@ end
 
 function MainMenu:start(showSplash)
     self.rootNode = getRootNode()
-   	self.rootNode:removeAllChildren()
-   	resetMouseState()
+    self.rootNode:removeAllChildren()
     self:initResources()
-    
+
     if showSplash == false then
-		self.trademarkBg:active(false)
-		self.mainBg:active(true)
+        self.trademarkBg.active = false
+        self.mainBg.active = true
     end
 end
 
 function MainMenu:createMainMenuButton(text, x, y)
-    local result = createButton(systemFonts.fntExocet10, resDefs.WideButtonBlank, resDefs.Palette.Sky)
-    result:segments(2, 1)
-    result:size(272, 35)
-    result:caption(text:upper())
-    result:position(x, y)
-    result:textOffset(0, -2)
-    result:frameIndex("normal", 0)
-    result:frameIndex("pressed", 2)
+    local result = createButton(systemFonts.fntExocet10, buttonDefs.sprButtonWideBlank)
+    result:setSegments(2, 1)
+    result:setFixedSize(272, 35)
+    result.caption = text:upper()
+    result:setPosition(x, y)
+    result:setTextOffset(0, -3)
+    result:setFrameIndex("normal", 0)
+    result:setFrameIndex("pressed", 2)
     return result
 end
 
 function MainMenu:createMainMenuMinibutton(text, x, y)
-    local result = createButton(systemFonts.fntRediculous, resDefs.ShortButtonBlank, resDefs.Palette.Sky)
-    result:segments(1, 1)
-    result:size(135, 25)
-    result:caption(text:upper())
-    result:position(x, y)
-    result:textOffset(0, -5)
-    result:frameIndex("normal", 0)
-    result:frameIndex("pressed", 1)
+    local result = createButton(systemFonts.fntRediculous, buttonDefs.sprButtonShortBlank)
+    result:setSegments(1, 1)
+    result:setFixedSize(135, 25)
+    result.caption = text:upper()
+    result:setPosition(x, y)
+    result:setTextOffset(0, -5)
+    result:setFrameIndex("normal", 0)
+    result:setFrameIndex("pressed", 1)
     return result
 end
 
 function MainMenu:initResources()
     -- OpenDiablo Version Label
-    self.lblVersion = createLabel(systemFonts.fntFormal12)
-    self.lblVersion:position(790, 0)
-    self.lblVersion:caption("OpenDiablo II v0.01")
-    self.lblVersion:hAlign("end")
+    self.lblVersion = Label:new(systemFonts.fntFormal12)
+    self.lblVersion:setPosition(790, 0)
+    self.lblVersion:setCaption("OpenDiablo II v0.01")
+    self.lblVersion:setAlignment("end", "middle")
 
     -- Disclaimer Label
-    self.lblDisclaimer = createLabel(systemFonts.fntFormal10)
-    self.lblDisclaimer:caption(
+    self.lblDisclaimer = Label:new(systemFonts.fntFormal10)
+    self.lblDisclaimer:setCaption(
         "OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision")
-    self.lblDisclaimer:position(400, 580)
-    self.lblDisclaimer:hAlign("middle")
-    self.lblDisclaimer:colorMod(0xFF, 0xFF, 0x8C)
+    self.lblDisclaimer:setPosition(400, 580)
+    self.lblDisclaimer:setAlignment("middle", "start")
+    self.lblDisclaimer:setColorMod(0xFF, 0xFF, 0x8C)
 
     -- Trademark Screen
     self.trademarkBg = loadSprite(resDefs.TrademarkScreen, resDefs.Palette.Sky)
-    self.trademarkBg:cellSize(4, 3)
+    self.trademarkBg:setCellSize(4, 3)
     self.trademarkBg:onMouseButtonDown(function(buttons)
-	    resetMouseState()
-        self.trademarkBg:active(false)
-        self.mainBg:active(true)
+        resetMouseState();
+        self.trademarkBg.active = false
+        self.mainBg.active = true
+        self = nil
+        collectgarbage("collect")
     end)
 
     -- Main Background
     self.mainBg = loadSprite(resDefs.GameSelectScreen, resDefs.Palette.Sky)
-    self.mainBg:cellSize(4, 3)
-    self.mainBg:active(false)
+    self.mainBg:setCellSize(4, 3)
+    self.mainBg.active = false
 
     -- D2 Logo Left Black BG
     self.d2LogoLeftBlackBg = loadSprite(resDefs.Diablo2LogoBlackLeft, resDefs.Palette.Sky)
-    self.d2LogoLeftBlackBg:position(400, 120)
-    self.d2LogoLeftBlackBg:bottomOrigin(true)
-    self.d2LogoLeftBlackBg:playMode("forwards")
+    self.d2LogoLeftBlackBg:setPosition(400, 120)
+    self.d2LogoLeftBlackBg.bottomOrigin = true
+    self.d2LogoLeftBlackBg.playMode = "forwards"
 
     -- D2 Logo Right Black BG
     self.d2LogoRightBlackBg = loadSprite(resDefs.Diablo2LogoBlackRight, resDefs.Palette.Sky)
-    self.d2LogoRightBlackBg:position(400, 120)
-    self.d2LogoRightBlackBg:bottomOrigin(true)
-    self.d2LogoRightBlackBg:playMode("forwards")
+    self.d2LogoRightBlackBg:setPosition(400, 120)
+    self.d2LogoRightBlackBg.bottomOrigin = true
+    self.d2LogoRightBlackBg.playMode = "forwards"
 
     -- D2 Logo Left
     self.d2LogoLeft = loadSprite(resDefs.Diablo2LogoFireLeft, resDefs.Palette.Sky)
-    self.d2LogoLeft:position(400, 120)
-    self.d2LogoLeft:blendMode("additive")
-    self.d2LogoLeft:bottomOrigin(true)
-    self.d2LogoLeft:playMode("forwards")
+    self.d2LogoLeft:setPosition(400, 120)
+    self.d2LogoLeft.blendMode = "additive"
+    self.d2LogoLeft.bottomOrigin = true
+    self.d2LogoLeft.playMode = "forwards"
 
     -- D2 Logo Right
     self.d2LogoRight = loadSprite(resDefs.Diablo2LogoFireRight, resDefs.Palette.Sky)
-    self.d2LogoRight:position(400, 120)
-    self.d2LogoRight:blendMode("additive")
-    self.d2LogoRight:bottomOrigin(true)
-    self.d2LogoRight:playMode("forwards")
+    self.d2LogoRight:setPosition(400, 120)
+    self.d2LogoRight.blendMode = "additive"
+    self.d2LogoRight.bottomOrigin = true
+    self.d2LogoRight.playMode = "forwards"
 
     -- Menu Buttons
     self.btnSinglePlayer = self:createMainMenuButton("Single Player", 264, 290)
     self.btnSinglePlayer:onActivate(function()
-    	-- TODO
+        -- TODO
     end)
-    
+
     self.btnLocalNetplay = self:createMainMenuButton("Local NetPlay", 264, 330)
     self.btnLocalNetplay:onActivate(function()
-    	-- TODO
+        -- TODO
     end)
-    
+
     self.btnMapEngineDebug = self:createMainMenuButton("Map Engine Debug", 264, 400)
     self.btnMapEngineDebug:onActivate(function()
-    	-- TODO
+        -- TODO
     end)
-            
+
     self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
     self.btnCredits:onActivate(function()
-		credits = require("credits"):new()
-		credits:start()
+        credits = require("credits"):new()
+        credits:start()
     end)
-    
+
     self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
     self.btnCinematics:onActivate(function()
-    	-- TODO
+        -- TODO
     end)
-    
+
     self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
     self.btnExitGame:onActivate(function()
-        globalsDestroy()
-		shutdown()
+        shutdown()
     end)
 
     -- Append all nodes to the scene graph

@@ -18,6 +18,7 @@ local Credits = {}
 
 local resDefs = require("common/resource-defs")
 local language = require("common/language")
+local buttonDefs = require("common/button-defs")
 
 function Credits:new(c)
     c = c or {}
@@ -26,14 +27,14 @@ function Credits:new(c)
 end
 
 function Credits:createCreditsButton(text, x, y)
-    local result = createButton(systemFonts.fntExocet10, resDefs.MediumButtonBlank, resDefs.Palette.Sky)
-    result:segments(1, 1)
-    result:size(128, 35)
-    result:caption(text:upper())
-    result:position(x, y)
-    result:textOffset(0, -2)
-    result:frameIndex("normal", 0)
-    result:frameIndex("pressed", 1)
+    local result = createButton(systemFonts.fntExocet10, buttonDefs.sprButtonMediumBlank)
+    result:setSegments(1, 1)
+    result:setFixedSize(128, 35)
+    result.caption = text:upper()
+    result:setPosition(x, y)
+    result:setTextOffset(0, -2)
+    result:setFrameIndex("normal", 0)
+    result:setFrameIndex("pressed", 1)
     return result
 end
 
@@ -48,11 +49,13 @@ function Credits:start()
     self.btnExit:onActivate(function()
         mainmenu = require("mainmenu"):new()
         mainmenu:start(false)
+        self = nil
+        collectgarbage("collect")
     end)
 
     -- Main Background
     self.mainBg = loadSprite(resDefs.CreditsBackground, resDefs.Palette.Sky)
-    self.mainBg:cellSize(4, 3)
+    self.mainBg:setCellSize(4, 3)
 
     self.rootNode:appendChild(self.mainBg)
     self.mainBg:appendChild(self.btnExit)

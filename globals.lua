@@ -28,13 +28,6 @@ function globalsInit()
 
     -- Set the cursor sprite
     cursorSprite = loadSprite(resDefs.CursorDefault, resDefs.Palette.Sky)
+    cursorSprite.blendMode = "blend"
 end
 
-function globalsDestroy()
-    getRootNode():removeAllChildren()
-    systemFonts.fntFormal12:destroy()
-    systemFonts.fntFormal10:destroy()
-    systemFonts.fntExocet10:destroy()
-    systemFonts.fntRediculous:destroy()
-    cursorSprite:destroy()
-end

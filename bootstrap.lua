@@ -63,5 +63,5 @@ if getConfig("System", "SkipStartupVideos") ~= "1" then
 end
 
 -- Start the main menu
--- mainMenu = require("mainmenu"):new()
--- mainMenu:start(true)
+mainMenu = require("mainmenu"):new()
+mainMenu:start(true)
