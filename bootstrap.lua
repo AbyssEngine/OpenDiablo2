@@ -77,6 +77,4 @@ abyss.showSystemCursor(true)
 ------------------------------------------------------------------------------------------------------------------------
 -- Start the game
 ------------------------------------------------------------------------------------------------------------------------
-CurrentScreen = require('screens/main-menu'):new(true)
-
--- collectgarbage("collect")
+SetScreen(Screen.MAIN_MENU)
