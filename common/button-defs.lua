@@ -1,42 +1,27 @@
--- Copyright (C) 2021 Tim Sarbin
--- This file is part of OpenDiablo2 <https://github.com/AbyssEngine/OpenDiablo2>.
---
--- OpenDiablo2 is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- OpenDiablo2 is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
---
-local resDefs = require("common/resource-defs")
+-- local resDefs = require("common/resource-defs")
 
-isButtonDefsLoaded = false
+-- isButtonDefsLoaded = false
 
-buttonSprites = {}
+local ButtonDefs = {
 
-function loadButtonDefs()
-    log("info", "Loading button definitions...")
-    buttonSprites.sprButtonWideBlank = loadSprite(resDefs.WideButtonBlank, resDefs.Palette.Sky)
-    buttonSprites.sprButtonShortBlank = loadSprite(resDefs.ShortButtonBlank, resDefs.Palette.Sky)
-    buttonSprites.sprButtonMediumBlank = loadSprite(resDefs.MediumButtonBlank, resDefs.Palette.Sky)
-end
-
-if not isButtonDefsLoaded then
-    isButtonDefsLoaded = true
-    loadButtonDefs()
-end
-
-return {
-    sprButtonWideBlank = buttonSprites.sprButtonWideBlank,
-    sprButtonShortBlank = buttonSprites.sprButtonShortBlank,
-    sprButtonMediumBlank = buttonSprites.sprButtonMediumBlank
 }
+ButtonDefs.__index = ButtonDefs
+
+function ButtonDefs:new()
+    local this = {}
+    setmetatable(this, self)
+    self:Initialize()
+    return this
+end
+
+function ButtonDefs:Initialize()
+    self.SprButtonWideBlank = abyss.loadSprite(ResourceDefs.WideButtonBlank, ResourceDefs.Palette.Sky)
+    self.SprButtonShortBlank = abyss.loadSprite(ResourceDefs.ShortButtonBlank, ResourceDefs.Palette.Sky)
+    self.SprButtonMediumBlank = abyss.loadSprite(ResourceDefs.MediumButtonBlank, ResourceDefs.Palette.Sky)
+end
+
+
+return ButtonDefs
 
 -- local greyAlpha100 = 0x646464ff
 -- local lightGreyAlpha75 = 0x808080c3

@@ -1,67 +1,82 @@
--- Copyright (C) 2021 Tim Sarbin
--- This file is part of OpenDiablo2 <https://github.com/AbyssEngine/OpenDiablo2>.
---
--- OpenDiablo2 is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- OpenDiablo2 is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
---
-require("util")
-require("globals")
-local resDefs = require("common/resource-defs")
-local language = require("common/language")
+--[[      /$$$$$$                                /$$$$$$$  /$$           /$$       /$$                 /$$$$ /$$$$
+         /$$__  $$                              | $$__  $$|__/          | $$      | $$                |_  $$| $$_/
+        | $$  \ $$  /$$$$$$   /$$$$$$  /$$$$$$$ | $$  \ $$ /$$  /$$$$$$ | $$$$$$$ | $$  /$$$$$$         | $$| $$
+        | $$  | $$ /$$__  $$ /$$__  $$| $$__  $$| $$  | $$| $$ |____  $$| $$__  $$| $$ /$$__  $$        | $$| $$
+        | $$  | $$| $$  \ $$| $$$$$$$$| $$  \ $$| $$  | $$| $$  /$$$$$$$| $$  \ $$| $$| $$  \ $$        | $$| $$
+        | $$  | $$| $$  | $$| $$_____/| $$  | $$| $$  | $$| $$ /$$__  $$| $$  | $$| $$| $$  | $$        | $$| $$
+        |  $$$$$$/| $$$$$$$/|  $$$$$$$| $$  | $$| $$$$$$$/| $$|  $$$$$$$| $$$$$$$/| $$|  $$$$$$/       /$$$$| $$$$
+        \______/ | $$____/  \_______/|__/  |__/|_______/ |__/ \_______/|_______/ |__/ \______/       |____/|____/
+                 | $$                                                         OpenDiablo II - An Abyss Engine Game
+                 | $$                                                   https://github.com/abyssengine/opendiablo2
+                 |__/                                                                                                 ]]
 
--- Load global configuration values
-basePath = getConfig("#Abyss", "BasePath")
-mpqRoot = getConfig("System", "MPQRoot")
-mpqs = split(getConfig("System", "MPQs"), ",")
 
+------------------------------------------------------------------------------------------------------------------------
+-- OpenDiablo2 Bootstrap Script
+------------------------------------------------------------------------------------------------------------------------
+
+require 'common/globals'
+
+------------------------------------------------------------------------------------------------------------------------
 -- Create load providers for all of the available MPQs
+------------------------------------------------------------------------------------------------------------------------
+local mpqs = Split(abyss.getConfig("System", "MPQs"), ",")
 for i in pairs(mpqs) do
-    mpqPath = basePath .. mpqRoot .. "/" .. mpqs[i]
-    loadStr = string.format("Loading Provider %s...", mpqPath)
-    log("info", loadStr)
-    addLoaderProvider("mpq", mpqPath)
+    local mpqPath = BasePath .. MPQRoot .. "/" .. mpqs[i]
+    local loadStr = string.format("Loading Provider %s...", mpqPath)
+    abyss.log("info", loadStr)
+    abyss.addLoaderProvider("mpq", mpqPath)
 end
 
+
+------------------------------------------------------------------------------------------------------------------------
 -- Load in all of the palettes
-for _, name in ipairs(resDefs.Palettes) do
+------------------------------------------------------------------------------------------------------------------------
+for _, name in ipairs(ResourceDefs.Palettes) do
     local lineLog = string.format("Loading Palette: %s...", name[1])
-    log("info", lineLog)
-    loadPalette(name[1], name[2])
+    abyss.log("info", lineLog)
+    abyss.loadPalette(name[1], name[2])
 end
 
+
+------------------------------------------------------------------------------------------------------------------------
 -- Detect the language
-local configLanguage = getConfig("System", "Language")
+------------------------------------------------------------------------------------------------------------------------
+local configLanguageName = abyss.getConfig("System", "Language")
 
-if configLanguage ~= "auto" then
-    language.set(configLanguage)
+if configLanguageName ~= "auto" then
+    Language:setLanguage(configLanguageName)
 else
-    language.autoDetect()
-
-    log("info", "Language automatically detected as " .. language.name())
+    Language:autoDetect()
 end
 
-globalsInit()
+local languageName = Language:name()
+abyss.log("info", "System language has been set to " .. languageName .. ".")
 
+
+------------------------------------------------------------------------------------------------------------------------
+-- Load the global objects
+------------------------------------------------------------------------------------------------------------------------
+LoadGlobals()
+
+
+------------------------------------------------------------------------------------------------------------------------
+-- Play Startup Videos
+------------------------------------------------------------------------------------------------------------------------
+if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
+    abyss.playVideo("/data/local/video/New_Bliz640x480.bik", true)
+    abyss.playVideo("/data/local/video/BlizNorth640x480.bik", true)
+end
+
+------------------------------------------------------------------------------------------------------------------------
 -- Show the Cursor
-setCursor(cursorSprite, 1, -24)
-showSystemCursor(true)
+------------------------------------------------------------------------------------------------------------------------
+abyss.setCursor(CursorSprite, 1, -24)
+abyss.showSystemCursor(true)
 
--- Play the videos
-if getConfig("System", "SkipStartupVideos") ~= "1" then
-    playVideo("/data/local/video/New_Bliz640x480.bik", true)
-    playVideo("/data/local/video/BlizNorth640x480.bik", true)
-end
+------------------------------------------------------------------------------------------------------------------------
+-- Start the game
+------------------------------------------------------------------------------------------------------------------------
+CurrentScreen = require('screens/main-menu'):new(true)
 
--- Start the main menu
-mainMenu = require("mainmenu"):new()
-mainMenu:start(true)
+-- collectgarbage("collect")

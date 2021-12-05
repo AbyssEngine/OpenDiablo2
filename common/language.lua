@@ -1,77 +1,71 @@
--- Copyright (C) 2021 Tim Sarbin
--- This file is part of OpenDiablo2 <https://github.com/AbyssEngine/OpenDiablo2>.
---
--- OpenDiablo2 is free software: you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation, either version 3 of the License, or
--- (at your option) any later version.
---
--- OpenDiablo2 is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
---
-local languageDefs = require("common/language-defs")
-
-languageSpec = {
-    id = 0x00,
-    name = "",
-    code = ""
+--- @class Language
+--- Provides mechinisms for language-specific operations.
+Language = {
+        _id = 0x00,
+        _name = "",
+        _code = "",
+        _languageDefs = require('common/language-defs')
 }
+Language.__index = Language
 
-function set(languageCode)
-    languageSpec.id = 0x00
-    languageSpec.code = languageDefs.LanguageCodes[languageSpec.id]
-    languageSpec.name = languageDefs.LanguageNames[languageSpec.id]
+--- Creates a new Language object.
+--- @return Language # A new Language object.
+function Language:new()
+    local this = {}
+    self.__index = self
+    setmetatable(this, self)
+    return this
+end
 
-    for langName, langId in pairs(languageDefs.Languages) do
-        if string.lower(langName) == string.lower(languageCode) then
-            languageSpec.id = langId
-            languageSpec.code = languageDefs.LanguageCodes[languageSpec.id]
-            languageSpec.name = languageDefs.LanguageNames[languageSpec.id]
+--- Sets the language based on the name.
+--- @param languageName string # The language name
+function Language:setLanguage(languageName)
+    self._id = 0x00
+    self._code = self._languageDefs.LanguageCodes[self._id]
+    self._name = self._languageDefs.LanguageNames[self._id]
+
+    for langName, langId in pairs(self._languageDefs.Languages) do
+        if string.lower(langName) == string.lower(languageName) then
+            self._id = langId
+            self._code = self._languageDefs.LanguageCodes[self._id]
+            self._name = self._languageDefs.LanguageNames[self._id]
+            return
+        end
+    end
+
+    abyss.log("warn", "Invalid language: " .. languageName .. ". Attempting to auto-detect.")
+end
+
+--- Auto detect the langauge based on files in the path
+function Language:autoDetect()
+    self._id = 0x00
+    for langName, langId in pairs(self._languageDefs.Languages) do
+        if abyss.fileExists("/data/local/ui/" .. self._languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
+            self:setLanguage(self._languageDefs.LanguageNames[langId])
             return
         end
     end
 end
 
-function autoDetect()
-    languageSpec.id = 0x00
-    for langName, langId in pairs(languageDefs.Languages) do
-        if fileExists("/data/local/ui/" .. languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
-            languageSpec.id = langId
-            languageSpec.code = languageDefs.LanguageCodes[langId]
-            languageSpec.name = languageDefs.LanguageNames[langId]
-            return
-        end
-    end
+function Language:id()
+    return self._id
 end
 
-function id()
-    return languageSpec.id
+function Language:name()
+    return self._name
 end
 
-function name()
-    return languageSpec.name
+function Language:code()
+    return self._code
 end
 
-function code()
-    return languageSpec.code
+--- Converts a language-specific path to the actual path based on the current language.
+--- @param originalPath string # The path to convert.
+--- @return string # The converted path.
+function Language:i18nPath(originalPath)
+    local path =  originalPath:gsub("{LANG_FONT}", self._languageDefs.LanguageFontNames[self._id])
+    path = path:gsub("{LANG}", self._languageDefs.LanguageCodes[self._id])
+    return path
 end
 
-function i18nPath(originalPath)
-    newPath = originalPath:gsub("{LANG_FONT}", languageDefs.LanguageFontNames[languageSpec.id])
-    newPath = newPath:gsub("{LANG}", languageDefs.LanguageCodes[languageSpec.id])
-    return newPath
-end
-
-return {
-    code = code,
-    name = name,
-    id = id,
-    autoDetect = autoDetect,
-    set = set,
-    i18nPath = i18nPath
-}
+return Language
