@@ -122,7 +122,6 @@ function MainMenu:initialize()
 end
 
 function MainMenu:createMainMenuButton(text, x, y)
-    abyss.log("debug", "Loading button: " .. text)
     local result = abyss.createButton(SystemFonts.FntExocet10, ButtonDefs.SprButtonWideBlank)
     result:setSegments(2, 1)
     result:setFixedSize(272, 35)
@@ -135,7 +134,6 @@ function MainMenu:createMainMenuButton(text, x, y)
 end
 
 function MainMenu:createMainMenuMinibutton(text, x, y)
-    abyss.log("debug", "Loading mini button: " .. text)
     local result = abyss.createButton(SystemFonts.FntRidiculous, ButtonDefs.SprButtonShortBlank)
     result:setSegments(1, 1)
     result:setFixedSize(135, 25)
