@@ -10,6 +10,8 @@ function MainMenu:new(showSplash)
 end
 
 function MainMenu:initialize()
+    abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+
     self.rootNode = abyss.getRootNode()
     self.rootNode:removeAllChildren()
     abyss.resetMouseState()

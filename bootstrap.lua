@@ -22,7 +22,7 @@ require 'common/globals'
 ------------------------------------------------------------------------------------------------------------------------
 local mpqs = Split(abyss.getConfig("System", "MPQs"), ",")
 for i in pairs(mpqs) do
-    local mpqPath = BasePath .. MPQRoot .. "/" .. mpqs[i]
+    local mpqPath = MPQRoot .. "/" .. mpqs[i]
     local loadStr = string.format("Loading Provider %s...", mpqPath)
     abyss.log("info", loadStr)
     abyss.addLoaderProvider("mpq", mpqPath)
