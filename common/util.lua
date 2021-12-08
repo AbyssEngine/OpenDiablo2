@@ -24,3 +24,43 @@ function Split(s, delimiter)
     return result;
 end
 
+--- Loads a tab seperated file into a table
+--- @param filePath string # The path to the file
+--- @param firstFieldIsHandle boolean # Whether the first field is the handle
+--- @return table # The table containing the file contents
+function LoadTsvAsTable(filePath, firstFieldIsHandle)
+    local tsvData = abyss.createString(filePath)
+
+    local lines = {}
+
+    for s in tsvData:gmatch("[^\r\n]+") do
+        table.insert(lines, s)
+    end
+
+    local fields = {}
+
+    for s in lines[1]:gmatch("[^\t]+") do
+        table.insert(fields, s)
+    end
+
+    local result = {}
+
+    for i = 2, #lines do
+        local line = lines[i]
+        local fieldIdx = 0
+        local item = {}
+
+        for s in line:gmatch("[^\t]+") do
+            fieldIdx = fieldIdx + 1
+            item[fields[fieldIdx]:gsub("%s+", "_")] = s
+        end
+
+        if firstFieldIsHandle then
+            result[item[fields[1]:gsub("%s+", "_")]] = item
+        else
+            table.insert(result, item)
+        end
+    end
+
+    return result
+end

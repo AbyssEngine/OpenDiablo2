@@ -35,7 +35,7 @@ end
 for _, name in ipairs(ResourceDefs.Palettes) do
     local lineLog = string.format("Loading Palette: %s...", name[1])
     abyss.log("info", lineLog)
-    abyss.loadPalette(name[1], name[2])
+    abyss.createPalette(name[1], name[2])
 end
 
 

@@ -10,27 +10,27 @@ function MainMenu:new(showSplash)
 end
 
 function MainMenu:initialize()
-    abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+    -- abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
 
     self.rootNode = abyss.getRootNode()
     self.rootNode:removeAllChildren()
     abyss.resetMouseState()
 
     -- OpenDiablo Version Label
-    self.lblVersion = abyss.loadLabel(SystemFonts.FntFormal12)
+    self.lblVersion = abyss.createLabel(SystemFonts.FntFormal12)
     self.lblVersion:setPosition(790, 0)
     self.lblVersion:setCaption("OpenDiablo II v0.01")
     self.lblVersion:setAlignment("end", "middle")
 
     -- Disclaimer Label
-    self.lblDisclaimer = abyss.loadLabel(SystemFonts.FntFormal10)
+    self.lblDisclaimer = abyss.createLabel(SystemFonts.FntFormal10)
     self.lblDisclaimer:setCaption("OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision")
     self.lblDisclaimer:setPosition(400, 580)
     self.lblDisclaimer:setAlignment("middle", "start")
     self.lblDisclaimer:setColorMod(0xFF, 0xFF, 0x8C)
 
     -- Trademark Screen
-    self.trademarkBg = abyss.loadSprite(ResourceDefs.TrademarkScreen, ResourceDefs.Palette.Sky)
+    self.trademarkBg = abyss.createSprite(ResourceDefs.TrademarkScreen, ResourceDefs.Palette.Sky)
     self.trademarkBg:setCellSize(4, 3)
     self.trademarkBg:onMouseButtonDown(function(buttons)
         abyss.resetMouseState();
@@ -40,62 +40,58 @@ function MainMenu:initialize()
     end)
 
     -- Main Background
-    self.mainBg = abyss.loadSprite(ResourceDefs.GameSelectScreen, ResourceDefs.Palette.Sky)
+    self.mainBg = abyss.createSprite(ResourceDefs.GameSelectScreen, ResourceDefs.Palette.Sky)
     self.mainBg:setCellSize(4, 3)
     self.mainBg.active = false
 
     -- D2 Logo Left Black BG
-    self.d2LogoLeftBlackBg = abyss.loadSprite(ResourceDefs.Diablo2LogoBlackLeft, ResourceDefs.Palette.Sky)
+    self.d2LogoLeftBlackBg = abyss.createSprite(ResourceDefs.Diablo2LogoBlackLeft, ResourceDefs.Palette.Sky)
     self.d2LogoLeftBlackBg:setPosition(400, 120)
     self.d2LogoLeftBlackBg.bottomOrigin = true
     self.d2LogoLeftBlackBg.playMode = "forwards"
 
     -- D2 Logo Right Black BG
-    self.d2LogoRightBlackBg = abyss.loadSprite(ResourceDefs.Diablo2LogoBlackRight, ResourceDefs.Palette.Sky)
+    self.d2LogoRightBlackBg = abyss.createSprite(ResourceDefs.Diablo2LogoBlackRight, ResourceDefs.Palette.Sky)
     self.d2LogoRightBlackBg:setPosition(400, 120)
     self.d2LogoRightBlackBg.bottomOrigin = true
     self.d2LogoRightBlackBg.playMode = "forwards"
 
     -- D2 Logo Left
-    self.d2LogoLeft = abyss.loadSprite(ResourceDefs.Diablo2LogoFireLeft, ResourceDefs.Palette.Sky)
+    self.d2LogoLeft = abyss.createSprite(ResourceDefs.Diablo2LogoFireLeft, ResourceDefs.Palette.Sky)
     self.d2LogoLeft:setPosition(400, 120)
     self.d2LogoLeft.blendMode = "additive"
     self.d2LogoLeft.bottomOrigin = true
     self.d2LogoLeft.playMode = "forwards"
 
     -- D2 Logo Right
-    self.d2LogoRight = abyss.loadSprite(ResourceDefs.Diablo2LogoFireRight, ResourceDefs.Palette.Sky)
+    self.d2LogoRight = abyss.createSprite(ResourceDefs.Diablo2LogoFireRight, ResourceDefs.Palette.Sky)
     self.d2LogoRight:setPosition(400, 120)
     self.d2LogoRight.blendMode = "additive"
     self.d2LogoRight.bottomOrigin = true
     self.d2LogoRight.playMode = "forwards"
 
     -- Menu Buttons
-    self.btnSinglePlayer = self:createMainMenuButton("Single Player", 264, 290)
-    self.btnSinglePlayer:onActivate(function()
+    self.btnSinglePlayer = CreateButton(ButtonTypes.Wide, 264, 290, "Single Player", function()
         -- TODO
     end)
 
-    self.btnLocalNetplay = self:createMainMenuButton("Local NetPlay", 264, 330)
-    self.btnLocalNetplay:onActivate(function()
+    self.btnLocalNetplay = CreateButton(ButtonTypes.Wide, 264, 330, "Local NetPlay", function()
         -- TODO
     end)
 
-    self.btnMapEngineDebug = self:createMainMenuButton("Map Engine Debug", 264, 400)
-    self.btnMapEngineDebug:onActivate(function()
+    self.btnMapEngineDebug = CreateButton(ButtonTypes.Wide, 264, 400, "Map Engine Debug", function()
         -- TODO
     end)
 
-    self.btnCredits = self:createMainMenuMinibutton("Credits", 264, 472)
-    self.btnCredits:onActivate(function() SetScreen(Screen.CREDITS) end)
+    self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "Credits", function()
+         SetScreen(Screen.CREDITS)
+    end)
 
-    self.btnCinematics = self:createMainMenuMinibutton("Cinematics", 401, 472)
-    self.btnCinematics:onActivate(function()
+    self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "Cinematics", function()
         -- TODO
     end)
 
-    self.btnExitGame = self:createMainMenuButton("Exit to Desktop", 264, 500)
-    self.btnExitGame:onActivate(function()
+    self.btnExitGame = CreateButton(ButtonTypes.Wide, 264, 500, "Exit to Desktop", function()
         abyss.shutdown()
     end)
 
@@ -123,28 +119,5 @@ function MainMenu:initialize()
     end
 end
 
-function MainMenu:createMainMenuButton(text, x, y)
-    local result = abyss.createButton(SystemFonts.FntExocet10, ButtonDefs.SprButtonWideBlank)
-    result:setSegments(2, 1)
-    result:setFixedSize(272, 35)
-    result.caption = text:upper()
-    result:setPosition(x, y)
-    result:setTextOffset(0, -3)
-    result:setFrameIndex("normal", 0)
-    result:setFrameIndex("pressed", 2)
-    return result
-end
-
-function MainMenu:createMainMenuMinibutton(text, x, y)
-    local result = abyss.createButton(SystemFonts.FntRidiculous, ButtonDefs.SprButtonShortBlank)
-    result:setSegments(1, 1)
-    result:setFixedSize(135, 25)
-    result.caption = text:upper()
-    result:setPosition(x, y)
-    result:setTextOffset(0, -5)
-    result:setFrameIndex("normal", 0)
-    result:setFrameIndex("pressed", 1)
-    return result
-end
 
 return MainMenu
