@@ -2,15 +2,15 @@ local MainMenu = {
 }
 MainMenu.__index = MainMenu
 
-function MainMenu:new(showSplash)
+function MainMenu:new()
     local this = {}
     setmetatable(this, self)
-    self:initialize(showSplash)
+    self:initialize()
     return this
 end
 
 function MainMenu:initialize()
-    -- abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+    abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
 
     self.rootNode = abyss.getRootNode()
     self.rootNode:removeAllChildren()
@@ -19,12 +19,12 @@ function MainMenu:initialize()
     -- OpenDiablo Version Label
     self.lblVersion = abyss.createLabel(SystemFonts.FntFormal12)
     self.lblVersion:setPosition(790, 0)
-    self.lblVersion:setCaption("OpenDiablo II v0.01")
+    self.lblVersion.caption = "OpenDiablo II v0.01"
     self.lblVersion:setAlignment("end", "middle")
 
     -- Disclaimer Label
     self.lblDisclaimer = abyss.createLabel(SystemFonts.FntFormal10)
-    self.lblDisclaimer:setCaption("OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision")
+    self.lblDisclaimer.caption = "OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision"
     self.lblDisclaimer:setPosition(400, 580)
     self.lblDisclaimer:setAlignment("middle", "start")
     self.lblDisclaimer:setColorMod(0xFF, 0xFF, 0x8C)
