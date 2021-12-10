@@ -64,17 +64,20 @@ LoadGlobals()
 -- Play Startup Videos
 ------------------------------------------------------------------------------------------------------------------------
 if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
-    abyss.playVideo("/data/local/video/New_Bliz640x480.bik", true)
-    abyss.playVideo("/data/local/video/BlizNorth640x480.bik", true)
+    abyss.playVideo("/data/local/video/New_Bliz640x480.bik", function()
+        abyss.playVideo("/data/local/video/BlizNorth640x480.bik", function()
+            StartGame()
+        end)
+    end)
+else
+    StartGame()
 end
 
-------------------------------------------------------------------------------------------------------------------------
--- Show the Cursor
-------------------------------------------------------------------------------------------------------------------------
-abyss.setCursor(CursorSprite, 1, -24)
-abyss.showSystemCursor(true)
 
-------------------------------------------------------------------------------------------------------------------------
--- Start the game
-------------------------------------------------------------------------------------------------------------------------
-SetScreen(Screen.MAIN_MENU)
+function StartGame()
+    abyss.setCursor(CursorSprite, 1, -24)
+    abyss.showSystemCursor(true)
+    SetScreen(Screen.MAIN_MENU)
+end
+
+

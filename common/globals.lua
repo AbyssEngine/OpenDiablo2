@@ -15,7 +15,11 @@ function LoadGlobals()
          FntFormal12 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal12), ResourceDefs.Palette.Static),
          FntFormal10 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal10), ResourceDefs.Palette.Static),
          FntExocet10 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontExocet10), ResourceDefs.Palette.Static),
-         FntRidiculous = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontRidiculous), ResourceDefs.Palette.Static)
+         FntRidiculous = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontRidiculous), ResourceDefs.Palette.Static),
+         Fnt16 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font16), ResourceDefs.Palette.Static),
+         Fnt24 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font24), ResourceDefs.Palette.Static),
+         Fnt30 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font30), ResourceDefs.Palette.Static),
+         Fnt42 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font42), ResourceDefs.Palette.Static),
     }
 
     CursorSprite = abyss.createSprite(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)

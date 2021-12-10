@@ -70,6 +70,9 @@ function MainMenu:initialize()
     self.d2LogoRight.bottomOrigin = true
     self.d2LogoRight.playMode = "forwards"
 
+    -- Cinematics Window
+    self.cinematicsDialog = self:createCinematicsWindow(self)
+
     -- Menu Buttons
     self.btnSinglePlayer = CreateButton(ButtonTypes.Wide, 264, 290, "Single Player", function()
         -- TODO
@@ -87,8 +90,16 @@ function MainMenu:initialize()
          SetScreen(Screen.CREDITS)
     end)
 
+    local this = self;
+
     self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "Cinematics", function()
-        -- TODO
+        this.cinematicsDialog.show()
+        this.btnSinglePlayer.active = false
+        this.btnLocalNetplay.active = false
+        this.btnExitGame.active = false
+        this.btnCredits.active = false
+        this.btnCinematics.active = false
+        this.btnMapEngineDebug.active = false
     end)
 
     self.btnExitGame = CreateButton(ButtonTypes.Wide, 264, 500, "Exit to Desktop", function()
@@ -111,12 +122,90 @@ function MainMenu:initialize()
     self.rootNode:appendChild(self.d2LogoLeft)
     self.rootNode:appendChild(self.d2LogoRight)
 
+    self.rootNode:appendChild(self.cinematicsDialog.window)
+
     if ShowTrademarkScreen == false then
         self.trademarkBg.active = false
         self.mainBg.active = true
     else
         ShowTrademarkScreen = false
     end
+end
+
+function MainMenu:createCinematicsWindow(main)
+    local result = {
+        window = abyss.createSprite(ResourceDefs.CinematicsBackground, ResourceDefs.Palette.Sky),
+        main = main
+    }
+
+    result.window:setCellSize(2, 2)
+    result.window:setPosition(237, 80)
+
+    result.lblHeader = abyss.createLabel(SystemFonts.Fnt30)
+    result.lblHeader.caption = "Select Cinematics"
+    result.lblHeader:setPosition(163, 20)
+    result.lblHeader:setAlignment("middle", "start")
+
+    result.btnSistersLament = CreateButton(ButtonTypes.Wide, 30, 70, "THE SISTER'S LAMENT", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/d2intro640x292.bik")
+    end)
+
+    result.btnDesertJourney = CreateButton(ButtonTypes.Wide, 30, 110, "DESERT JOURNEY", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act02start640x292.bik")
+    end)
+
+    result.btnMephistosJungle = CreateButton(ButtonTypes.Wide, 30, 150, "MEPHISTO'S JUNGLE", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act03start640x292.bik")
+    end)
+
+    result.btnEnterHell = CreateButton(ButtonTypes.Wide, 30, 190, "ENTER HELL", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act04start640x292.bik")
+    end)
+
+    result.btnTerrorsEnd = CreateButton(ButtonTypes.Wide, 30, 230, "TERROR'S END", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act04end640x292.bik")
+    end)
+
+    result.btnSearchForBaal = CreateButton(ButtonTypes.Wide, 30, 270, "SEARCH FOR BAAL", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/D2x_Intro_640x292.bik")
+    end)
+
+    result.btnDestructionsEnd = CreateButton(ButtonTypes.Wide, 30, 310, "DESTRUCTION'S END", function()
+        abyss.playVideo("/data/local/video/" .. Language:code() .. "/D2x_Out_640x292.bik")
+    end)
+
+    result.btnCancel = CreateButton(ButtonTypes.Medium, 100, 375, "CANCEL", function()
+        result.main.btnSinglePlayer.active = true
+        result.main.btnLocalNetplay.active = true
+        result.main.btnExitGame.active = true
+        result.main.btnCredits.active = true
+        result.main.btnCinematics.active = true
+        result.main.btnMapEngineDebug.active = true
+        result:hide()
+    end)
+
+    result.window:appendChild(result.lblHeader)
+    result.window:appendChild(result.btnSistersLament)
+    result.window:appendChild(result.btnDesertJourney)
+    result.window:appendChild(result.btnMephistosJungle)
+    result.window:appendChild(result.btnEnterHell)
+    result.window:appendChild(result.btnTerrorsEnd)
+    result.window:appendChild(result.btnSearchForBaal)
+    result.window:appendChild(result.btnDestructionsEnd)
+    result.window:appendChild(result.btnCancel)
+    result.window.active = false
+
+    result.show = function()
+        abyss.playBackgroundMusic("")
+        result.window.active = true
+    end
+
+    result.hide = function()
+        abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+        result.window.active = false
+    end
+
+    return result
 end
 
 
