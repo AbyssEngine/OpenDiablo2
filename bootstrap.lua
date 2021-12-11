@@ -81,8 +81,7 @@ end
 
 if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
     if abyss.fileExists("/data/hd/global/video/blizzardlogos.webm") then
-        -- TODO: audio for hd videos
-        abyss.playVideo("/data/hd/global/video/blizzardlogos.webm", StartGame)
+        abyss.playVideoAndAudio("/data/hd/global/video/blizzardlogos.webm", "/data/hd/local/video/blizzardlogos.flac", StartGame)
     else
         abyss.playVideo("/data/local/video/New_Bliz640x480.bik", function()
             abyss.playVideo("/data/local/video/BlizNorth640x480.bik", StartGame)

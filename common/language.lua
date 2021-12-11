@@ -4,6 +4,7 @@ Language = {
         _id = 0x00,
         _name = "",
         _code = "",
+        _hdcode = "",
         _languageDefs = require('common/language-defs')
 }
 Language.__index = Language
@@ -22,12 +23,14 @@ end
 function Language:setLanguage(languageName)
     self._id = 0x00
     self._code = self._languageDefs.LanguageCodes[self._id]
+    self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
     self._name = self._languageDefs.LanguageNames[self._id]
 
     for langName, langId in pairs(self._languageDefs.Languages) do
         if string.lower(langName) == string.lower(languageName) then
             self._id = langId
             self._code = self._languageDefs.LanguageCodes[self._id]
+            self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
             self._name = self._languageDefs.LanguageNames[self._id]
             return
         end
@@ -57,6 +60,14 @@ end
 
 function Language:code()
     return self._code
+end
+
+function Language:hdaudioPath(originalPath)
+    if self._id == 0x00 then
+        return originalPath
+    else
+        return "/locales/audio/" .. self._hdcode .. originalPath
+    end
 end
 
 --- Converts a language-specific path to the actual path based on the current language.
