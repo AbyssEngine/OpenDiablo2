@@ -27,6 +27,8 @@ Todo:
 1. Download a binary of the Abyss Engine for [Windows](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-windows.zip), [Linux](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-linux.tar.gz), or [MacOS](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-darwin.dmg), and extract it to the root OpenDiablo2 folder.
 1. Run the Abyss Engine application.
 
+Please note that the Abyss Engine is in very active development, and new features are added on a daily basis. It is recommended that you grab a new copy of the engine any time you update your copy of this repo.
+
 # Screenshots
 
 ![Main Menu Screenshot](media/ss1.png)
