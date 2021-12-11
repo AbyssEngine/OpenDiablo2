@@ -11,10 +11,7 @@ end
 
 function MainMenu:initialize()
     abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
-
     self.rootNode = abyss.getRootNode()
-    self.rootNode:removeAllChildren()
-    abyss.resetMouseState()
 
     -- OpenDiablo Version Label
     self.lblVersion = abyss.createLabel(SystemFonts.FntFormal12)
@@ -82,8 +79,8 @@ function MainMenu:initialize()
         -- TODO
     end)
 
-    self.btnMapEngineDebug = CreateButton(ButtonTypes.Wide, 264, 400, "Map Engine Debug", function()
-        -- TODO
+    self.btnMapEngineDebug = CreateButton(ButtonTypes.Wide, 264, 400, "Map Engine Test", function()
+        SetScreen(Screen.MAP_ENGINE_TEST)
     end)
 
     self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "Credits", function()
