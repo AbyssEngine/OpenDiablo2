@@ -34,14 +34,17 @@ function LoadTsvAsTable(filePath, firstFieldIsHandle)
     local lines = {}
 
     for s in tsvData:gmatch("[^\r\n]+") do
-        table.insert(lines, s)
+        table.insert(lines, s .. "\t")
     end
 
     local fields = {}
 
-    for s in lines[1]:gmatch("[^\t]+") do
-        table.insert(fields, s)
-    end
+    local fieldstart = 1
+    repeat
+        local nexti = lines[1]:find("\t", fieldstart)
+        table.insert(fields, lines[1]:sub(fieldstart, nexti - 1))
+        fieldstart = nexti + 1
+    until fieldstart > lines[1]:len()
 
     local result = {}
 
@@ -50,10 +53,13 @@ function LoadTsvAsTable(filePath, firstFieldIsHandle)
         local fieldIdx = 0
         local item = {}
 
-        for s in line:gmatch("[^\t]+") do
+        fieldstart = 1
+        repeat
             fieldIdx = fieldIdx + 1
-            item[fields[fieldIdx]:gsub("%s+", "_")] = s
-        end
+            local nexti = line:find("\t", fieldstart)
+            item[fields[fieldIdx]:gsub("%s+", "_")] = line:sub(fieldstart, nexti - 1)
+            fieldstart = nexti + 1
+        until fieldstart > line:len()
 
         if firstFieldIsHandle then
             result[item[fields[1]:gsub("%s+", "_")]] = item

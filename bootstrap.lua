@@ -18,16 +18,25 @@
 require 'common/globals'
 
 ------------------------------------------------------------------------------------------------------------------------
--- Create load providers for all of the available MPQs
+-- Create load providers for all of the available MPQs and CASCs
 ------------------------------------------------------------------------------------------------------------------------
+local cascs = Split(abyss.getConfig("System", "CASCs"), ",")
+for i in pairs(cascs) do
+    abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
+    pcall(function()
+        abyss.addLoaderProvider("casc", cascs[i])
+    end)
+end
+
 local mpqs = Split(abyss.getConfig("System", "MPQs"), ",")
 for i in pairs(mpqs) do
     local mpqPath = MPQRoot .. "/" .. mpqs[i]
-    local loadStr = string.format("Loading Provider %s...", mpqPath)
+    local loadStr = string.format("Loading MPQ %s...", mpqPath)
     abyss.log("info", loadStr)
-    abyss.addLoaderProvider("mpq", mpqPath)
+    pcall(function()
+        abyss.addLoaderProvider("mpq", mpqPath)
+    end)
 end
-
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Load in all of the palettes
@@ -63,21 +72,24 @@ LoadGlobals()
 ------------------------------------------------------------------------------------------------------------------------
 -- Play Startup Videos
 ------------------------------------------------------------------------------------------------------------------------
-if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
-    abyss.playVideo("/data/local/video/New_Bliz640x480.bik", function()
-        abyss.playVideo("/data/local/video/BlizNorth640x480.bik", function()
-            StartGame()
-        end)
-    end)
-else
-    StartGame()
-end
-
 
 function StartGame()
     abyss.setCursor(CursorSprite, 1, -24)
     abyss.showSystemCursor(true)
     SetScreen(Screen.MAIN_MENU)
+end
+
+if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
+    if abyss.fileExists("/data/hd/global/video/blizzardlogos.webm") then
+        -- TODO: audio for hd videos
+        abyss.playVideo("/data/hd/global/video/blizzardlogos.webm", StartGame)
+    else
+        abyss.playVideo("/data/local/video/New_Bliz640x480.bik", function()
+            abyss.playVideo("/data/local/video/BlizNorth640x480.bik", StartGame)
+        end)
+    end
+else
+    StartGame()
 end
 
 
