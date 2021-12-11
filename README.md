@@ -1,2 +1,31 @@
 # OpenDiablo2
-An implementation of Diablo 2 in AbyssEngine.
+OpenDiablo2 is an implementation of Diablo 2 in AbyssEngine.
+
+This game requires the [Abyss Engine](https://github.com/AbyssEngine/AbyssEngine) to run, as well as the MPQ files provided by the official Diablo 2 + LOD installers (online, CD, or digital).
+
+# General Information
+This project is currently very early stages of development, and is not in a playable state yet. The game is being developed in tandem with the Abyss Engine, though all contributors are encouraged to help directly with this project instead of the core engine itself.
+
+Current Features:
+* Main Menu
+* Cinematics Screen
+
+In Progress:
+* Map Engine Tests Screen
+
+Todo:
+* Credits Screen (Can be done now)
+* New Hero Screen (Can be done now except for text input)
+* Gameplay (when the engine supports it)
+
+# Installation
+
+1. Download OpenDiablo2 to a folder (or clone the repo)
+1. Copy the MPQs from the game's installation folder into the MPQs folder of this project (there should be 11 MPQs).
+1. Download a binary of the Abyss Engine for [Windows](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-windows.zip), [Linux](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-linux.tar.gz), or [MacOS](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-darwin.dmg), and extract it to the root OpenDiablo2 folder.
+1. Run the Abyss Engine application.
+
+# Screenshots
+
+![Main Menu Screenshot](media/ss1.png)
+![Movie](media/ss2.png)
