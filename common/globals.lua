@@ -30,8 +30,12 @@ function LoadGlobals()
     InitUI()
 end
 
-function LoadSoundEffect(handle)
-    return abyss.createSoundEffect("/data/global/sfx/" .. SoundEffects[handle].FileName:gsub("\\+", "/"))
+function LoadSoundEffect(handle, hd_handle)
+    if SoundEffects[hd_handle] ~= nil and abyss.fileExists("/data/hd/global/sfx/" .. SoundEffects[hd_handle].FileName) then
+        return abyss.createSoundEffect("/data/hd/global/sfx/" .. SoundEffects[hd_handle].FileName)
+    else
+        return abyss.createSoundEffect("/data/global/sfx/" .. SoundEffects[handle].FileName)
+    end
 end
 
 function LoadDatasets()
@@ -47,7 +51,7 @@ function LoadDatasets()
     LevelTypes = {}
     local levelTypeDefs = LoadTsvAsTable(ResourceDefs.LevelType, true)
     for _, levelTypeRecord in pairs(levelTypeDefs) do
-        if levelTypeRecord.Id ~= nil then
+        if levelTypeRecord.Id ~= "" then
             local levelType = abyss.LevelType.new()
             levelType.id = tonumber(levelTypeRecord.Id)
             levelType.name = levelTypeRecord.Name

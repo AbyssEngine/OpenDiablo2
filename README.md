@@ -23,7 +23,9 @@ Todo:
 # Installation
 
 1. Download OpenDiablo2 to a folder (or clone the repo)
-1. Copy the MPQs from the game's installation folder into the MPQs folder of this project (there should be 11 MPQs).
+1. Copy the data files over from the copy of Diablo II you have. You need to do at least one of the following:
+   1. If you have good old Diablo II (latest LOD patch required), copy the MPQs from the game's installation folder into the MPQs folder of this project (there should be 11 MPQs).
+   1. If you have Resurrected, copy Data/ and .build.info files from it into D2RData folder of this project.
 1. Download a binary of the Abyss Engine for [Windows](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-windows.zip), [Linux](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-linux.tar.gz), or [MacOS](https://github.com/AbyssEngine/AbyssEngine/releases/download/unstable/abyss-darwin.dmg), and extract it to the root OpenDiablo2 folder.
 1. Run the Abyss Engine application.
 

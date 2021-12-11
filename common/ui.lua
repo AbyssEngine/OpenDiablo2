@@ -30,7 +30,7 @@ function InitUI()
         }
     }
 
-    ButtonPressedSfx = LoadSoundEffect("ESOUND_CURSOR_BUTTON_CLICK")
+    ButtonPressedSfx = LoadSoundEffect("ESOUND_CURSOR_BUTTON_CLICK", "cursor_button_hd_3")
 end
 
 -- Creates a button

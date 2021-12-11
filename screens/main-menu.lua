@@ -10,7 +10,11 @@ function MainMenu:new()
 end
 
 function MainMenu:initialize()
-    abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+    if abyss.fileExists("/data/hd/global/music/introedit_hd.flac") then
+        abyss.playBackgroundMusic("/data/hd/global/music/introedit_hd.flac")
+    else
+        abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+    end
     self.rootNode = abyss.getRootNode()
 
     -- OpenDiablo Version Label
@@ -198,7 +202,11 @@ function MainMenu:createCinematicsWindow(main)
     end
 
     result.hide = function()
-        abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+        if abyss.fileExists("/data/hd/global/music/introedit_hd.flac") then
+            abyss.playBackgroundMusic("/data/hd/global/music/introedit_hd.flac")
+        else
+            abyss.playBackgroundMusic(ResourceDefs.BGMTitle)
+        end
         result.window.active = false
     end
 
