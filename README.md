@@ -3,6 +3,8 @@ OpenDiablo2 is an implementation of Diablo 2 in AbyssEngine.
 
 This game requires the [Abyss Engine](https://github.com/AbyssEngine/AbyssEngine) to run, as well as the MPQ files provided by the official Diablo 2 + LOD installers (online, CD, or digital).
 
+Please note that we only support users who are using an official and legally owned copy of the original game (not D2 Resurrected). If you do not have a copy of the game and/or do not use a Windows computer, it is recommend that you purchase the Windows edition of the [Diablo 2](https://us.shop.battle.net/en-us/product/diablo-ii) and [LOD Expansion](https://us.shop.battle.net/en-us/product/diablo-ii-lord-of-destruction) from the Blizzard store directly, and install/patch it on another machine, or in a virtual machine in order to obtain the MPQ files. MPQs/disks downloaded from unofficial sources tend to have mods/changes that are not supported.
+
 # General Information
 This project is currently very early stages of development, and is not in a playable state yet. The game is being developed in tandem with the Abyss Engine, though all contributors are encouraged to help directly with this project instead of the core engine itself.
 
