@@ -143,9 +143,22 @@ function MainMenu:createCinematicsWindow(main)
     result.window:setCellSize(2, 2)
     result.window:setPosition(237, 80)
 
+    local showHD = false
+    if abyss.fileExists("/data/hd/global/video/d2intro.webm") then
+        showHD = true
+    end
+
+    function cond(c, a, b)
+        if c then
+            return a
+        else
+            return b
+        end
+    end
+
     result.lblHeader = abyss.createLabel(SystemFonts.Fnt30)
     result.lblHeader.caption = "Select Cinematics"
-    result.lblHeader:setPosition(163, 20)
+    result.lblHeader:setPosition(163, cond(showHD, 10, 20))
     result.lblHeader:setAlignment("middle", "start")
 
     local files = {{
@@ -178,14 +191,18 @@ function MainMenu:createCinematicsWindow(main)
         hd = "act5/d2x_out",
     }}
 
-    local y = 70
+    local y = cond(showHD, 50, 70)
 
     for _, item in ipairs(files) do
         local btn = CreateButton(ButtonTypes.Wide, 30, y, item.name, function()
-            if abyss.fileExists("/data/hd/global/video/" .. item.hd .. ".webm") then
+            if result.btnToggleHD.checked then
                 abyss.playVideoAndAudio("/data/hd/global/video/" .. item.hd .. ".webm", Language:hdaudioPath("/data/hd/local/video/" .. item.hd .. ".flac"))
             else
-                abyss.playVideo("/data/local/video/" .. Language:code() .. "/" .. item.bik)
+                if abyss.fileExists("/data/global/video/" .. item.hd .. ".webm") then
+                    abyss.playVideoAndAudio("/data/global/video/" .. item.hd .. ".webm", Language:hdaudioPath("/data/local/video/" .. item.hd .. ".flac"))
+                else
+                    abyss.playVideo("/data/local/video/" .. Language:code() .. "/" .. item.bik)
+                end
             end
         end)
 
@@ -193,6 +210,12 @@ function MainMenu:createCinematicsWindow(main)
         result.window:appendChild(btn)
 
         y = y + 40
+    end
+
+    result.btnToggleHD = CreateCheckbox(97, 333, "HD video")
+    if showHD then
+        result.btnToggleHD.checked = true
+        result.window:appendChild(result.btnToggleHD)
     end
 
     result.btnCancel = CreateButton(ButtonTypes.Medium, 100, 375, "CANCEL", function()
