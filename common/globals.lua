@@ -30,11 +30,27 @@ function LoadGlobals()
     InitUI()
 end
 
-function LoadSoundEffect(handle, hd_handle)
-    if SoundEffects[hd_handle] ~= nil and abyss.fileExists("/data/hd/global/sfx/" .. SoundEffects[hd_handle].FileName) then
-        return abyss.createSoundEffect("/data/hd/global/sfx/" .. SoundEffects[hd_handle].FileName)
-    else
-        return abyss.createSoundEffect("/data/global/sfx/" .. SoundEffects[handle].FileName)
+function LoadSoundEffect(handle)
+    local attempts = {}
+    local redirect = SoundEffects[handle].Redirect
+    if redirect ~= nil and redirect ~= "" then
+        table.insert(attempts, SoundEffects[redirect].FileName)
+        -- cursor_button_click redirects to cursor_button_hd_1 but only cursor_button_3_hd.flac actually exists
+        local _, _, start, digit = redirect:find("(.*_)(%d)$")
+        if digit then
+            for _, i in ipairs({1, 2, 3, 4, 5}) do
+                table.insert(attempts, SoundEffects[start .. i].FileName)
+            end
+        end
+    end
+    table.insert(attempts, SoundEffects[handle].FileName)
+    for _, file in ipairs(attempts) do
+        if abyss.fileExists("/data/hd/global/sfx/" .. file) then
+            return abyss.createSoundEffect("/data/hd/global/sfx/" .. file)
+        end
+        if abyss.fileExists("/data/global/sfx/" .. file) then
+            return abyss.createSoundEffect("/data/global/sfx/" .. file)
+        end
     end
 end
 
