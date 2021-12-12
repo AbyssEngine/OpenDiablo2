@@ -17,6 +17,7 @@ function InitUI()
             Segments     = { X =   2, Y =   1 },
             FixedSize    = { X = 272, Y =  35 },
             TextOffset   = { X =   0, Y =  -3 },
+            TextColor    = { R = 255, G = 255, B = 255 },
             LabelBlend   = "multiply",
             Uppercase    = true,
             FrameIndexes = { ["normal"] = 0, ["pressed"] = 2 }
@@ -27,6 +28,7 @@ function InitUI()
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 128, Y =  35 },
             TextOffset   = { X =   0, Y =  -2 },
+            TextColor    = { R = 255, G = 255, B = 255 },
             LabelBlend   = "multiply",
             Uppercase    = true,
             FrameIndexes = { ["normal"] = 0, ["pressed"] = 1 }
@@ -37,6 +39,7 @@ function InitUI()
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 135, Y =  25 },
             TextOffset   = { X =   0, Y =  -5 },
+            TextColor    = { R = 255, G = 255, B = 255 },
             LabelBlend   = "multiply",
             Uppercase    = true,
             FrameIndexes = { ["normal"] = 0, ["pressed"] = 1 }
@@ -47,6 +50,7 @@ function InitUI()
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 135, Y =  25 },
             TextOffset   = { X =  20, Y =  -5 },
+            TextColor    = { R = 255, G = 255, B = 255 },
             LabelBlend   = "none",
             Uppercase    = false,
             FrameIndexes = { normal = 0, hover = 3, pressed = 1, checkednormal = 4, checkedhover = 6, checkedpressed = 5, disabled = 2 }
@@ -62,17 +66,25 @@ end
 -- @param y The y position of the button
 -- @param text The text to display on the button
 function CreateButton(buttonSpec, x, y, text, onActivate)
-    local result = abyss.createButton(buttonSpec.Font, buttonSpec.Sprite)
+    local label = abyss.createLabel(buttonSpec.Font)
+    label:setAlignment("middle", "middle")
+    label:setPosition(math.floor(buttonSpec.FixedSize.X / 2) + buttonSpec.TextOffset.X, math.floor(buttonSpec.FixedSize.Y / 2) + buttonSpec.TextOffset.Y)
+    label:setColorMod(buttonSpec.TextColor.R, buttonSpec.TextColor.G, buttonSpec.TextColor.B)
+    local result = abyss.createButton(buttonSpec.Sprite)
+    result.data = {
+        label = label
+    }
+    result:appendChild(label)
     result:setSegments(buttonSpec.Segments.X, buttonSpec.Segments.Y)
     result:setFixedSize(buttonSpec.FixedSize.X, buttonSpec.FixedSize.Y)
     if buttonSpec.Uppercase then
-        result.caption = text:upper()
+        label.caption = text:upper()
     else
-        result.caption = text
+        label.caption = text
     end
-    result.labelBlendMode = buttonSpec.LabelBlend
+    label.blendMode = buttonSpec.LabelBlend
     result:setPosition(x, y)
-    result:setTextOffset(buttonSpec.TextOffset.X, buttonSpec.TextOffset.Y)
+    result:setPressedOffset(-2, 2)
     result:onActivate(onActivate)
     result:onPressed(function()
         ButtonPressedSfx:play()
