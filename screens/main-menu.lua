@@ -136,7 +136,8 @@ end
 function MainMenu:createCinematicsWindow(main)
     local result = {
         window = abyss.createSprite(ResourceDefs.CinematicsBackground, ResourceDefs.Palette.Sky),
-        main = main
+        main = main,
+        buttons = {}
     }
 
     result.window:setCellSize(2, 2)
@@ -147,33 +148,52 @@ function MainMenu:createCinematicsWindow(main)
     result.lblHeader:setPosition(163, 20)
     result.lblHeader:setAlignment("middle", "start")
 
-    result.btnSistersLament = CreateButton(ButtonTypes.Wide, 30, 70, "THE SISTER'S LAMENT", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/d2intro640x292.bik")
-    end)
+    local files = {{
+        name = "THE SISTER'S LAMENT",
+        bik = "d2intro640x292.bik",
+        hd = "d2intro",
+    }, {
+        name = "DESERT JOURNEY",
+        bik = "Act02start640x292.bik",
+        hd = "act2/act02start",
+    }, {
+        name = "MEPHISTO'S JUNGLE",
+        bik = "Act03start640x292.bik",
+        hd = "act3/act03start",
+    }, {
+        name = "ENTER HELL",
+        bik = "Act04start640x292.bik",
+        hd = "act4/act04start",
+    }, {
+        name = "TERROR'S END",
+        bik = "Act04end640x292.bik",
+        hd = "act4/act04end",
+    }, {
+        name = "SEARCH FOR BAAL",
+        bik = "D2x_Intro_640x292.bik",
+        hd = "d2x_intro",
+    }, {
+        name = "DESTRUCTION'S END",
+        bik = "D2x_Out_640x292.bik",
+        hd = "act5/d2x_out",
+    }}
 
-    result.btnDesertJourney = CreateButton(ButtonTypes.Wide, 30, 110, "DESERT JOURNEY", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act02start640x292.bik")
-    end)
+    local y = 70
 
-    result.btnMephistosJungle = CreateButton(ButtonTypes.Wide, 30, 150, "MEPHISTO'S JUNGLE", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act03start640x292.bik")
-    end)
+    for _, item in ipairs(files) do
+        local btn = CreateButton(ButtonTypes.Wide, 30, y, item.name, function()
+            if abyss.fileExists("/data/hd/global/video/" .. item.hd .. ".webm") then
+                abyss.playVideoAndAudio("/data/hd/global/video/" .. item.hd .. ".webm", Language:hdaudioPath("/data/hd/local/video/" .. item.hd .. ".flac"))
+            else
+                abyss.playVideo("/data/local/video/" .. Language:code() .. "/" .. item.bik)
+            end
+        end)
 
-    result.btnEnterHell = CreateButton(ButtonTypes.Wide, 30, 190, "ENTER HELL", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act04start640x292.bik")
-    end)
+        table.insert(result.buttons, btn)
+        result.window:appendChild(btn)
 
-    result.btnTerrorsEnd = CreateButton(ButtonTypes.Wide, 30, 230, "TERROR'S END", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/Act04end640x292.bik")
-    end)
-
-    result.btnSearchForBaal = CreateButton(ButtonTypes.Wide, 30, 270, "SEARCH FOR BAAL", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/D2x_Intro_640x292.bik")
-    end)
-
-    result.btnDestructionsEnd = CreateButton(ButtonTypes.Wide, 30, 310, "DESTRUCTION'S END", function()
-        abyss.playVideo("/data/local/video/" .. Language:code() .. "/D2x_Out_640x292.bik")
-    end)
+        y = y + 40
+    end
 
     result.btnCancel = CreateButton(ButtonTypes.Medium, 100, 375, "CANCEL", function()
         result.main.btnSinglePlayer.active = true
@@ -186,13 +206,6 @@ function MainMenu:createCinematicsWindow(main)
     end)
 
     result.window:appendChild(result.lblHeader)
-    result.window:appendChild(result.btnSistersLament)
-    result.window:appendChild(result.btnDesertJourney)
-    result.window:appendChild(result.btnMephistosJungle)
-    result.window:appendChild(result.btnEnterHell)
-    result.window:appendChild(result.btnTerrorsEnd)
-    result.window:appendChild(result.btnSearchForBaal)
-    result.window:appendChild(result.btnDestructionsEnd)
     result.window:appendChild(result.btnCancel)
     result.window.active = false
 
