@@ -4,6 +4,7 @@ require ('screens/screens')
 
 Language = require('common/language'):new()
 MusicDefs = require('common/music-defs')
+RegionDefs = require('common/region-defs')
 ResourceDefs = require("common/resource-defs")
 BasePath = abyss.getConfig("#Abyss", "BasePath")
 MPQRoot = abyss.getConfig("System", "MPQRoot")
@@ -92,25 +93,25 @@ function LoadDatasets()
     LevelPresets = {}
     local levelPresetDefs = LoadTsvAsTable(ResourceDefs.LevelPreset, true)
     for _, levelPresetRecord in pairs(levelPresetDefs) do
-        if levelPresetRecord.definitionId ~= nil or levelPresetRecord.definitionId == '' then
+        if levelPresetRecord.Def ~= nil and levelPresetRecord.Name ~= '' and levelPresetRecord.Name ~= 'Expansion' then
             local levelPreset = abyss.LevelPreset.new()
             levelPreset.name = levelPresetRecord.Name
-            levelPreset.definitionId = tonumber(levelPreset.Def)
-            levelPreset.levelId = tonumber(levelPreset.LevelId)
-            levelPreset.populate = tonumber(levelPreset.Populate) == 1
-            levelPreset.logicals = tonumber(levelPreset.Logicals) == 1
-            levelPreset.outdoors = tonumber(levelPreset.Outdoors) == 1
-            levelPreset.animate = tonumber(levelPreset.Animate) == 1
-            levelPreset.killEdge = tonumber(levelPreset.KillEdge) == 1
-            levelPreset.fillBlanks = tonumber(levelPreset.FillBlanks) == 1
-            levelPreset.sizeX = tonumber(levelPreset.SizeX)
-            levelPreset.sizeY = tonumber(levelPreset.SizeY)
-            levelPreset.autoMap = tonumber(levelPreset.AutoMap) == 1
-            levelPreset.scan = tonumber(levelPreset.Scan) == 1
-            levelPreset.pops = tonumber(levelPreset.Pops)
-            levelPreset.popPad = tonumber(levelPreset.PopPad)
-            levelPreset.dt1Mask = tonumber(levelPreset.Dt1Mask)
-            levelPreset.beta = tonumber(levelPreset.Beta) == 1
+            levelPreset.definitionId = tonumber(levelPresetRecord.Def)
+            levelPreset.levelId = tonumber(levelPresetRecord.LevelId)
+            levelPreset.populate = tonumber(levelPresetRecord.Populate) == 1
+            levelPreset.logicals = tonumber(levelPresetRecord.Logicals) == 1
+            levelPreset.outdoors = tonumber(levelPresetRecord.Outdoors) == 1
+            levelPreset.animate = tonumber(levelPresetRecord.Animate) == 1
+            levelPreset.killEdge = tonumber(levelPresetRecord.KillEdge) == 1
+            levelPreset.fillBlanks = tonumber(levelPresetRecord.FillBlanks) == 1
+            levelPreset.sizeX = tonumber(levelPresetRecord.SizeX)
+            levelPreset.sizeY = tonumber(levelPresetRecord.SizeY)
+            levelPreset.autoMap = tonumber(levelPresetRecord.AutoMap) == 1
+            levelPreset.scan = tonumber(levelPresetRecord.Scan) == 1
+            levelPreset.pops = tonumber(levelPresetRecord.Pops)
+            levelPreset.popPad = tonumber(levelPresetRecord.PopPad)
+            levelPreset.dt1Mask = tonumber(levelPresetRecord.Dt1Mask)
+            levelPreset.beta = tonumber(levelPresetRecord.Beta) == 1
 
             for i=1,6 do
                 local fileName = levelPresetRecord["File" .. i]
@@ -119,8 +120,23 @@ function LoadDatasets()
                 end
             end
 
-            LevelPresets[levelPreset.LevelId] = levelPreset
+            table.insert(LevelPresets, levelPreset)
         end
     end
 
+
+    abyss.log("info", "Finished loading definitions.")
+end
+
+function GetLevelPreset(levelId, presetId)
+    for _, levelPreset in pairs(LevelPresets) do
+        -- Town is special
+        if (levelId == 1) and (levelPreset.levelId < 2) and (levelPreset.definitionId == presetId) then
+            return levelPreset
+        elseif levelPreset.definitionId == presetId then
+            return levelPreset
+        end
+    end
+
+    abyss.log("error", "Level Preset not found for level " .. levelId .. " and preset " .. presetId)
 end

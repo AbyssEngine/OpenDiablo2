@@ -50,21 +50,24 @@ function LoadTsvAsTable(filePath, firstFieldIsHandle)
 
     for i = 2, #lines do
         local line = lines[i]
-        local fieldIdx = 0
-        local item = {}
+        if line ~= nil and line:len() ~= 0 and line ~= '0' and line ~= 'expansion' and line ~= 'Expansion' then
 
-        fieldstart = 1
-        repeat
-            fieldIdx = fieldIdx + 1
-            local nexti = line:find("\t", fieldstart)
-            item[fields[fieldIdx]:gsub("%s+", "_")] = line:sub(fieldstart, nexti - 1)
-            fieldstart = nexti + 1
-        until fieldstart > line:len()
+            local fieldIdx = 0
+            local item = {}
 
-        if firstFieldIsHandle then
-            result[item[fields[1]:gsub("%s+", "_")]] = item
-        else
-            table.insert(result, item)
+            fieldstart = 1
+            repeat
+                fieldIdx = fieldIdx + 1
+                local nexti = line:find("\t", fieldstart)
+                item[fields[fieldIdx]:gsub("%s+", "_")] = line:sub(fieldstart, nexti - 1)
+                fieldstart = nexti + 1
+            until fieldstart > line:len()
+
+            if firstFieldIsHandle then
+                result[item[fields[1]:gsub("%s+", "_")]] = item
+            else
+                table.insert(result, item)
+            end
         end
     end
 
