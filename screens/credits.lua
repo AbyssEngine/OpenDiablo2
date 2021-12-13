@@ -10,7 +10,7 @@ function Credits:new()
 end
 
 function Credits:initialize()
-    self.creditsLines = abyss.createString(Language:i18nPath(ResourceDefs.CreditsText))
+    self.creditsLines = abyss.loadString(Language:i18nPath(ResourceDefs.CreditsText))
 
     self.rootNode = abyss.getRootNode()
     self.rootNode:removeAllChildren()
