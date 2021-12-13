@@ -29,7 +29,7 @@ end
 --- @param firstFieldIsHandle boolean # Whether the first field is the handle
 --- @return table # The table containing the file contents
 function LoadTsvAsTable(filePath, firstFieldIsHandle)
-    local tsvData = abyss.createString(filePath)
+    local tsvData = abyss.loadString(filePath)
 
     local lines = {}
 
