@@ -7,7 +7,7 @@ MusicDefs = require('common/music-defs')
 RegionDefs = require('common/region-defs')
 ResourceDefs = require("common/resource-defs")
 BasePath = abyss.getConfig("#Abyss", "BasePath")
-MPQRoot = abyss.getConfig("System", "MPQRoot")
+MPQRoot = abyss.getConfig("OpenDiablo2", "MPQRoot")
 ShowTrademarkScreen = true
 
 function LoadGlobals()

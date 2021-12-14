@@ -15,20 +15,25 @@
 -- OpenDiablo2 Bootstrap Script
 ------------------------------------------------------------------------------------------------------------------------
 
+ResurrectedMode = abyss.getConfig("OpenDiablo2", "Resurrected") == "1"
+
 require 'common/globals'
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Create load providers for all of the available MPQs and CASCs
 ------------------------------------------------------------------------------------------------------------------------
-local cascs = Split(abyss.getConfig("System", "CASCs"), ",")
-for i in pairs(cascs) do
-    abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
-    pcall(function()
-        abyss.addLoaderProvider("casc", cascs[i])
-    end)
+
+if ResurrectedMode == true then
+    local cascs = Split(abyss.getConfig("OpenDiablo2", "CASCs"), ",")
+    for i in pairs(cascs) do
+        abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
+        pcall(function()
+            abyss.addLoaderProvider("casc", cascs[i])
+        end)
+    end
 end
 
-local mpqs = Split(abyss.getConfig("System", "MPQs"), ",")
+local mpqs = Split(abyss.getConfig("OpenDiablo2", "MPQs"), ",")
 for i in pairs(mpqs) do
     local mpqPath = MPQRoot .. "/" .. mpqs[i]
     local loadStr = string.format("Loading MPQ %s...", mpqPath)
@@ -49,7 +54,7 @@ for _, name in ipairs(ResourceDefs.Palettes) do
 ------------------------------------------------------------------------------------------------------------------------
 -- Detect the language
 ------------------------------------------------------------------------------------------------------------------------
-local configLanguageName = abyss.getConfig("System", "Language")
+local configLanguageName = abyss.getConfig("OpenDiablo2", "Language")
 
 if configLanguageName ~= "auto" then
     Language:setLanguage(configLanguageName)
@@ -77,7 +82,7 @@ function StartGame()
     SetScreen(Screen.MAIN_MENU)
 end
 
-if abyss.getConfig("System", "SkipStartupVideos") ~= "1" then
+if abyss.getConfig("OpenDiablo2", "SkipStartupVideos") ~= "1" then
     if abyss.fileExists("/data/hd/global/video/blizzardlogos.webm") then
         abyss.playVideoAndAudio("/data/hd/global/video/blizzardlogos.webm", "/data/hd/local/video/blizzardlogos.flac", StartGame)
     else
