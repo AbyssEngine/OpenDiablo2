@@ -23,7 +23,7 @@ function LoadGlobals()
          Fnt42 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font42), ResourceDefs.Palette.Static),
     }
 
-    CursorSprite = abyss.createSprite(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)
+    CursorSprite = CreateUniqueSpriteFromFile(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)
     CursorSprite.blendMode = "blend"
 
     LoadDatasets()

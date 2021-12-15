@@ -1,19 +1,19 @@
 function InitUI()
-    local sprButtonWideBlank = abyss.createSprite(ResourceDefs.WideButtonBlank, ResourceDefs.Palette.Sky)
-    local sprButtonShortBlank = abyss.createSprite(ResourceDefs.ShortButtonBlank, ResourceDefs.Palette.Sky)
-    local sprButtonMediumBlank = abyss.createSprite(ResourceDefs.MediumButtonBlank, ResourceDefs.Palette.Sky)
-    local sprCheckbox
+    local imgButtonWideBlank = abyss.loadImage(ResourceDefs.WideButtonBlank, ResourceDefs.Palette.Sky)
+    local imgButtonShortBlank = abyss.loadImage(ResourceDefs.ShortButtonBlank, ResourceDefs.Palette.Sky)
+    local imgButtonMediumBlank = abyss.loadImage(ResourceDefs.MediumButtonBlank, ResourceDefs.Palette.Sky)
+    local imgCheckbox
     if abyss.fileExists("/data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite") then
-        sprCheckbox = abyss.createSprite("/data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite", "")
+        imgCheckbox = abyss.loadImage("/data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite", "")
     else
         -- TODO do something for non-D2R. Currently this is used only for D2R though.
-        sprCheckbox = sprButtonShortBlank
+        imgCheckbox = imgButtonShortBlank
     end
 
     ButtonTypes = {
         Wide = {
             Font         = SystemFonts.FntExocet10,
-            Sprite       = sprButtonWideBlank,
+            Image        = imgButtonWideBlank,
             Segments     = { X =   2, Y =   1 },
             FixedSize    = { X = 272, Y =  35 },
             TextOffset   = { X =   0, Y =  -3 },
@@ -24,7 +24,7 @@ function InitUI()
         },
         Medium = {
             Font         = SystemFonts.FntExocet10,
-            Sprite       = sprButtonMediumBlank,
+            Image        = imgButtonMediumBlank,
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 128, Y =  35 },
             TextOffset   = { X =   0, Y =  -2 },
@@ -35,7 +35,7 @@ function InitUI()
         },
         Short = {
             Font         = SystemFonts.FntRidiculous,
-            Sprite       = sprButtonShortBlank,
+            Image        = imgButtonShortBlank,
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 135, Y =  25 },
             TextOffset   = { X =   0, Y =  -5 },
@@ -46,7 +46,7 @@ function InitUI()
         },
         Checkbox = {
             Font         = SystemFonts.FntFormal12,
-            Sprite       = sprCheckbox,
+            Image        = imgCheckbox,
             Segments     = { X =   1, Y =   1 },
             FixedSize    = { X = 135, Y =  25 },
             TextOffset   = { X =  20, Y =  -5 },
@@ -70,7 +70,7 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     label:setAlignment("middle", "middle")
     label:setPosition(math.floor(buttonSpec.FixedSize.X / 2) + buttonSpec.TextOffset.X, math.floor(buttonSpec.FixedSize.Y / 2) + buttonSpec.TextOffset.Y)
     label:setColorMod(buttonSpec.TextColor.R, buttonSpec.TextColor.G, buttonSpec.TextColor.B)
-    local result = abyss.createButton(buttonSpec.Sprite)
+    local result = abyss.createButton(buttonSpec.Image)
     result.data = {
         label = label
     }
@@ -104,4 +104,13 @@ function CreateCheckbox(x, y, text)
     end)
 
     return btn
+end
+
+function CreateUniqueSpriteFromFile(file, palette)
+    local img = abyss.loadImage(file, palette)
+    local spr = abyss.createSprite(img)
+    spr.data = {
+        img = img
+    }
+    return spr
 end

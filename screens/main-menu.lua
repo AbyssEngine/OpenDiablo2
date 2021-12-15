@@ -31,7 +31,7 @@ function MainMenu:initialize()
     self.lblDisclaimer:setColorMod(0xFF, 0xFF, 0x8C)
 
     -- Trademark Screen
-    self.trademarkBg = abyss.createSprite(ResourceDefs.TrademarkScreen, ResourceDefs.Palette.Sky)
+    self.trademarkBg = CreateUniqueSpriteFromFile(ResourceDefs.TrademarkScreen, ResourceDefs.Palette.Sky)
     self.trademarkBg:setCellSize(4, 3)
     self.trademarkBg:onMouseButtonDown(function(buttons)
         abyss.resetMouseState();
@@ -41,31 +41,31 @@ function MainMenu:initialize()
     end)
 
     -- Main Background
-    self.mainBg = abyss.createSprite(ResourceDefs.GameSelectScreen, ResourceDefs.Palette.Sky)
+    self.mainBg = CreateUniqueSpriteFromFile(ResourceDefs.GameSelectScreen, ResourceDefs.Palette.Sky)
     self.mainBg:setCellSize(4, 3)
     self.mainBg.active = false
 
     -- D2 Logo Left Black BG
-    self.d2LogoLeftBlackBg = abyss.createSprite(ResourceDefs.Diablo2LogoBlackLeft, ResourceDefs.Palette.Sky)
+    self.d2LogoLeftBlackBg = CreateUniqueSpriteFromFile(ResourceDefs.Diablo2LogoBlackLeft, ResourceDefs.Palette.Sky)
     self.d2LogoLeftBlackBg:setPosition(400, 120)
     self.d2LogoLeftBlackBg.bottomOrigin = true
     self.d2LogoLeftBlackBg.playMode = "forwards"
 
     -- D2 Logo Right Black BG
-    self.d2LogoRightBlackBg = abyss.createSprite(ResourceDefs.Diablo2LogoBlackRight, ResourceDefs.Palette.Sky)
+    self.d2LogoRightBlackBg = CreateUniqueSpriteFromFile(ResourceDefs.Diablo2LogoBlackRight, ResourceDefs.Palette.Sky)
     self.d2LogoRightBlackBg:setPosition(400, 120)
     self.d2LogoRightBlackBg.bottomOrigin = true
     self.d2LogoRightBlackBg.playMode = "forwards"
 
     -- D2 Logo Left
-    self.d2LogoLeft = abyss.createSprite(ResourceDefs.Diablo2LogoFireLeft, ResourceDefs.Palette.Sky)
+    self.d2LogoLeft = CreateUniqueSpriteFromFile(ResourceDefs.Diablo2LogoFireLeft, ResourceDefs.Palette.Sky)
     self.d2LogoLeft:setPosition(400, 120)
     self.d2LogoLeft.blendMode = "additive"
     self.d2LogoLeft.bottomOrigin = true
     self.d2LogoLeft.playMode = "forwards"
 
     -- D2 Logo Right
-    self.d2LogoRight = abyss.createSprite(ResourceDefs.Diablo2LogoFireRight, ResourceDefs.Palette.Sky)
+    self.d2LogoRight = CreateUniqueSpriteFromFile(ResourceDefs.Diablo2LogoFireRight, ResourceDefs.Palette.Sky)
     self.d2LogoRight:setPosition(400, 120)
     self.d2LogoRight.blendMode = "additive"
     self.d2LogoRight.bottomOrigin = true
@@ -135,7 +135,7 @@ end
 
 function MainMenu:createCinematicsWindow(main)
     local result = {
-        window = abyss.createSprite(ResourceDefs.CinematicsBackground, ResourceDefs.Palette.Sky),
+        window = CreateUniqueSpriteFromFile(ResourceDefs.CinematicsBackground, ResourceDefs.Palette.Sky),
         main = main,
         buttons = {}
     }
