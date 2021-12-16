@@ -21,7 +21,7 @@ function Credits:initialize()
     end)
 
     -- Main Background
-    self.mainBg = abyss.createSprite(ResourceDefs.CreditsBackground, ResourceDefs.Palette.Sky)
+    self.mainBg = CreateUniqueSpriteFromFile(ResourceDefs.CreditsBackground, ResourceDefs.Palette.Sky)
     self.mainBg:setCellSize(4, 3)
 
     self.rootNode:appendChild(self.mainBg)
