@@ -66,7 +66,7 @@ function MapEngineTest:initialize()
 		{ typeId = RegionDefs.Act5.IceCaves,   startPreset = 1003, endPreset = 1041, Palette = ResourceDefs.Palette.Act5, extra = {}},
 		{ typeId = RegionDefs.Act5.Temple,     startPreset = 1042, endPreset = 1052, Palette = ResourceDefs.Palette.Act5, extra = {}},
         { typeId = RegionDefs.Act5.Lava,       startPreset = 1053, endPreset = 1058, Palette = ResourceDefs.Palette.Act4, extra = {}},
-		{ typeId = RegionDefs.Act5.Baal,       startPreset = 1059, endPreset = 1090, Palette = ResourceDefs.Palette.Act5, extra = {}},
+		{ typeId = RegionDefs.Act5.Baal,       startPreset = 1059, endPreset = 1089, Palette = ResourceDefs.Palette.Act5, extra = {}},
 
     }
 
@@ -240,12 +240,16 @@ function MapEngineTest:updateMap()
 
     local ds1 = abyss.loadDS1(preset.files[self.selectedFile])
 
-    self.zone:resetMap(levelType, ds1.width, ds1.height, self.seed)
+    self.zone:resetMap(levelType, preset.dt1Mask, ds1.width, ds1.height, self.seed)
     self.zone:stamp(ds1, 0, 0)
     self.mapRenderer:compile(region.Palette)
-    self.mapRenderer:setPosition(400, 300)
-    self.curMapOffsetX = 400
-    self.curMapOffsetY = 300
+    local ttx = -math.floor(ds1.width / 2)
+    local tty = -math.floor(ds1.height / 2)
+    self.curMapOffsetX, self.curMapOffsetY = abyss.worldToOrtho(ttx, tty)
+    self.curMapOffsetX = self.curMapOffsetX + 400
+    self.curMapOffsetY = self.curMapOffsetY + 300
+    self.mapRenderer:setPosition(self.curMapOffsetX, self.curMapOffsetY)
+
 end
 
 return MapEngineTest

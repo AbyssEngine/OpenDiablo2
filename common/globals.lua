@@ -78,9 +78,7 @@ function LoadDatasets()
 
             for i=1,32 do
                 local fileName = levelTypeRecord["File_" .. i]
-                if fileName ~= "0" then
-                    levelType.files:add("/data/global/tiles/" .. fileName)
-                end
+                levelType.files:add("/data/global/tiles/" .. fileName)
             end
 
             LevelTypes[levelType.id] = levelType
