@@ -11,6 +11,14 @@ function MapEngineTest:new()
 end
 
 function MapEngineTest:initialize()
+    self.startMouseX = 0
+    self.startMouseY = 0
+    self.lastMouseX = 0
+    self.lastMouseY = 0
+    self.curMapOffsetX = 400
+    self.curMapOffsetY = 300
+    self.isMouseDrag = false
+
     self.currentMap = 1
     self.currentPreset = 1
     self.selectedFile = 1
@@ -48,7 +56,7 @@ function MapEngineTest:initialize()
 
     self.mapRenderer = abyss.createMapRenderer(self.zone)
 
-    self.mapRenderer:setPosition(400, 300)
+    self.mapRenderer:setPosition(self.curMapOffsetX, self.curMapOffsetY)
     self.mapRenderer.showOuterBorder = true
 
     self.btnExit = CreateButton(ButtonTypes.Short, 0, 573, "Exit", function()
@@ -82,6 +90,42 @@ function MapEngineTest:initialize()
     self.lblPreset:setColorMod(0xFF, 0xFF, 0xFF)
     self.lblPreset:setAlignment("middle", "middle")
     self.lblPreset.caption = ""
+
+    self.inputListener = abyss.createInputListener()
+    self.mapRenderer:appendChild(self.inputListener)
+    self.inputListener:onMouseMove(function(x, y)
+        self.lastMouseX = x
+        self.lastMouseY = y
+
+        if self.isMouseDrag then
+            self.mapRenderer:setPosition(self.curMapOffsetX + (x - self.startMouseX), self.curMapOffsetY + (y - self.startMouseY))
+        else
+            self.startMouseX = x
+            self.startMouseY = y
+        end
+    end)
+    self.inputListener:onMouseButton(function(button, isPressed)
+        if button == 1 then -- Left mouse button
+            if isPressed then
+                self.isMouseDrag = true
+            else
+                self.isMouseDrag = false
+                self.curMapOffsetX, self.curMapOffsetY = self.mapRenderer:getPosition()
+            end
+        elseif button == 2 and isPressed then -- Right mouse button
+            local mx, my = self.mapRenderer:getPosition()
+            local tx, ty = abyss.orthoToWorld(self.lastMouseX - mx, self.lastMouseY - my)
+            if (tx >= 0) and (ty >= 0) and (tx < self.zone.width) and (ty < self.zone.height) then
+                local tiles = self.zone:getTileInfo(tx, ty)
+                abyss.log("info", "Tiles at " .. tx .. ", " .. ty .. ":")
+                for _, tile in ipairs(tiles) do
+                    abyss.log("info", " -> " .. tile.type .. ", " .. tile.mainIndex .. ", " .. tile.subIndex)
+                end
+
+
+            end
+        end
+    end)
 
     self.rootNode:appendChild(self.mapRenderer)
     self.rootNode:appendChild(self.btnExit)
@@ -176,7 +220,9 @@ function MapEngineTest:updateMap()
     self.zone:resetMap(levelType, ds1.width, ds1.height, self.seed)
     self.zone:stamp(ds1, 0, 0)
     self.mapRenderer:compile(region.Palette)
-
+    self.mapRenderer:setPosition(400, 300)
+    self.curMapOffsetX = 400
+    self.curMapOffsetY = 300
 end
 
 return MapEngineTest
