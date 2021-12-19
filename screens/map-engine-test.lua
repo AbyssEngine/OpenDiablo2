@@ -24,27 +24,50 @@ function MapEngineTest:initialize()
     self.selectedFile = 1
     self.RegionSpec = {
         -- Act 1
-        { typeId = RegionDefs.Act1.Town,       startPreset =   1, endPreset =  3,  Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Wilderness, startPreset =   4, endPreset =  52, Palette = ResourceDefs.Palette.Act1, extra = {108,160,161,162,163,164} },
-        { typeId = RegionDefs.Act1.Cave,       startPreset =  53, endPreset = 107, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Crypt,      startPreset = 109, endPreset = 159, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Monastary,  startPreset = 165, endPreset = 165, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Courtyard,  startPreset = 166, endPreset = 166, Palette = ResourceDefs.Palette.Act1, extra = {256} },
-        { typeId = RegionDefs.Act1.Barracks,   startPreset = 167, endPreset = 205, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Jail,       startPreset = 206, endPreset = 255, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Cathedral,  startPreset = 257, endPreset = 257, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Catacombs,  startPreset = 258, endPreset = 299, Palette = ResourceDefs.Palette.Act1, extra = {} },
-        { typeId = RegionDefs.Act1.Tristram,   startPreset = 300, endPreset = 300, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Town,       startPreset =    1, endPreset =    3, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Wilderness, startPreset =    4, endPreset =   52, Palette = ResourceDefs.Palette.Act1, extra = {108,160,161,162,163,164} },
+        { typeId = RegionDefs.Act1.Cave,       startPreset =   53, endPreset =  107, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Crypt,      startPreset =  109, endPreset =  159, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Monastary,  startPreset =  165, endPreset =  165, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Courtyard,  startPreset =  166, endPreset =  166, Palette = ResourceDefs.Palette.Act1, extra = {256} },
+        { typeId = RegionDefs.Act1.Barracks,   startPreset =  167, endPreset =  205, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Jail,       startPreset =  206, endPreset =  255, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Cathedral,  startPreset =  257, endPreset =  257, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Catacombs,  startPreset =  258, endPreset =  299, Palette = ResourceDefs.Palette.Act1, extra = {} },
+        { typeId = RegionDefs.Act1.Tristram,   startPreset =  300, endPreset =  300, Palette = ResourceDefs.Palette.Act1, extra = {} },
 
         -- Act2
-        { typeId = RegionDefs.Act2.Town,       startPreset = 301, endPreset = 301, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Sewer,      startPreset = 302, endPreset = 352, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Harem,      startPreset = 353, endPreset = 357, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Basement,   startPreset = 358, endPreset = 361, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Desert,     startPreset = 362, endPreset = 413, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Tomb,       startPreset = 414, endPreset = 481, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Lair,       startPreset = 482, endPreset = 509, Palette = ResourceDefs.Palette.Act2, extra = {} },
-        { typeId = RegionDefs.Act2.Arcane,     startPreset = 510, endPreset = 528, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Town,       startPreset =  301, endPreset =  301, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Sewer,      startPreset =  302, endPreset =  352, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Harem,      startPreset =  353, endPreset =  357, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Basement,   startPreset =  358, endPreset =  361, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Desert,     startPreset =  362, endPreset =  413, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Tomb,       startPreset =  414, endPreset =  481, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Lair,       startPreset =  482, endPreset =  509, Palette = ResourceDefs.Palette.Act2, extra = {} },
+        { typeId = RegionDefs.Act2.Arcane,     startPreset =  510, endPreset =  528, Palette = ResourceDefs.Palette.Act2, extra = {} },
+
+        -- Act III
+		{ typeId = RegionDefs.Act3.Town,       startPreset =  529, endPreset =  529, Palette = ResourceDefs.Palette.Act3, extra = {}},
+		{ typeId = RegionDefs.Act3.Jungle,     startPreset =  530, endPreset =  604, Palette = ResourceDefs.Palette.Act3, extra = {}},
+		{ typeId = RegionDefs.Act3.Kurast,     startPreset =  605, endPreset =  658, Palette = ResourceDefs.Palette.Act3, extra = {748, 749, 750, 751, 752, 753, 754, 755, 756, 757, 758, 759, 760, 761, 762, 763, 764, 765, 766, 767, 768, 769,770, 771, 772, 773, 774, 775, 776, 777, 778, 779, 780, 781, 782, 783, 784, 785, 786, 787, 788, 789, 790, 791,792, 793, 794, 795, 796}},
+		{ typeId = RegionDefs.Act3.Spider,     startPreset =  659, endPreset =  664, Palette = ResourceDefs.Palette.Act3, extra = {}},
+		{ typeId = RegionDefs.Act3.Dungeon,    startPreset =  665, endPreset =  704, Palette = ResourceDefs.Palette.Act3, extra = {}},
+		{ typeId = RegionDefs.Act3.Sewer,      startPreset =  705, endPreset =  747, Palette = ResourceDefs.Palette.Act3, extra = {}},
+
+		-- Act IV
+		{ typeId = RegionDefs.Act4.Town,       startPreset =  797, endPreset =  798, Palette = ResourceDefs.Palette.Act4, extra = {}},
+		{ typeId = RegionDefs.Act4.Mesa,       startPreset =  799, endPreset =  835, Palette = ResourceDefs.Palette.Act4, extra = {}},
+		{ typeId = RegionDefs.Act4.Lava,       startPreset =  836, endPreset =  862, Palette = ResourceDefs.Palette.Act4, extra = {}},
+
+		-- Act V
+		{ typeId = RegionDefs.Act5.Town,       startPreset =  863, endPreset =  864, Palette = ResourceDefs.Palette.Act5, extra = {}},
+		{ typeId = RegionDefs.Act5.Siege,      startPreset =  865, endPreset =  879, Palette = ResourceDefs.Palette.Act5, extra = {}},
+		{ typeId = RegionDefs.Act5.Barricade,  startPreset =  880, endPreset = 1002, Palette = ResourceDefs.Palette.Act5, extra = {}},
+		{ typeId = RegionDefs.Act5.IceCaves,   startPreset = 1003, endPreset = 1041, Palette = ResourceDefs.Palette.Act5, extra = {}},
+		{ typeId = RegionDefs.Act5.Temple,     startPreset = 1042, endPreset = 1052, Palette = ResourceDefs.Palette.Act5, extra = {}},
+        { typeId = RegionDefs.Act5.Lava,       startPreset = 1053, endPreset = 1058, Palette = ResourceDefs.Palette.Act4, extra = {}},
+		{ typeId = RegionDefs.Act5.Baal,       startPreset = 1059, endPreset = 1090, Palette = ResourceDefs.Palette.Act5, extra = {}},
+
     }
 
     abyss.playBackgroundMusic("")

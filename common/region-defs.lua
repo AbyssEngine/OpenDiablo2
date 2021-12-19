@@ -37,12 +37,13 @@ local defs = {
         Lava = 28
     },
     Act5 = {
-        Siege = 29,
-        Barricade = 30,
-        Temple = 31,
-        IceCaves = 32,
-        Baal = 33,
-        Lava = 34
+        Town = 29,
+        Siege = 30,
+        Barricade = 31,
+        Temple = 32,
+        IceCaves = 33,
+        Baal = 34,
+        Lava = 35
     }
 }
 
