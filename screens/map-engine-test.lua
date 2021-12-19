@@ -230,6 +230,8 @@ function MapEngineTest:updateMap()
 
     self.btnNextFile.visible = #preset.files > 1
     self.btnPreviousFile.visible = #preset.files > 1
+    self.btnNextFile.active = #preset.files > 1
+    self.btnPreviousFile.active = #preset.files > 1
 
     if #preset.files > 1 then
         fileCaption = fileCaption .. " (" .. self.selectedFile .. " of " .. #preset.files .. ")"
