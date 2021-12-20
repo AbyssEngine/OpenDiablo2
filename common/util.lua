@@ -74,6 +74,14 @@ function LoadTsvAsTable(filePath, firstFieldIsHandle)
     return result
 end
 
+function cond(c, a, b)
+    if c then
+        return a
+    else
+        return b
+    end
+end
+
 function dump(o)
    if type(o) == 'table' then
       local s = '{ '

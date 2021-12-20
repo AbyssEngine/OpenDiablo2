@@ -23,14 +23,12 @@ require 'common/globals'
 -- Create load providers for all of the available MPQs and CASCs
 ------------------------------------------------------------------------------------------------------------------------
 
-if ResurrectedMode == true then
-    local cascs = Split(abyss.getConfig("OpenDiablo2", "CASCs"), ",")
-    for i in pairs(cascs) do
-        abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
-        pcall(function()
-            abyss.addLoaderProvider("casc", cascs[i])
-        end)
-    end
+local cascs = Split(abyss.getConfig("OpenDiablo2", "CASCs"), ",")
+for i in pairs(cascs) do
+    abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
+    pcall(function()
+        abyss.addLoaderProvider("casc", cascs[i])
+    end)
 end
 
 local mpqs = Split(abyss.getConfig("OpenDiablo2", "MPQs"), ",")

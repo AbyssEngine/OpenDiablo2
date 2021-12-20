@@ -126,6 +126,12 @@ function MainMenu:initialize()
 
     self.rootNode:appendChild(self.cinematicsDialog.window)
 
+    --local testLayout = LayoutLoader:load('hudpanel.json')
+    --self.testLayout = testLayout
+    --if testLayout then
+    --    self.mainBg:appendChild(testLayout)
+    --end
+
     if ShowTrademarkScreen == false then
         self.trademarkBg.active = false
         self.mainBg.active = true
@@ -147,14 +153,6 @@ function MainMenu:createCinematicsWindow(main)
     local showHD = false
     if abyss.fileExists("/data/hd/global/video/d2intro.webm") then
         showHD = true
-    end
-
-    function cond(c, a, b)
-        if c then
-            return a
-        else
-            return b
-        end
     end
 
     result.lblHeader = abyss.createLabel(SystemFonts.Fnt30)
