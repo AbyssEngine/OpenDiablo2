@@ -19,11 +19,11 @@ function setLabelProperties(this, creditsLabel, index)
                     if string.find(creditsline, "*") then
                         -- red text without first * and last \n
                         creditsline = string.sub(creditsline, 2, -2)
-                        creditsLabel:setColorMod(TextColor.Red)
+                        creditsLabel:setColorMod(TextColor.Red.R, TextColor.Red.G, TextColor.Red.B)
                     else
                         -- white text without first * and last \n
                         creditsline = string.sub(creditsline, 1, -2)
-                        creditsLabel:setColorMod(TextColor.White)
+                        creditsLabel:setColorMod(TextColor.White.R, TextColor.White.G, TextColor.White.B)
                     end
                     creditsLabel.caption = creditsline
                 else
@@ -51,9 +51,16 @@ function Credits:initialize()
     self.rootNode:removeAllChildren()
     abyss.resetMouseState()
 
-    self.btnExit = CreateButton(ButtonTypes.Medium, 33, 543, "Exit", function()
-        SetScreen(Screen.MAIN_MENU)
-    end)
+    self.btnExit =
+        CreateButton(
+        ButtonTypes.Medium,
+        33,
+        543,
+        "Exit",
+        function()
+            SetScreen(Screen.MAIN_MENU)
+        end
+    )
 
     -- Main Background
     self.mainBg = CreateUniqueSpriteFromFile(ResourceDefs.CreditsBackground, ResourceDefs.Palette.Sky)
