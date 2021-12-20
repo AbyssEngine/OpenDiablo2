@@ -117,6 +117,7 @@ function MapEngineTest:initialize()
     self.inputListener = abyss.createInputListener()
     self.mapRenderer:appendChild(self.inputListener)
     self.inputListener:onMouseMove(function(x, y)
+        if IsOnButton then self.isMouseDrag = false; return end
         self.lastMouseX = x
         self.lastMouseY = y
 
