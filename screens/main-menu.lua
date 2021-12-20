@@ -76,6 +76,7 @@ function MainMenu:initialize()
 
     -- Menu Buttons
     self.btnSinglePlayer = CreateButton(ButtonTypes.Wide, 264, 290, "Single Player", function()
+        SetScreen(Screen.CHARACTER_SELECTION)
         -- TODO
     end)
 
@@ -88,7 +89,7 @@ function MainMenu:initialize()
     end)
 
     self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "Credits", function()
-         SetScreen(Screen.CREDITS)
+        SetScreen(Screen.CREDITS)
     end)
 
     local this = self;

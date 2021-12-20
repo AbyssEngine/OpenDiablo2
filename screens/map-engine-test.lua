@@ -128,6 +128,7 @@ function MapEngineTest:initialize()
         end
     end)
     self.inputListener:onMouseButton(function(button, isPressed)
+        if IsOnButton then return end
         if button == 1 then -- Left mouse button
             if isPressed then
                 self.isMouseDrag = true
