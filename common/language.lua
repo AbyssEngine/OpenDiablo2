@@ -5,7 +5,8 @@ Language = {
         _name = "",
         _code = "",
         _hdcode = "",
-        _languageDefs = require('common/language-defs')
+        _languageDefs = require('common/language-defs'),
+        _d2rstrings = {},
 }
 Language.__index = Language
 
@@ -32,6 +33,8 @@ function Language:setLanguage(languageName)
             self._code = self._languageDefs.LanguageCodes[self._id]
             self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
             self._name = self._languageDefs.LanguageNames[self._id]
+            self._d2rstrings = {}
+            self:loadD2RStrings()
             return
         end
     end
@@ -50,6 +53,17 @@ function Language:autoDetect()
     end
 end
 
+function Language:loadD2RStrings()
+    --TODO load other json files from this directory
+    if not abyss.fileExists('/data/local/lng/strings/ui.json') then
+        return
+    end
+    local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
+    for _, data in ipairs(json) do
+        self._d2rstrings[data.Key] = data[self._hdcode]
+    end
+end
+
 function Language:id()
     return self._id
 end
@@ -60,6 +74,10 @@ end
 
 function Language:code()
     return self._code
+end
+
+function Language:d2rstring(code)
+    return self._d2rstrings[code]
 end
 
 function Language:hdaudioPath(originalPath)

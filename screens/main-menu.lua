@@ -126,7 +126,10 @@ function MainMenu:initialize()
 
     self.rootNode:appendChild(self.cinematicsDialog.window)
 
-    --local testLayout = LayoutLoader:load('hudpanel.json')
+    --local testLayout = LayoutLoader:load('HUDPanel.json')
+    --local testLayout = LayoutLoader:load('PlayerInventoryExpansionLayout.json')
+    --local testLayout = LayoutLoader:load('PlayerInventoryOriginalLayout.json')
+    --local testLayout = LayoutLoader:load('CharacterStatsPanel.json')
     --self.testLayout = testLayout
     --if testLayout then
     --    self.mainBg:appendChild(testLayout)

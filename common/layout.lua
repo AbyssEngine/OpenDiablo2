@@ -1,4 +1,3 @@
-local jsonlib = require('common/json')
 local RESOLUTION_X = 800
 local RESOLUTION_Y = 600
 local LOWEND_HD = true
@@ -28,31 +27,9 @@ function imageFilename(image, hd)
     end
 end
 
--- reads json file as lua table
-function readRawJson(path)
-    local jsonstr = abyss.loadString(path)
-    -- remove comments
-    local lines = {}
-    for line in jsonstr:gmatch("([^\n]+)") do
-        local quotes = false
-        local new_line = line
-        for i = 1, #line do
-            if line:sub(i, i) == '"' then
-                quotes = not quotes
-            end
-            if line:sub(i, i + 1) == '//' and not quotes then
-                new_line = line:sub(1, i - 1)
-                break
-            end
-        end
-        table.insert(lines, new_line)
-    end
-    return jsonlib.decode(table.concat(lines, '\n'))
-end
-
 -- reads profile file as lua table, following the parents link and merging them
 function readProfile(name)
-    local start = readRawJson(LAYOUTS_DIR .. '_profile' .. name .. '.json')
+    local start = ReadJsonAsTable(LAYOUTS_DIR .. '_profile' .. name .. '.json')
     if start.basedOn == nil then
         return start
     end
@@ -71,11 +48,36 @@ function readResolvedProfile(name)
     return profile
 end
 
+function mergeFromParent(layout, parent)
+    local mergedFields = or_else(parent.fields, {})
+    for key, value in pairs(or_else(layout.fields, {})) do
+        mergedFields[key] = value
+    end
+    layout.fields = mergedFields
+    if layout.children ~= nil and parent.children ~= nil then
+        local otherChildren = {}
+        for _, child in ipairs(parent.children) do
+            if child.name ~= nil then
+                otherChildren[child.name] = child
+            end
+        end
+        for _, child in ipairs(layout.children) do
+            if child.name ~= nil then
+                local brother = otherChildren[child.name]
+                if brother ~= nil then
+                    mergeFromParent(child, brother)
+                end
+            end
+        end
+    end
+end
+
 -- reads layout file as lua table, following the parents link and merging them
 function readLayout(name)
-    local data = readRawJson(LAYOUTS_DIR .. name)
+    local data = ReadJsonAsTable(LAYOUTS_DIR .. name)
     if data.basedOn ~= nil then
         local parent = readLayout(data.basedOn)
+        mergeFromParent(data, parent)
         -- TODO merge into data
     end
     return data
@@ -110,13 +112,6 @@ function resolveReferences(layout, profile)
             resolveReferences(child, profile)
         end
     end
-end
-
-function or_else(x, y)
-    if x == nil then
-        return y
-    end
-    return x
 end
 
 function move_by(node, rect)
@@ -223,7 +218,9 @@ local TYPES = {
 
     TextBoxWidget = function(layout)
         local label = abyss.createLabel(SystemFonts.FntFormal12)
-        label.caption = 'text'
+        label.caption = or_else(layout.fields.text, 'text'):gsub('@(%w+)', function(name)
+            return Language:d2rstring(name)
+        end)
         label.data = {}
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
@@ -251,6 +248,20 @@ local TYPES = {
         return node
     end,
 
+    ButtonWidget = function(layout, hd)
+        if true then
+            return abyss.createNode()
+        end
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        local button = abyss.createButton(image)
+        button.data = {
+            image = image
+        }
+        button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
+        button:setFrameIndex("pressed", or_else(layout.fields.pressedFrame, 1))
+        return button
+    end,
+
     MiniMenuButtonWidget = function(layout, hd)
         local button = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         -- TODO hoveredFrame statusUpdateNormalFrame etc
@@ -263,6 +274,22 @@ local TYPES = {
         end
         return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
     end,
+
+    GridImageWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        sprite.currentFrameIndex = or_else(layout.fields.frame, 0)
+        sprite:setCellSize(math.floor(layout.fields.frames / layout.fields.rows), layout.fields.rows)
+        return sprite
+    end,
+
+    InventorySlotWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.backgroundFilename, hd), ResourceDefs.Palette.Sky)
+        sprite.currentFrameIndex = or_else(layout.fields.backgroundFrame, 0)
+        --TODO swappedOffset for weapons
+        return sprite, function()
+            move_by(sprite, layout.fields.backgroundOffset)
+        end
+    end
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
@@ -278,15 +305,15 @@ function translate(layout, hd)
     end
     node.data = or_else(node.data, {})
     node.data.layout = layout
-    if layout.fields ~= nil and layout.fields.rect ~= nil then
-        local rect = layout.fields.rect
-        local x = or_else(rect.x, 0)
-        local y = or_else(rect.y, 0)
-        if hd and LOWEND_HD then
-            x = math.floor(x / 2)
-            y = math.floor(y / 2)
+    if layout.fields ~= nil then
+        if layout.fields.anchor ~= nil then
+            local anchor = layout.fields.anchor
+            --TODO anchors for non-root
+            node:setPosition(math.floor(or_else(anchor.x, 0) * RESOLUTION_X), math.floor(or_else(anchor.y, 0) * RESOLUTION_Y))
         end
-        node:setPosition(x, y)
+        if layout.fields.rect ~= nil then
+            move_by(node, layout.fields.rect)
+        end
     end
     if layout.children ~= nil then
         node.data.children = {}
@@ -312,7 +339,7 @@ function LayoutLoader:load(name)
         return nil
     end
     local layout = readLayout(name)
-    local hd = name:match('hd.json$')
+    local hd = name:lower():match('hd.json$')
     resolveReferences(layout, cond(hd, self.profileHD, self.profileSD))
     return translate(layout, hd)
 end
