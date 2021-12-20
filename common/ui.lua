@@ -10,7 +10,7 @@ function InitUI()
         LightBrown = { R = 188, G = 168, B = 140 },
         LightGreen = { R = 24, G = 255, B = 0 },
         White = { R = 255, G = 255, B = 255 },
-        Black = { R = 0, G = 0, B = 0 },
+        Red = { R = 255, G = 0, B = 0},        Black = { R = 0, G = 0, B = 0 },
         Yellowish = { R = 199, G = 179, B = 119 },
 
     }

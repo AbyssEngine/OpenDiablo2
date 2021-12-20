@@ -19,11 +19,11 @@ function setLabelProperties(this, creditsLabel, index)
                     if string.find(creditsline, "*") then
                         -- red text without first * and last \n
                         creditsline = string.sub(creditsline, 2, -2)
-                        creditsLabel:setColorMod(0xFF, 0x00, 0x00)
+                        creditsLabel:setColorMod(TextColor.Red)
                     else
                         -- white text without first * and last \n
                         creditsline = string.sub(creditsline, 1, -2)
-                        creditsLabel:setColorMod(0xFF, 0xFF, 0xFF)
+                        creditsLabel:setColorMod(TextColor.White)
                     end
                     creditsLabel.caption = creditsline
                 else
