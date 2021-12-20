@@ -27,6 +27,7 @@ function LoadGlobals()
     CursorSprite = CreateUniqueSpriteFromFile(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)
     CursorSprite.blendMode = "blend"
 
+    LayoutLoader = require('common/layout'):new()
     LoadDatasets()
 
     InitUI()
