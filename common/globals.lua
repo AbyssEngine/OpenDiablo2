@@ -8,6 +8,7 @@ RegionDefs = require('common/region-defs')
 ResourceDefs = require("common/resource-defs")
 BasePath = abyss.getConfig("#Abyss", "BasePath")
 MPQRoot = abyss.getConfig("OpenDiablo2", "MPQRoot")
+IsOnButton = false
 ShowTrademarkScreen = true
 
 function LoadGlobals()
