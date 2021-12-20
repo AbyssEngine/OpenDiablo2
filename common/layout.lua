@@ -1,7 +1,7 @@
 local jsonlib = require('common/json')
 local RESOLUTION_X = 800
 local RESOLUTION_Y = 600
-local LOWEND_HD = false
+local LOWEND_HD = true
 
 local LayoutLoader = {
 }
@@ -19,9 +19,9 @@ local LAYOUTS_DIR = '/data/global/ui/layouts/'
 function imageFilename(image, hd)
     if hd then
         if LOWEND_HD then
-            return '/data/hd/global/ui/' .. fname .. '.lowend.sprite'
+            return '/data/hd/global/ui/' .. image .. '.lowend.sprite'
         else
-            return '/data/hd/global/ui/' .. fname .. '.sprite'
+            return '/data/hd/global/ui/' .. image .. '.sprite'
         end
     else
         return '/data/global/ui/' .. image .. '.dc6'
@@ -124,9 +124,13 @@ function move_by(node, rect)
         return
     end
     local x, y = node:getPosition()
-    x = x + or_else(rect.x, 0)
-    y = y + or_else(rect.y, 0)
-    node:setPosition(x, y)
+    local dx = or_else(rect.x, 0)
+    local dy = or_else(rect.y, 0)
+    if hd and LOWEND_HD then
+        dx = math.floor(dx / 2)
+        dy = math.floor(dy / 2)
+    end
+    node:setPosition(x + dx, y + dy)
 end
 
 local ALIGN_MAPPING = {
@@ -171,16 +175,31 @@ local TYPES = {
         end
     end,
 
+    HUDPanelHD = function(layout)
+        local node = abyss.createNode()
+        return node, function()
+            --TODO use anchor
+            node:setPosition(math.floor(RESOLUTION_X / 2 - layout.fields.rect.width / 4 + (layout.fields.rect.width + layout.fields.rect.x * 2)/4), RESOLUTION_Y + math.floor(layout.fields.rect.y / 2 ))
+        end
+    end,
+
     Widget = function(layout)
         return abyss.createNode()
     end,
 
-    ImageWidget = function(layout)
-        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    ImageWidget = function(layout, hd)
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
     end,
 
-    LevelUpButtonWidget = function(layout)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    AnimatedImageWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        --TODO fps
+        sprite.playMode = "forwards"
+        return sprite
+    end,
+
+    LevelUpButtonWidget = function(layout, hd)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
         node.data = {
             image = image,
@@ -191,8 +210,8 @@ local TYPES = {
         return node
     end,
 
-    RunButtonWidget = function(layout)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    RunButtonWidget = function(layout, hd)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
         node.data = {
             image = image,
@@ -206,8 +225,9 @@ local TYPES = {
         local label = abyss.createLabel(SystemFonts.FntFormal12)
         label.caption = 'text'
         label.data = {}
-        local hAlign = or_else(layout.fields.style.alignment.h, "left")
-        local vAlign = or_else(layout.fields.style.alignment.v, "top")
+        local align = or_else(layout.fields.style.alignment, {})
+        local hAlign = or_else(align.h, "left")
+        local vAlign = or_else(align.v, "top")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         if layout.fields.style.fontColor ~= nil then
             local color = layout.fields.style.fontColor
@@ -220,7 +240,7 @@ local TYPES = {
         local node = abyss.createNode()
         -- TODO which one? maybe create all of them and control the active one via active/visible prop
         local fname = layout.fields.skillIconFilenames[2]
-        local image = abyss.loadImage(imageFilename(fname), ResourceDefs.Palette.Sky)
+        local image = abyss.loadImage(imageFilename(fname, hd), ResourceDefs.Palette.Sky)
         node.data = {
             image = image
         }
@@ -230,8 +250,20 @@ local TYPES = {
         node:appendChild(button)
         return node
     end,
+
+    MiniMenuButtonWidget = function(layout, hd)
+        local button = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        -- TODO hoveredFrame statusUpdateNormalFrame etc
+        return button
+    end,
+
+    AttributeBallWidget = function(layout, hd)
+        if layout.fields.filename == nil then
+            return abyss.createNode()
+        end
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    end,
 }
-TYPES.AttributeBallWidget = TYPES.ImageWidget
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
 function translate(layout, hd)
@@ -250,6 +282,10 @@ function translate(layout, hd)
         local rect = layout.fields.rect
         local x = or_else(rect.x, 0)
         local y = or_else(rect.y, 0)
+        if hd and LOWEND_HD then
+            x = math.floor(x / 2)
+            y = math.floor(y / 2)
+        end
         node:setPosition(x, y)
     end
     if layout.children ~= nil then
