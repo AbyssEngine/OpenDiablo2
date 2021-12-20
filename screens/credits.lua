@@ -10,7 +10,7 @@ function setLabelProperties(this, creditsLabel, index)
     creditsLabel:onUpdate(
         function(delta)
             local x, y = creditsLabel:getPosition()
-            y = math.round(y - delta * 15)
+            y = math.floor(y - delta * 15)
             creditsLabel:setPosition(x, y)
             if y < -30 then
                 creditsLabel:setPosition(400, 600)
