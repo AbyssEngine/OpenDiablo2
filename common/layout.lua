@@ -138,9 +138,9 @@ local ALIGN_MAPPING = {
 }
 
 local TYPES = {
-    SDHeadsUpPanel = function(layout)
+    SDHeadsUpPanel = function(layout, hd, palette)
         local node = abyss.createNode()
-        local bg_image = abyss.loadImage('/data/global/ui/' .. layout.fields.background800 .. '.dc6', ResourceDefs.Palette.Sky)
+        local bg_image = abyss.loadImage(imageFilename(layout.fields.background800, hd), palette)
         local bg_pieces = {}
         for i, off in ipairs(layout.fields.background800Offsets) do
             local piece = abyss.createSprite(bg_image)
@@ -180,19 +180,23 @@ local TYPES = {
         return abyss.createNode()
     end,
 
-    ImageWidget = function(layout, hd)
-        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    ImageWidget = function(layout, hd, palette)
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
     end,
 
-    AnimatedImageWidget = function(layout, hd)
-        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    AnimatedImageWidget = function(layout, hd, palette)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
         --TODO fps
         sprite.playMode = "forwards"
+        sprite.bottomOrigin = true
+        if layout.fields.blendMode == "black" then
+            sprite.blendMode = "additive"
+        end
         return sprite
     end,
 
-    LevelUpButtonWidget = function(layout, hd)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    LevelUpButtonWidget = function(layout, hd, palette)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local node = abyss.createButton(image)
         node.data.image = image
         node:setSegments(1, 1)
@@ -201,8 +205,8 @@ local TYPES = {
         return node
     end,
 
-    RunButtonWidget = function(layout, hd)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    RunButtonWidget = function(layout, hd, palette)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local node = abyss.createButton(image)
         node.data.image = image
         node:setSegments(1, 1)
@@ -217,7 +221,7 @@ local TYPES = {
         end)
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
-        local vAlign = or_else(align.v, "top")
+        local vAlign = or_else(align.v, "center")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         if layout.fields.style.fontColor ~= nil then
             local color = layout.fields.style.fontColor
@@ -226,11 +230,11 @@ local TYPES = {
         return label
     end,
 
-    SkillSelectButtonWidget = function(layout, hd)
+    SkillSelectButtonWidget = function(layout, hd, palette)
         local node = abyss.createNode()
         -- TODO which one? maybe create all of them and control the active one via active/visible prop
         local fname = layout.fields.skillIconFilenames[2]
-        local image = abyss.loadImage(imageFilename(fname, hd), ResourceDefs.Palette.Sky)
+        local image = abyss.loadImage(imageFilename(fname, hd), palette)
         node.data.image = image
         local button = abyss.createButton(image)
         button:setSegments(1, 1)
@@ -239,11 +243,11 @@ local TYPES = {
         return node
     end,
 
-    ButtonWidget = function(layout, hd)
+    ButtonWidget = function(layout, hd, palette)
         if true then
             return abyss.createNode()
         end
-        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local button = abyss.createButton(image)
         button.data.image = image
         button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
@@ -251,43 +255,67 @@ local TYPES = {
         return button
     end,
 
-    MiniMenuButtonWidget = function(layout, hd)
-        local button = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    MiniMenuButtonWidget = function(layout, hd, palette)
+        local button = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
         -- TODO hoveredFrame statusUpdateNormalFrame etc
         return button
     end,
 
-    AttributeBallWidget = function(layout, hd)
+    AttributeBallWidget = function(layout, hd, palette)
         if layout.fields.filename == nil then
             return abyss.createNode()
         end
-        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
     end,
 
-    GridImageWidget = function(layout, hd)
-        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    GridImageWidget = function(layout, hd, palette)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
         sprite.currentFrameIndex = or_else(layout.fields.frame, 0)
         sprite:setCellSize(math.floor(layout.fields.frames / layout.fields.rows), layout.fields.rows)
         return sprite
     end,
 
-    InventorySlotWidget = function(layout, hd)
-        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.backgroundFilename, hd), ResourceDefs.Palette.Sky)
+    InventorySlotWidget = function(layout, hd, palette)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.backgroundFilename, hd), palette)
         sprite.currentFrameIndex = or_else(layout.fields.backgroundFrame, 0)
         --TODO swappedOffset for weapons
         return sprite, function()
             move_by(sprite, layout.fields.backgroundOffset)
         end
-    end
+    end,
+
+    CharacterCreateWidget = function(layout, hd, palette)
+        -- TODO different sprites for select/hover/etc
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.stateAnimations.base.basePath, hd), palette)
+        sprite.playMode = "forwards"
+        sprite.bottomOrigin = true
+        return sprite
+    end,
+
+    ToggleButtonWidget = function(layout, hd, palette)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
+        local button = abyss.createButton(image)
+        button.data.image = image
+        local toggledFrame = layout.fields.toggledFrame
+        button:setFrameIndex("checkednormal", toggledFrame)
+        button:setFrameIndex("checkedhover", toggledFrame)
+        button:setFrameIndex("checkedpressed", toggledFrame)
+        button.checked = or_else(layout.fields.isToggled, false)
+        button:onActivate(function()
+            button.checked = not button.checked
+        end)
+        button:setSegments(1, 1)
+        return button
+    end,
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
-function translate(layout, hd)
+function translate(layout, hd, palette)
     local type = TYPES[layout.type]
     local node = nil
     local postprocess = nil
     if type ~= nil then
-        node, postprocess = type(layout, hd)
+        node, postprocess = type(layout, hd, palette)
     else
         abyss.log("warn", "Layout type not found: " .. layout.type)
         node = abyss.createNode()
@@ -314,7 +342,7 @@ function translate(layout, hd)
         node.data.children = {}
         node.data.anonymous_children = {}
         for _, child in ipairs(layout.children) do
-            local childNode = translate(child, hd)
+            local childNode = translate(child, hd, palette)
             if child.name ~= nil then
                 node.data.children[child.name] = childNode
             else
@@ -329,14 +357,14 @@ function translate(layout, hd)
     return node
 end
 
-function LayoutLoader:load(name)
+function LayoutLoader:load(name, palette)
     if not self.supported then
         return nil
     end
     local layout = readLayout(name)
     local hd = name:lower():match('hd.json$')
     resolveReferences(layout, cond(hd, self.profileHD, self.profileSD))
-    return translate(layout, hd)
+    return translate(layout, hd, palette)
 end
 
 function LayoutLoader:initialize()
