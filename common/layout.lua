@@ -78,7 +78,6 @@ function readLayout(name)
     if data.basedOn ~= nil then
         local parent = readLayout(data.basedOn)
         mergeFromParent(data, parent)
-        -- TODO merge into data
     end
     return data
 end
@@ -122,6 +121,7 @@ function move_by(node, rect)
     local dx = or_else(rect.x, 0)
     local dy = or_else(rect.y, 0)
     if hd and LOWEND_HD then
+        -- TODO debug this
         dx = math.floor(dx / 2)
         dy = math.floor(dy / 2)
     end
@@ -150,10 +150,8 @@ local TYPES = {
             table.insert(bg_pieces, piece)
             node:appendChild(piece)
         end
-        node.data = {
-            bg_pieces = bg_pieces,
-            bg_image = bg_image,
-        }
+        node.data.bg_pieces = bg_pieces
+        node.data.bg_image = bg_image
         return node, function()
             for _, child in pairs(node.data.children) do
                 move_by(child, layout.fields.rect)
@@ -196,9 +194,7 @@ local TYPES = {
     LevelUpButtonWidget = function(layout, hd)
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
-        node.data = {
-            image = image,
-        }
+        node.data.image = image
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
         node:setFrameIndex("disabled", layout.fields.disabledFrame)
@@ -208,9 +204,7 @@ local TYPES = {
     RunButtonWidget = function(layout, hd)
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
-        node.data = {
-            image = image,
-        }
+        node.data.image = image
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
         return node
@@ -221,7 +215,6 @@ local TYPES = {
         label.caption = or_else(layout.fields.text, 'text'):gsub('@(%w+)', function(name)
             return Language:d2rstring(name)
         end)
-        label.data = {}
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "top")
@@ -238,9 +231,7 @@ local TYPES = {
         -- TODO which one? maybe create all of them and control the active one via active/visible prop
         local fname = layout.fields.skillIconFilenames[2]
         local image = abyss.loadImage(imageFilename(fname, hd), ResourceDefs.Palette.Sky)
-        node.data = {
-            image = image
-        }
+        node.data.image = image
         local button = abyss.createButton(image)
         button:setSegments(1, 1)
         node.data.button = button
@@ -254,9 +245,7 @@ local TYPES = {
         end
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local button = abyss.createButton(image)
-        button.data = {
-            image = image
-        }
+        button.data.image = image
         button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
         button:setFrameIndex("pressed", or_else(layout.fields.pressedFrame, 1))
         return button
@@ -303,7 +292,6 @@ function translate(layout, hd)
         abyss.log("warn", "Layout type not found: " .. layout.type)
         node = abyss.createNode()
     end
-    node.data = or_else(node.data, {})
     node.data.layout = layout
     if layout.fields ~= nil then
         if layout.fields.anchor ~= nil then
@@ -312,7 +300,14 @@ function translate(layout, hd)
             node:setPosition(math.floor(or_else(anchor.x, 0) * RESOLUTION_X), math.floor(or_else(anchor.y, 0) * RESOLUTION_Y))
         end
         if layout.fields.rect ~= nil then
-            move_by(node, layout.fields.rect)
+            local rect = layout.fields.rect
+            local x = or_else(rect.x, 0)
+            local y = or_else(rect.y, 0)
+            if hd and LOWEND_HD then
+                x = math.floor(x / 2)
+                y = math.floor(y / 2)
+            end
+            node:setPosition(x, y)
         end
     end
     if layout.children ~= nil then
