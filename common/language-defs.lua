@@ -52,16 +52,16 @@ return {
         [0x0B] = "LATIN" -- TODO: Confirm for Russian
     },
     LanguageHdCodes = {
-        [0x00] = "enus",
-        [0x01] = "eses", -- TODO: differentiate from esmx
-        [0x02] = "dede",
-        [0x03] = "frfr",
-        [0x04] = "ptbr",
-        [0x05] = "itit",
-        [0x06] = "jajp",
-        [0x07] = "kokr",
-        [0x09] = "zhcn", -- TODO: differentiate from zhtw
-        [0x0A] = "plpl",
-        [0x0B] = "ruru",
+        [0x00] = "enUS",
+        [0x01] = "esES", -- TODO: differentiate from esmx
+        [0x02] = "deDE",
+        [0x03] = "frFR",
+        [0x04] = "ptBR",
+        [0x05] = "itIT",
+        [0x06] = "jaJP",
+        [0x07] = "koKR",
+        [0x09] = "zhCN", -- TODO: differentiate from zhtw
+        [0x0A] = "plPL",
+        [0x0B] = "ruRU",
     }
 }

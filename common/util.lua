@@ -15,6 +15,7 @@
 -- along with OpenDiablo2.  If not, see <http://www.gnu.org/licenses/>.
 --
 require("string")
+local jsonlib = require('common/json')
 
 function Split(s, delimiter)
     local result = {};
@@ -74,12 +75,45 @@ function LoadTsvAsTable(filePath, firstFieldIsHandle)
     return result
 end
 
+-- reads json file as lua table
+function ReadJsonAsTable(path)
+    local jsonstr = abyss.loadString(path)
+    -- remove utf-8 bom
+    if jsonstr:sub(1, 3) == '\xEF\xBB\xBF' then
+        jsonstr = jsonstr:sub(4)
+    end
+    -- remove comments
+    local lines = {}
+    for line in jsonstr:gmatch("([^\n]+)") do
+        local quotes = false
+        local new_line = line
+        for i = 1, #line do
+            if line:sub(i, i) == '"' then
+                quotes = not quotes
+            end
+            if line:sub(i, i + 1) == '//' and not quotes then
+                new_line = line:sub(1, i - 1)
+                break
+            end
+        end
+        table.insert(lines, new_line)
+    end
+    return jsonlib.decode(table.concat(lines, '\n'))
+end
+
 function cond(c, a, b)
     if c then
         return a
     else
         return b
     end
+end
+
+function or_else(x, y)
+    if x == nil then
+        return y
+    end
+    return x
 end
 
 function dump(o)

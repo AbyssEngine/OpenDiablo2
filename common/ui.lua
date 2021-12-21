@@ -93,9 +93,7 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     label:setColorMod(buttonSpec.TextColor.R, buttonSpec.TextColor.G, buttonSpec.TextColor.B)
     if buttonSpec.TextVerticalSpacing ~= nil then label.verticalSpacing = buttonSpec.TextVerticalSpacing end
     local result = abyss.createButton(buttonSpec.Image)
-    result.data = {
-        label = label
-    }
+    result.data.label = label
     result:appendChild(label)
     result:setSegments(buttonSpec.Segments.X, buttonSpec.Segments.Y)
     result:setFixedSize(buttonSpec.FixedSize.X, buttonSpec.FixedSize.Y)
@@ -137,8 +135,6 @@ end
 function CreateUniqueSpriteFromFile(file, palette)
     local img = abyss.loadImage(file, palette)
     local spr = abyss.createSprite(img)
-    spr.data = {
-        img = img
-    }
+    spr.data.img = img
     return spr
 end

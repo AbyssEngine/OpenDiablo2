@@ -1,7 +1,6 @@
-local jsonlib = require('common/json')
 local RESOLUTION_X = 800
 local RESOLUTION_Y = 600
-local LOWEND_HD = false
+local LOWEND_HD = true
 
 local LayoutLoader = {
 }
@@ -19,40 +18,18 @@ local LAYOUTS_DIR = '/data/global/ui/layouts/'
 function imageFilename(image, hd)
     if hd then
         if LOWEND_HD then
-            return '/data/hd/global/ui/' .. fname .. '.lowend.sprite'
+            return '/data/hd/global/ui/' .. image .. '.lowend.sprite'
         else
-            return '/data/hd/global/ui/' .. fname .. '.sprite'
+            return '/data/hd/global/ui/' .. image .. '.sprite'
         end
     else
         return '/data/global/ui/' .. image .. '.dc6'
     end
 end
 
--- reads json file as lua table
-function readRawJson(path)
-    local jsonstr = abyss.loadString(path)
-    -- remove comments
-    local lines = {}
-    for line in jsonstr:gmatch("([^\n]+)") do
-        local quotes = false
-        local new_line = line
-        for i = 1, #line do
-            if line:sub(i, i) == '"' then
-                quotes = not quotes
-            end
-            if line:sub(i, i + 1) == '//' and not quotes then
-                new_line = line:sub(1, i - 1)
-                break
-            end
-        end
-        table.insert(lines, new_line)
-    end
-    return jsonlib.decode(table.concat(lines, '\n'))
-end
-
 -- reads profile file as lua table, following the parents link and merging them
 function readProfile(name)
-    local start = readRawJson(LAYOUTS_DIR .. '_profile' .. name .. '.json')
+    local start = ReadJsonAsTable(LAYOUTS_DIR .. '_profile' .. name .. '.json')
     if start.basedOn == nil then
         return start
     end
@@ -71,12 +48,36 @@ function readResolvedProfile(name)
     return profile
 end
 
+function mergeFromParent(layout, parent)
+    local mergedFields = or_else(parent.fields, {})
+    for key, value in pairs(or_else(layout.fields, {})) do
+        mergedFields[key] = value
+    end
+    layout.fields = mergedFields
+    if layout.children ~= nil and parent.children ~= nil then
+        local otherChildren = {}
+        for _, child in ipairs(parent.children) do
+            if child.name ~= nil then
+                otherChildren[child.name] = child
+            end
+        end
+        for _, child in ipairs(layout.children) do
+            if child.name ~= nil then
+                local brother = otherChildren[child.name]
+                if brother ~= nil then
+                    mergeFromParent(child, brother)
+                end
+            end
+        end
+    end
+end
+
 -- reads layout file as lua table, following the parents link and merging them
 function readLayout(name)
-    local data = readRawJson(LAYOUTS_DIR .. name)
+    local data = ReadJsonAsTable(LAYOUTS_DIR .. name)
     if data.basedOn ~= nil then
         local parent = readLayout(data.basedOn)
-        -- TODO merge into data
+        mergeFromParent(data, parent)
     end
     return data
 end
@@ -112,21 +113,19 @@ function resolveReferences(layout, profile)
     end
 end
 
-function or_else(x, y)
-    if x == nil then
-        return y
-    end
-    return x
-end
-
 function move_by(node, rect)
     if rect == nil then
         return
     end
     local x, y = node:getPosition()
-    x = x + or_else(rect.x, 0)
-    y = y + or_else(rect.y, 0)
-    node:setPosition(x, y)
+    local dx = or_else(rect.x, 0)
+    local dy = or_else(rect.y, 0)
+    if hd and LOWEND_HD then
+        -- TODO debug this
+        dx = math.floor(dx / 2)
+        dy = math.floor(dy / 2)
+    end
+    node:setPosition(x + dx, y + dy)
 end
 
 local ALIGN_MAPPING = {
@@ -151,10 +150,8 @@ local TYPES = {
             table.insert(bg_pieces, piece)
             node:appendChild(piece)
         end
-        node.data = {
-            bg_pieces = bg_pieces,
-            bg_image = bg_image,
-        }
+        node.data.bg_pieces = bg_pieces
+        node.data.bg_image = bg_image
         return node, function()
             for _, child in pairs(node.data.children) do
                 move_by(child, layout.fields.rect)
@@ -171,32 +168,43 @@ local TYPES = {
         end
     end,
 
+    HUDPanelHD = function(layout)
+        local node = abyss.createNode()
+        return node, function()
+            --TODO use anchor
+            node:setPosition(math.floor(RESOLUTION_X / 2 - layout.fields.rect.width / 4 + (layout.fields.rect.width + layout.fields.rect.x * 2)/4), RESOLUTION_Y + math.floor(layout.fields.rect.y / 2 ))
+        end
+    end,
+
     Widget = function(layout)
         return abyss.createNode()
     end,
 
-    ImageWidget = function(layout)
-        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    ImageWidget = function(layout, hd)
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
     end,
 
-    LevelUpButtonWidget = function(layout)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    AnimatedImageWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        --TODO fps
+        sprite.playMode = "forwards"
+        return sprite
+    end,
+
+    LevelUpButtonWidget = function(layout, hd)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
-        node.data = {
-            image = image,
-        }
+        node.data.image = image
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
         node:setFrameIndex("disabled", layout.fields.disabledFrame)
         return node
     end,
 
-    RunButtonWidget = function(layout)
-        local image = abyss.loadImage(imageFilename(layout.fields.filename), ResourceDefs.Palette.Sky)
+    RunButtonWidget = function(layout, hd)
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
         local node = abyss.createButton(image)
-        node.data = {
-            image = image,
-        }
+        node.data.image = image
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
         return node
@@ -204,10 +212,12 @@ local TYPES = {
 
     TextBoxWidget = function(layout)
         local label = abyss.createLabel(SystemFonts.FntFormal12)
-        label.caption = 'text'
-        label.data = {}
-        local hAlign = or_else(layout.fields.style.alignment.h, "left")
-        local vAlign = or_else(layout.fields.style.alignment.v, "top")
+        label.caption = or_else(layout.fields.text, 'text'):gsub('@(%w+)', function(name)
+            return Language:d2rstring(name)
+        end)
+        local align = or_else(layout.fields.style.alignment, {})
+        local hAlign = or_else(align.h, "left")
+        local vAlign = or_else(align.v, "top")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         if layout.fields.style.fontColor ~= nil then
             local color = layout.fields.style.fontColor
@@ -220,18 +230,56 @@ local TYPES = {
         local node = abyss.createNode()
         -- TODO which one? maybe create all of them and control the active one via active/visible prop
         local fname = layout.fields.skillIconFilenames[2]
-        local image = abyss.loadImage(imageFilename(fname), ResourceDefs.Palette.Sky)
-        node.data = {
-            image = image
-        }
+        local image = abyss.loadImage(imageFilename(fname, hd), ResourceDefs.Palette.Sky)
+        node.data.image = image
         local button = abyss.createButton(image)
         button:setSegments(1, 1)
         node.data.button = button
         node:appendChild(button)
         return node
     end,
+
+    ButtonWidget = function(layout, hd)
+        if true then
+            return abyss.createNode()
+        end
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        local button = abyss.createButton(image)
+        button.data.image = image
+        button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
+        button:setFrameIndex("pressed", or_else(layout.fields.pressedFrame, 1))
+        return button
+    end,
+
+    MiniMenuButtonWidget = function(layout, hd)
+        local button = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        -- TODO hoveredFrame statusUpdateNormalFrame etc
+        return button
+    end,
+
+    AttributeBallWidget = function(layout, hd)
+        if layout.fields.filename == nil then
+            return abyss.createNode()
+        end
+        return CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+    end,
+
+    GridImageWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), ResourceDefs.Palette.Sky)
+        sprite.currentFrameIndex = or_else(layout.fields.frame, 0)
+        sprite:setCellSize(math.floor(layout.fields.frames / layout.fields.rows), layout.fields.rows)
+        return sprite
+    end,
+
+    InventorySlotWidget = function(layout, hd)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.backgroundFilename, hd), ResourceDefs.Palette.Sky)
+        sprite.currentFrameIndex = or_else(layout.fields.backgroundFrame, 0)
+        --TODO swappedOffset for weapons
+        return sprite, function()
+            move_by(sprite, layout.fields.backgroundOffset)
+        end
+    end
 }
-TYPES.AttributeBallWidget = TYPES.ImageWidget
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
 function translate(layout, hd)
@@ -244,13 +292,23 @@ function translate(layout, hd)
         abyss.log("warn", "Layout type not found: " .. layout.type)
         node = abyss.createNode()
     end
-    node.data = or_else(node.data, {})
     node.data.layout = layout
-    if layout.fields ~= nil and layout.fields.rect ~= nil then
-        local rect = layout.fields.rect
-        local x = or_else(rect.x, 0)
-        local y = or_else(rect.y, 0)
-        node:setPosition(x, y)
+    if layout.fields ~= nil then
+        if layout.fields.anchor ~= nil then
+            local anchor = layout.fields.anchor
+            --TODO anchors for non-root
+            node:setPosition(math.floor(or_else(anchor.x, 0) * RESOLUTION_X), math.floor(or_else(anchor.y, 0) * RESOLUTION_Y))
+        end
+        if layout.fields.rect ~= nil then
+            local rect = layout.fields.rect
+            local x = or_else(rect.x, 0)
+            local y = or_else(rect.y, 0)
+            if hd and LOWEND_HD then
+                x = math.floor(x / 2)
+                y = math.floor(y / 2)
+            end
+            node:setPosition(x, y)
+        end
     end
     if layout.children ~= nil then
         node.data.children = {}
@@ -276,7 +334,7 @@ function LayoutLoader:load(name)
         return nil
     end
     local layout = readLayout(name)
-    local hd = name:match('hd.json$')
+    local hd = name:lower():match('hd.json$')
     resolveReferences(layout, cond(hd, self.profileHD, self.profileSD))
     return translate(layout, hd)
 end
