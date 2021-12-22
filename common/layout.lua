@@ -15,7 +15,7 @@ end
 
 local LAYOUTS_DIR = '/data/global/ui/layouts/'
 
-function imageFilename(image, hd)
+local function imageFilename(image, hd)
     if hd then
         if LOWEND_HD then
             return '/data/hd/global/ui/' .. image .. '.lowend.sprite'
@@ -27,8 +27,28 @@ function imageFilename(image, hd)
     end
 end
 
+-- recursively replaces references to $variables in profile with their values
+local function resolveDataReferences(object, profile)
+    local replace = {}
+    local again = false
+    for key, value in pairs(object) do
+        if type(value) == 'table' then
+            again = resolveDataReferences(value, profile) or again
+        else
+            if type(value) == 'string' and value:sub(1, 1) == '$' then
+                replace[key] = profile[value:sub(2)]
+                again = true
+            end
+        end
+    end
+    for key, value in pairs(replace) do
+        object[key] = value
+    end
+    return again
+end
+
 -- reads profile file as lua table, following the parents link and merging them
-function readProfile(name)
+local function readProfile(name)
     local start = ReadJsonAsTable(LAYOUTS_DIR .. '_profile' .. name .. '.json')
     if start.basedOn == nil then
         return start
@@ -41,14 +61,14 @@ function readProfile(name)
 end
 
 -- reads profile file as lua table and resolves all the variable names
-function readResolvedProfile(name)
+local function readResolvedProfile(name)
     local profile = readProfile(name)
     while resolveDataReferences(profile, profile) do
     end
     return profile
 end
 
-function mergeFromParent(layout, parent)
+local function mergeFromParent(layout, parent)
     local mergedFields = or_else(parent.fields, {})
     for key, value in pairs(or_else(layout.fields, {})) do
         mergedFields[key] = value
@@ -73,7 +93,7 @@ function mergeFromParent(layout, parent)
 end
 
 -- reads layout file as lua table, following the parents link and merging them
-function readLayout(name)
+local function readLayout(name)
     local data = ReadJsonAsTable(LAYOUTS_DIR .. name)
     if data.basedOn ~= nil then
         local parent = readLayout(data.basedOn)
@@ -82,27 +102,7 @@ function readLayout(name)
     return data
 end
 
--- recursively replaces references to $variables in profile with their values
-function resolveDataReferences(object, profile)
-    local replace = {}
-    local again = false
-    for key, value in pairs(object) do
-        if type(value) == 'table' then
-            again = resolveDataReferences(value, profile) or again
-        else
-            if type(value) == 'string' and value:sub(1, 1) == '$' then
-                replace[key] = profile[value:sub(2)]
-                again = true
-            end
-        end
-    end
-    for key, value in pairs(replace) do
-        object[key] = value
-    end
-    return again
-end
-
-function resolveReferences(layout, profile)
+local function resolveReferences(layout, profile)
     if layout.fields ~= nil then
         resolveDataReferences(layout.fields, profile)
     end
@@ -113,7 +113,7 @@ function resolveReferences(layout, profile)
     end
 end
 
-function move_by(node, rect)
+local function move_by(node, rect)
     if rect == nil then
         return
     end
@@ -144,27 +144,25 @@ local TYPES = {
         local bg_pieces = {}
         for i, off in ipairs(layout.fields.background800Offsets) do
             local piece = abyss.createSprite(bg_image)
+            piece.bottomOrigin = true
             piece.currentFrameIndex = i - 1
-            local w, h = bg_image:getFrameSize(i - 1, 1)
-            piece:setPosition(off, -h)
+            piece:setPosition(off, layout.fields.rect.height)
             table.insert(bg_pieces, piece)
             node:appendChild(piece)
         end
         node.data.bg_pieces = bg_pieces
         node.data.bg_image = bg_image
+        if layout.fields.rect.x == nil then
+            layout.fields.rect.x = math.floor(-RESOLUTION_X / 2)
+        end
         return node, function()
-            for _, child in pairs(node.data.children) do
-                move_by(child, layout.fields.rect)
-            end
             move_by(node.data.children.QuestAlert, layout.fields.questAlert800Offset)
 
+            --TODO use anchor
             local _, y = node.data.children.Right:getPosition()
             node.data.children.Right:setPosition(RESOLUTION_X - node.data.children.Right.data.layout.fields.rect.width, y)
 
             move_by(node.data.children.Middle, { x = math.floor((RESOLUTION_X - node.data.children.Middle.data.layout.fields.rect.width) / 2) })
-
-            --TODO use anchor
-            node:setPosition(0, RESOLUTION_Y + 1)
         end
     end,
 
@@ -189,10 +187,18 @@ local TYPES = {
         --TODO fps
         sprite.playMode = "forwards"
         sprite.bottomOrigin = true
-        if layout.fields.blendMode == "black" then
-            sprite.blendMode = "additive"
+        local num = sprite.data.img:getNumberOfFrames()
+        local maxh = 0
+        for i = 0, num-1 do
+            local w, h = sprite.data.img:getFrameSize(0, 1)
+            maxh = math.max(maxh, h)
         end
-        return sprite
+        if layout.fields.blendMode == "black" then
+--            sprite.blendMode = "additive"
+        end
+        return sprite, function()
+            move_by(sprite, {y=maxh})
+        end
     end,
 
     LevelUpButtonWidget = function(layout, hd, palette)
@@ -310,7 +316,8 @@ local TYPES = {
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
-function translate(layout, hd, palette)
+function translate(layout, hd, palette, parent)
+    local outer = abyss.createNode()
     local type = TYPES[layout.type]
     local node = nil
     local postprocess = nil
@@ -320,12 +327,21 @@ function translate(layout, hd, palette)
         abyss.log("warn", "Layout type not found: " .. layout.type)
         node = abyss.createNode()
     end
+    outer.data.node = node
+    outer:appendChild(node)
     node.data.layout = layout
+    outer.data.layout = layout
     if layout.fields ~= nil then
         if layout.fields.anchor ~= nil then
             local anchor = layout.fields.anchor
             --TODO anchors for non-root
-            node:setPosition(math.floor(or_else(anchor.x, 0) * RESOLUTION_X), math.floor(or_else(anchor.y, 0) * RESOLUTION_Y))
+            if parent == nil then
+                outer:setPosition(
+                    math.floor(or_else(anchor.x, 0) * RESOLUTION_X),
+                    math.floor(or_else(anchor.y, 0) * RESOLUTION_Y))
+            else
+                abyss.log("warn", "TODO anchor on non-root layout")
+            end
         end
         if layout.fields.rect ~= nil then
             local rect = layout.fields.rect
@@ -342,7 +358,7 @@ function translate(layout, hd, palette)
         node.data.children = {}
         node.data.anonymous_children = {}
         for _, child in ipairs(layout.children) do
-            local childNode = translate(child, hd, palette)
+            local childNode = translate(child, hd, palette, node)
             if child.name ~= nil then
                 node.data.children[child.name] = childNode
             else
@@ -354,6 +370,11 @@ function translate(layout, hd, palette)
     if postprocess ~= nil then
         postprocess()
     end
+    outer.data.children = node.data.children
+    if layout.fields ~= nil and layout.fields.anchor ~= nil then
+        return outer
+    end
+    -- TODO: don't create outer node in the first place if not necessary
     return node
 end
 

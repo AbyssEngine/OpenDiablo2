@@ -80,7 +80,28 @@ function MainMenu:initialize()
         -- TODO
     end)
 
+    local this = self;
     self.btnLocalNetplay = CreateButton(ButtonTypes.Wide, 264, 330, "Local NetPlay", function()
+        local function output(node, offset)
+            local x, y = node:getPosition()
+            local line = node:nodeType() .. " X=" .. dump(x) .. " Y="..dump(y)
+            if node.data.layout ~= nil then
+                line = line .. " Layout type=" .. node.data.layout.type .. " name=" .. or_else(node.data.layout.name, "(nil)")
+            end
+            local label = node:castToLabel()
+            if label ~= nil then
+                line = line .. " text: " .. label.caption
+            end
+            for i = 1, offset do
+                line = "    " .. line
+            end
+            abyss.log("info", line)
+            local children = node:getChildren()
+            for _, child in ipairs(children) do
+                output(child, offset+1)
+            end
+        end
+        output(this.rootNode, 0)
         -- TODO
     end)
 
@@ -91,8 +112,6 @@ function MainMenu:initialize()
     self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "Credits", function()
         SetScreen(Screen.CREDITS)
     end)
-
-    local this = self;
 
     self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "Cinematics", function()
         this.cinematicsDialog.show()
