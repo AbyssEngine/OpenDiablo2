@@ -33,7 +33,8 @@ function Language:setLanguage(languageName)
             self._code = self._languageDefs.LanguageCodes[self._id]
             self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
             self._name = self._languageDefs.LanguageNames[self._id]
-            self._d2rstrings = {}
+            self._strings = {}
+            self:loadTblStrings()
             self:loadD2RStrings()
             return
         end
@@ -60,8 +61,20 @@ function Language:loadD2RStrings()
     end
     local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
     for _, data in ipairs(json) do
-        self._d2rstrings[data.Key] = data[self._hdcode]
+        self._strings[data.Key] = data[self._hdcode]
     end
+end
+
+function Language:loadTblFile(path)
+    for key, value in pairs(abyss.loadTbl(self:i18nPath(path))) do
+        self._strings[key] = value
+    end
+end
+
+function Language:loadTblStrings()
+    self:loadTblFile(ResourceDefs.StringTable)
+    self:loadTblFile(ResourceDefs.ExpansionStringTable)
+    self:loadTblFile(ResourceDefs.PatchStringTable)
 end
 
 function Language:id()
@@ -76,8 +89,8 @@ function Language:code()
     return self._code
 end
 
-function Language:d2rstring(code)
-    return self._d2rstrings[code]
+function Language:string(code)
+    return self._strings[code]
 end
 
 function Language:hdaudioPath(originalPath)

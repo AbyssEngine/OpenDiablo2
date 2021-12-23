@@ -17,6 +17,9 @@ local LAYOUTS_DIR = '/data/global/ui/layouts/'
 --LAYOUTS_DIR = '/var/tmp/d2runpack/data' .. LAYOUTS_DIR
 
 local function imageFilename(image, hd)
+    if image:sub(1, 1) == '\\' then
+        image = image:sub(2)
+    end
     if hd then
         if LOWEND_HD then
             return '/data/hd/global/ui/' .. image .. '.lowend.sprite'
@@ -26,6 +29,22 @@ local function imageFilename(image, hd)
     else
         return '/data/global/ui/' .. image .. '.dc6'
     end
+end
+
+-- http://lua-users.org/wiki/CopyTable
+local function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
 end
 
 -- recursively replaces references to $variables in profile with their values
@@ -69,12 +88,16 @@ local function readResolvedProfile(name)
     return profile
 end
 
-local function mergeFromParent(layout, parent)
-    local mergedFields = or_else(parent.fields, {})
-    for key, value in pairs(or_else(layout.fields, {})) do
-        mergedFields[key] = value
+local function shallowMergeTables(overrides, parent)
+    local merged = or_else(parent, {})
+    for key, value in pairs(or_else(overrides, {})) do
+        merged[key] = value
     end
-    layout.fields = mergedFields
+    return merged
+end
+
+local function mergeFromParent(layout, parent)
+    layout.fields = shallowMergeTables(layout.fields, parent.fields)
     if layout.children ~= nil and parent.children ~= nil then
         local otherChildren = {}
         for _, child in ipairs(parent.children) do
@@ -224,7 +247,7 @@ local TYPES = {
     TextBoxWidget = function(layout)
         local label = abyss.createLabel(SystemFonts.FntFormal12)
         label.caption = or_else(layout.fields.text, 'text'):gsub('@(%w+)', function(name)
-            return Language:d2rstring(name)
+            return Language:string(name)
         end)
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
@@ -251,6 +274,10 @@ local TYPES = {
     end,
 
     ButtonWidget = function(layout, hd, palette)
+        if layout.fields.filename == 'PANEL\\buysellbtn' then
+            -- TODO this file throws an exception in dc6 parsing now
+            return abyss.createNode()
+        end
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local button = abyss.createButton(image)
         button.data.image = image
@@ -364,6 +391,14 @@ local TYPES = {
             else
                 tab.currentFrameIndex = layout.fields.inactiveFrames[i]
             end
+            if layout.fields.textStrings ~= nil then
+                local label = abyss.createLabel(SystemFonts.FntFormal12)
+                label.caption = layout.fields.textStrings[i]
+                label:setAlignment('middle', 'end')
+                label:setPosition(math.floor(layout.fields.tabSize.x/2), math.floor(layout.fields.tabSize.y/2))
+                tab.data.label = label
+                tab:appendChild(label)
+            end
             tab:setPosition(x, 0)
             x = x + layout.fields.tabSize.x + layout.fields.tabPadding.x
         end
@@ -372,7 +407,7 @@ local TYPES = {
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
-function translate(layout, hd, palette, parent)
+local function translate(layout, hd, palette, parent)
     local outer = abyss.createNode()
     local type = TYPES[layout.type]
     local node = nil
@@ -432,6 +467,67 @@ function translate(layout, hd, palette, parent)
     end
     -- TODO: don't create outer node in the first place if not necessary
     return node
+end
+
+function TYPES.WaypointsPanel(layout, hd, palette)
+    local node = abyss.createNode()
+    local function find_child(layout, name)
+        for i, child in ipairs(layout.children) do
+            if child.name == name then
+                table.remove(layout.children, i)
+                return child
+            end
+        end
+        error('child ' .. name .. ' not found')
+    end
+    local templates = find_child(layout, 'Templates')
+    local Unselectable = find_child(templates, 'UnselectableButtonTemplate')
+    local SelectableButton = find_child(templates, 'SelectableButton')
+    local CurrentButton = find_child(templates, 'CurrentButton')
+    SelectableButton.fields = shallowMergeTables(SelectableButton.fields, deepcopy(Unselectable.fields))
+    CurrentButton.fields = shallowMergeTables(CurrentButton.fields, deepcopy(Unselectable.fields))
+    Unselectable.fields = shallowMergeTables(Unselectable.fields, deepcopy(SelectableButton.fields))
+    return node, function()
+        local current_button = math.random(5)
+        local buttons_enabled = 7 -- TODO
+        local y = 0
+        node.data.buttons = {}
+        for i = 1, 9 do
+            local template = Unselectable
+            if i < buttons_enabled then
+                template = SelectableButton
+            end
+            if i == current_button then
+                template = CurrentButton
+            end
+            local row = translate(template, hd, palette, node)
+            local label = abyss.createLabel(SystemFonts.FntFormal12)
+            label.caption = 'Waypoint N ' .. i
+            label:setAlignment('start', 'middle')
+            row:appendChild(label)
+            row.data.label = label
+            local textRect = deepcopy(template.fields['text/rect'])
+            textRect.x = textRect.x - template.fields.rect.x
+            move_by(label, textRect)
+            local color
+            if i < buttons_enabled then
+                if i == current_button then
+                    row.currentFrameIndex = 0 -- TODO
+                    color = layout.fields.currentFontColor
+                else
+                    row.currentFrameIndex = layout.fields.selectableFrames[1]
+                    color = layout.fields.selectableFontColor
+                end
+            else
+                color = template.fields.textColor
+            end
+            label:setColorMod(color.r, color.g, color.b)
+            move_by(row, {y=y})
+            y = y + layout.fields.buttonOffset
+            node:appendChild(row)
+            table.insert(node.data.buttons, row)
+        end
+    end
 end
 
 function LayoutLoader:load(name, palette)
