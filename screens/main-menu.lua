@@ -146,14 +146,16 @@ function MainMenu:initialize()
     self.rootNode:appendChild(self.cinematicsDialog.window)
 
     --local testLayout = LayoutLoader:load('HUDPanel.json', ResourceDefs.Palette.Sky)
-    --local testLayout = LayoutLoader:load('HUDPanelHD.json', '')
     --local testLayout = LayoutLoader:load('PlayerInventoryExpansionLayout.json', ResourceDefs.Palette.Sky)
     --local testLayout = LayoutLoader:load('PlayerInventoryOriginalLayout.json', ResourceDefs.Palette.Sky)
     --local testLayout = LayoutLoader:load('CharacterStatsPanel.json', ResourceDefs.Palette.Sky)
     --local testLayout = LayoutLoader:load('CharacterCreatePanel.json', ResourceDefs.Palette.Fechar)
+    --local testLayout = LayoutLoader:load('QuestLogPanelOriginal.json', ResourceDefs.Palette.Sky)
+    --local testLayout = LayoutLoader:load('QuestLogPanelExpansion.json', ResourceDefs.Palette.Sky)
+    --local testLayout = LayoutLoader:load('HirelingInventoryPanel.json', ResourceDefs.Palette.Sky)
     --self.testLayout = testLayout
     --if testLayout then
-    --    self.mainBg:appendChild(testLayout)
+    --    self.rootNode:appendChild(testLayout)
     --end
 
     if ShowTrademarkScreen == false then

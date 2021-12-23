@@ -14,6 +14,7 @@ function LayoutLoader:new()
 end
 
 local LAYOUTS_DIR = '/data/global/ui/layouts/'
+--LAYOUTS_DIR = '/var/tmp/d2runpack/data' .. LAYOUTS_DIR
 
 local function imageFilename(image, hd)
     if hd then
@@ -250,14 +251,12 @@ local TYPES = {
     end,
 
     ButtonWidget = function(layout, hd, palette)
-        if true then
-            return abyss.createNode()
-        end
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local button = abyss.createButton(image)
         button.data.image = image
         button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
         button:setFrameIndex("pressed", or_else(layout.fields.pressedFrame, 1))
+        button:setSegments(1, 1)
         return button
     end,
 
@@ -284,9 +283,10 @@ local TYPES = {
     InventorySlotWidget = function(layout, hd, palette)
         local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.backgroundFilename, hd), palette)
         sprite.currentFrameIndex = or_else(layout.fields.backgroundFrame, 0)
-        --TODO swappedOffset for weapons
         return sprite, function()
             move_by(sprite, layout.fields.backgroundOffset)
+            --TODO skip this if the first set is selected
+            move_by(sprite, layout.fields.swappedOffset)
         end
     end,
 
@@ -312,6 +312,62 @@ local TYPES = {
         end)
         button:setSegments(1, 1)
         return button
+    end,
+
+    QuestLogButtonWidget = function(layout, hd, palette)
+        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.filename, hd), palette)
+        return sprite, function()
+            move_by(sprite, {
+                -- +1 because lua arrays index from 1
+                x = layout.gridColumnPositions[layout.fields.gridPosition.x + 1],
+                y = layout.gridRowPositions[layout.fields.gridPosition.y + 1],
+            })
+        end
+    end,
+
+    QuestLogPanel = function(layout, hd, palette)
+        local function recurse(spec)
+            if spec.type == 'QuestLogButtonWidget' then
+                spec.gridColumnPositions = layout.fields.gridColumnPositions
+                spec.gridRowPositions = layout.fields.gridRowPositions
+            end
+            if spec.children ~= nil then
+                for _, child in ipairs(spec.children) do
+                    recurse(child)
+                end
+            end
+        end
+        recurse(layout)
+        panel = abyss.createNode()
+        return panel, function()
+            -- Let's have Quest15 be selected for now
+            local x, y = panel.data.children.Tab2.data.children.Quest15:getPosition()
+            move_by(panel.data.children.TemplateSocket, {x = x, y = y})
+        end
+    end,
+
+    TabBarWidget = function(layout, hd, palette)
+        -- TODO make only the selected tab active
+        local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
+        local bar = abyss.createNode()
+        local x = 0
+        bar.data.image = image
+        bar.data.tabs = {}
+        local activeTab = 3 -- why not; TODO
+        for i = 1, layout.fields.tabCount do
+            -- TODO some of these aren't active yet
+            local tab = abyss.createSprite(image)
+            table.insert(bar.data.tabs, tab)
+            bar:appendChild(tab)
+            if i == activeTab then
+                tab.currentFrameIndex = layout.fields.activeFrames[i]
+            else
+                tab.currentFrameIndex = layout.fields.inactiveFrames[i]
+            end
+            tab:setPosition(x, 0)
+            x = x + layout.fields.tabSize.x + layout.fields.tabPadding.x
+        end
+        return bar
     end,
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
