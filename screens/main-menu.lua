@@ -153,6 +153,9 @@ function MainMenu:initialize()
     --local testLayout = LayoutLoader:load('QuestLogPanelOriginal.json', ResourceDefs.Palette.Sky)
     --local testLayout = LayoutLoader:load('QuestLogPanelExpansion.json', ResourceDefs.Palette.Sky)
     --local testLayout = LayoutLoader:load('HirelingInventoryPanel.json', ResourceDefs.Palette.Sky)
+    --local testLayout = LayoutLoader:load('WaypointsPanelOriginal.json', ResourceDefs.Palette.Sky)
+    --local testLayout = LayoutLoader:load('WaypointsPanelExpansion.json', ResourceDefs.Palette.Sky)
+    --local testLayout = LayoutLoader:load('VendorPanelLayout.json', ResourceDefs.Palette.Sky)
     --self.testLayout = testLayout
     --if testLayout then
     --    self.rootNode:appendChild(testLayout)
