@@ -2,9 +2,12 @@ local RESOLUTION_X = 800
 local RESOLUTION_Y = 600
 local LOWEND_HD = true
 
+local _supported
+local _profileSD
+local _profileHD
+
 local LayoutLoader = {
 }
-LayoutLoader.__index = LayoutLoader
 
 function LayoutLoader:new()
     local this = {}
@@ -530,24 +533,28 @@ function TYPES.WaypointsPanel(layout, hd, palette)
     end
 end
 
+function LayoutLoader:isSupported() return _supported end
+function LayoutLoader:getProfileSD() return _profileSD end
+function LayoutLoader:getProfileHD() return _profileHD end
+
 function LayoutLoader:load(name, palette)
-    if not self.supported then
+    if not _supported then
         return nil
     end
     local layout = readLayout(name)
     local hd = name:lower():match('hd.json$')
-    resolveReferences(layout, cond(hd, self.profileHD, self.profileSD))
+    resolveReferences(layout, cond(hd, _profileHD, _profileSD))
     return translate(layout, hd, palette)
 end
 
 function LayoutLoader:initialize()
     if not abyss.fileExists('/data/global/ui/layouts/_profilehd.json') then
-        self.supported = false
+        _supported = false
         return
     end
-    self.supported = true
-    self.profileSD = readResolvedProfile('sd')
-    self.profileHD = readResolvedProfile('hd')
+    _supported = true
+    _profileSD = readResolvedProfile('sd')
+    _profileHD = readResolvedProfile('hd')
     --TODO 'asian', 'lv' profiles
     --TODO read globaldata and globaldatahd
 end

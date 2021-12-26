@@ -1,6 +1,5 @@
 local CharacterSelection = {
 }
-CharacterSelection.__index = CharacterSelection
 
 function CharacterSelection:new()
     local this = {}

@@ -1,4 +1,4 @@
-local defs = {
+return {
     None = 0,
     Act1 = {
         Town = 1,
@@ -46,5 +46,3 @@ local defs = {
         Lava = 35
     }
 }
-
-return defs
