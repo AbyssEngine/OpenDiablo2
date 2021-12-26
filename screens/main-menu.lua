@@ -1,6 +1,5 @@
 local MainMenu = {
 }
-MainMenu.__index = MainMenu
 
 function MainMenu:new()
     local this = {}

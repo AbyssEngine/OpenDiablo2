@@ -1,41 +1,26 @@
---- @class Language
---- Provides mechinisms for language-specific operations.
-Language = {
-        _id = 0x00,
-        _name = "",
-        _code = "",
-        _hdcode = "",
-        _languageDefs = require('common/language-defs'),
-        _d2rstrings = {},
-}
-Language.__index = Language
-
 --- Creates a new Language object.
---- @return Language # A new Language object.
-function Language:new()
-    local this = {}
-    self.__index = self
-    setmetatable(this, self)
-    return this
-end
+--- @class Language
+local Language = {}
+local _id, _code, _hdcode, _name, _languageDefs, _strings
+_languageDefs = require('common/enum/language')
 
 --- Sets the language based on the name.
 --- @param languageName string # The language name
 function Language:setLanguage(languageName)
-    self._id = 0x00
-    self._code = self._languageDefs.LanguageCodes[self._id]
-    self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
-    self._name = self._languageDefs.LanguageNames[self._id]
+    _id = 0x00
+    _code = _languageDefs.LanguageCodes[_id]
+    _hdcode = _languageDefs.LanguageHdCodes[_id]
+    _name = _languageDefs.LanguageNames[_id]
 
-    for langName, langId in pairs(self._languageDefs.Languages) do
+    for langName, langId in pairs(_languageDefs.Languages) do
         if string.lower(langName) == string.lower(languageName) then
-            self._id = langId
-            self._code = self._languageDefs.LanguageCodes[self._id]
-            self._hdcode = self._languageDefs.LanguageHdCodes[self._id]
-            self._name = self._languageDefs.LanguageNames[self._id]
-            self._strings = {}
-            self:loadTblStrings()
-            self:loadD2RStrings()
+            _id = langId
+            _code = _languageDefs.LanguageCodes[_id]
+            _hdcode = _languageDefs.LanguageHdCodes[_id]
+            _name = _languageDefs.LanguageNames[_id]
+            _strings = {}
+            Language:loadTblStrings()
+            Language:loadD2RStrings()
             return
         end
     end
@@ -45,10 +30,10 @@ end
 
 --- Auto detect the langauge based on files in the path
 function Language:autoDetect()
-    self._id = 0x00
-    for langName, langId in pairs(self._languageDefs.Languages) do
-        if abyss.fileExists("/data/local/ui/" .. self._languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
-            self:setLanguage(self._languageDefs.LanguageNames[langId])
+    _id = 0x00
+    for langName, langId in pairs(_languageDefs.Languages) do
+        if abyss.fileExists("/data/local/ui/" .. _languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
+            Language:setLanguage(_languageDefs.LanguageNames[langId])
             return
         end
     end
@@ -61,43 +46,43 @@ function Language:loadD2RStrings()
     end
     local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
     for _, data in ipairs(json) do
-        self._strings[data.Key] = data[self._hdcode]
+        _strings[data.Key] = data[_hdcode]
     end
 end
 
 function Language:loadTblFile(path)
-    for key, value in pairs(abyss.loadTbl(self:i18nPath(path))) do
-        self._strings[key] = value
+    for key, value in pairs(abyss.loadTbl(Language:i18nPath(path))) do
+        _strings[key] = value
     end
 end
 
 function Language:loadTblStrings()
-    self:loadTblFile(ResourceDefs.StringTable)
-    self:loadTblFile(ResourceDefs.ExpansionStringTable)
-    self:loadTblFile(ResourceDefs.PatchStringTable)
+    Language:loadTblFile(ResourceDefs.StringTable)
+    Language:loadTblFile(ResourceDefs.ExpansionStringTable)
+    Language:loadTblFile(ResourceDefs.PatchStringTable)
 end
 
 function Language:id()
-    return self._id
+    return _id
 end
 
 function Language:name()
-    return self._name
+    return _name
 end
 
 function Language:code()
-    return self._code
+    return _code
 end
 
 function Language:string(code)
-    return self._strings[code]
+    return _strings[code]
 end
 
 function Language:hdaudioPath(originalPath)
-    if self._id == 0x00 then
+    if _id == 0x00 then
         return originalPath
     else
-        return "/locales/audio/" .. self._hdcode .. originalPath
+        return "/locales/audio/" .. _hdcode .. originalPath
     end
 end
 
@@ -105,8 +90,8 @@ end
 --- @param originalPath string # The path to convert.
 --- @return string # The converted path.
 function Language:i18nPath(originalPath)
-    local path =  originalPath:gsub("{LANG_FONT}", self._languageDefs.LanguageFontNames[self._id])
-    path = path:gsub("{LANG}", self._languageDefs.LanguageCodes[self._id])
+    local path =  originalPath:gsub("{LANG_FONT}", _languageDefs.LanguageFontNames[_id])
+    path = path:gsub("{LANG}", _languageDefs.LanguageCodes[_id])
     return path
 end
 

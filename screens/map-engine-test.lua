@@ -1,7 +1,6 @@
 local MapEngineTest = {
     seed = math.random(1, 9223372036854775807)
 }
-MapEngineTest.__index = MapEngineTest
 
 function MapEngineTest:new()
     local this = {}

@@ -1,6 +1,5 @@
 local Credits = {
 }
-Credits.__index = Credits
 
 function Credits:new()
     local this = {}
