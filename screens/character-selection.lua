@@ -28,8 +28,6 @@ function CharacterSelection:initialize()
 	local okBtnX, okBtnY                   = 625, 537
 
     self.rootNode = abyss.getRootNode()
-    self.rootNode:removeAllChildren()
-    abyss.resetMouseState()
 
     self.deleteCharacterDialog = self:createDeleteCharacterWindow(self)
 
@@ -42,6 +40,7 @@ function CharacterSelection:initialize()
 
     -- new character button
     self.btnNewCharacter = CreateButton(ButtonTypes.Tall, newCharBtnX, newCharBtnY, "Create New\nCharacter", function()
+        SetScreen(Screen.CHARACTER_CREATION)
         -- Todo
     end)
 
@@ -71,7 +70,7 @@ function CharacterSelection:initialize()
     -- Main Background
     self.mainBg = CreateUniqueSpriteFromFile(ResourceDefs.CharacterSelectionBackground, ResourceDefs.Palette.Sky)
     self.mainBg:setCellSize(4, 3)
-    
+
     self.rootNode:appendChild(self.mainBg)
     self.mainBg:appendChild(self.btnExit)
     self.mainBg:appendChild(self.btnNewCharacter)

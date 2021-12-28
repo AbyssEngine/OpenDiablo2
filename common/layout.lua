@@ -2,12 +2,12 @@ local RESOLUTION_X = 800
 local RESOLUTION_Y = 600
 local LOWEND_HD = true
 
-local _supported
 local _profileSD
 local _profileHD
 
 local LayoutLoader = {
 }
+LayoutLoader.__index = LayoutLoader
 
 function LayoutLoader:new()
     local this = {}
@@ -221,7 +221,7 @@ local TYPES = {
             maxh = math.max(maxh, h)
         end
         if layout.fields.blendMode == "black" then
---            sprite.blendMode = "additive"
+            sprite.blendMode = "additive"
         end
         return sprite, function()
             move_by(sprite, {y=maxh})
@@ -235,6 +235,8 @@ local TYPES = {
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
         node:setFrameIndex("disabled", layout.fields.disabledFrame)
+        local w, h = image:getFrameSize(0, 1)
+        node:setFixedSize(w, h)
         return node
     end,
 
@@ -244,14 +246,14 @@ local TYPES = {
         node.data.image = image
         node:setSegments(1, 1)
         node:setFrameIndex("pressed", 1)
+        local w, h = image:getFrameSize(0, 1)
+        node:setFixedSize(w, h)
         return node
     end,
 
     TextBoxWidget = function(layout)
         local label = abyss.createLabel(SystemFonts.FntFormal12)
-        label.caption = or_else(layout.fields.text, 'text'):gsub('@(%w+)', function(name)
-            return Language:string(name)
-        end)
+        label.caption = Language:translate(or_else(layout.fields.text, 'text'))
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "center")
@@ -260,7 +262,11 @@ local TYPES = {
             local color = layout.fields.style.fontColor
             label:setColorMod(color.r, color.g, color.b)
         end
-        return label
+        return label, function()
+            if align.h == "center" then
+                move_by(label, {x=math.floor(layout.fields.rect.width/2)})
+            end
+        end
     end,
 
     SkillSelectButtonWidget = function(layout, hd, palette)
@@ -271,22 +277,36 @@ local TYPES = {
         node.data.image = image
         local button = abyss.createButton(image)
         button:setSegments(1, 1)
+        local w, h = image:getFrameSize(0, 1)
+        button:setFixedSize(w, h)
         node.data.button = button
         node:appendChild(button)
         return node
     end,
 
     ButtonWidget = function(layout, hd, palette)
-        if layout.fields.filename == 'PANEL\\buysellbtn' then
+        if layout.fields.filename == 'PANEL\\buysellbtn' or layout.fields.filename == 'FrontEnd\\XLMediumButtonBlank' then
             -- TODO this file throws an exception in dc6 parsing now
             return abyss.createNode()
         end
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local button = abyss.createButton(image)
         button.data.image = image
-        button:setFrameIndex("normal", or_else(layout.fields.normalFrame, 0))
+        local normalFrame = or_else(layout.fields.normalFrame, 0)
+        button:setFrameIndex("normal", normalFrame)
         button:setFrameIndex("pressed", or_else(layout.fields.pressedFrame, 1))
         button:setSegments(1, 1)
+        local w, h = image:getFrameSize(normalFrame, 1)
+        button:setFixedSize(w, h)
+        if layout.fields.textString ~= nil then
+            local w, h = image:getFrameSize(normalFrame, 1)
+            local label = abyss.createLabel(SystemFonts.FntFormal12)
+            label:setPosition(math.floor(w/2), math.floor(h/2))
+            label.caption = Language:translate(layout.fields.textString)
+            label:setAlignment("middle", "middle")
+            button:appendChild(label)
+            button.data.label = label
+        end
         return button
     end,
 
@@ -321,11 +341,215 @@ local TYPES = {
     end,
 
     CharacterCreateWidget = function(layout, hd, palette)
-        -- TODO different sprites for select/hover/etc
-        local sprite = CreateUniqueSpriteFromFile(imageFilename(layout.fields.stateAnimations.base.basePath, hd), palette)
-        sprite.playMode = "forwards"
-        sprite.bottomOrigin = true
-        return sprite
+        local character = abyss.createNode()
+        local states = {'base', 'onHover', 'onSelect', 'onUnselect', 'selected'}
+        for _, name in ipairs(states) do
+            local animDesc = layout.fields.stateAnimations[name]
+            local fullImage = abyss.createNode()
+            local base = CreateUniqueSpriteFromFile(imageFilename(animDesc.basePath, hd), palette)
+            fullImage:appendChild(base)
+            fullImage.data.base = base
+            base.playMode = "forwards"
+            base.bottomOrigin = true
+            if name == 'onSelect' or name == 'onUnselect' then
+                base.loopAnimation = false
+            end
+            if animDesc.overlayPath ~= nil then
+                local overlay = CreateUniqueSpriteFromFile(imageFilename(animDesc.overlayPath, hd), palette)
+                fullImage:appendChild(overlay)
+                fullImage.data.overlay = overlay
+                overlay.playMode = "forwards"
+                overlay.bottomOrigin = true
+                if animDesc.overlayBlendMode == "black" then
+                    overlay.blendMode = "additive"
+                end
+                if name == 'onSelect' or name == 'onUnselect' then
+                    overlay.loopAnimation = false
+                end
+            end
+            -- TODO: use speedMultiplier field
+            character.data[name] = fullImage
+            character:appendChild(fullImage)
+            fullImage.active = false
+            character.data.state = 'base'
+        end
+        local function setState(state)
+            character.data.state = state
+            for _, name in ipairs(states) do
+                if name == state then
+                    character.data[name].active = true
+                    character.data[name].data.base.currentFrameIndex = 0
+                    if character.data[name].data.overlay ~= nil then
+                        character.data[name].data.overlay.currentFrameIndex = 0
+                    end
+                else
+                    character.data[name].active = false
+                end
+            end
+        end
+        local finishAnimationCb = function() end
+        character.data.onSelect.data.base:onAnimationFinished(function()
+            setState('selected')
+            finishAnimationCb()
+            finishAnimationCb = function() end
+        end)
+        character.data.onUnselect.data.base:onAnimationFinished(function()
+            setState('base')
+            finishAnimationCb()
+            finishAnimationCb = function() end
+        end)
+        character.data.base.active = true
+        character.data.gotoSelect = function(cb)
+            if character.data.state == 'base' then
+                finishAnimationCb = cb
+                setState('onSelect')
+            else
+                cb()
+            end
+        end
+        character.data.gotoUnselect = function(cb)
+            if character.data.state == 'base' then
+                cb()
+            else
+                finishAnimationCb = cb
+                setState('onUnselect')
+            end
+        end
+        return character
+    end,
+
+    CharacterCreateContainerWidget = function(layout, hd, palette)
+        local input = abyss.createInputListener()
+        input.data.onUpdateSelected = function() end
+        return input, function()
+            local classes = {}
+            for name, child in pairs(input.data.children) do
+                table.insert(classes, name)
+            end
+            table.sort(classes, function(a, b)
+                local ax = input.data.children[a].data.layout.fields.rect.x
+                local bx = input.data.children[b].data.layout.fields.rect.x
+                return ax < bx
+            end)
+            local selectedClass
+            local overClass
+            input:onMouseMove(function(x, y)
+                -- FIXME inputlistener should do the X Y offset
+                x = x - RESOLUTION_X / 2
+                -- every stated number is somewhere in middle of character
+                x = x + RESOLUTION_X / #classes / 2
+                overClass = nil
+                if y > RESOLUTION_Y / 3 and y < RESOLUTION_Y * 2 / 3 then
+                    for i = #classes, 1, -1 do
+                        -- TODO this logic makes all the right of the druid to be druid
+                        if x > input.data.children[classes[i]].data.layout.fields.rect.x then
+                            overClass = classes[i]
+                            break
+                        end
+                    end
+                end
+                for i = 1, #classes do
+                    local overThis = overClass == classes[i]
+                    if input.data.children[classes[i]].data.state == 'base' then
+                        input.data.children[classes[i]].data.base.active = not overThis
+                        input.data.children[classes[i]].data.onHover.active = overThis
+                    end
+                end
+            end)
+            local inputBlocked = 0
+            input:onMouseButton(function(button, isPressed)
+                if not isPressed then return end
+                -- only left button
+                if button ~= 1 then return end
+                if overClass == nil then return end
+                if inputBlocked > 0 then return end
+                for i = 1, #classes do
+                    if overClass == classes[i] then
+                        if selectedClass == overClass then
+                            selectedClass = nil
+                            input.data.onUpdateSelected(selectedClass)
+                            inputBlocked = inputBlocked + 1
+                            input.data.children[classes[i]].data.gotoUnselect(function()
+                                inputBlocked = inputBlocked - 1
+                            end)
+                        else
+                            selectedClass = overClass
+                            input.data.onUpdateSelected(selectedClass)
+                            inputBlocked = inputBlocked + 1
+                            input.data.children[classes[i]].data.gotoSelect(function()
+                                inputBlocked = inputBlocked - 1
+                            end)
+                        end
+                    else
+                        inputBlocked = inputBlocked + 1
+                        input.data.children[classes[i]].data.gotoUnselect(function()
+                            inputBlocked = inputBlocked - 1
+                        end)
+                    end
+                end
+            end)
+        end
+    end,
+
+    CharacterCreatePanel = function(layout, hd, palette)
+        local node = abyss.createNode()
+        return node, function()
+            -- TODO read translations from d2r json with fallback to tbl, for moddability compatible with original d2r
+            --local d2rDescriptions = {
+                --Amazon = '@strAmazonDesc',
+                --Necromancer = '@strNecroDesc',
+                --Barbarian = '@strBarbDesc',
+                --Sorceress = '@strSorcDesc',
+                --Paladin = '@strPalDesc',
+                --Druid = '@strDruDesc',
+                --Assassin = '@strAssDesc',
+            --}
+            local classicDescriptions = {
+                -- non-exp tbl codes match codes in d2r json
+                Amazon = '@#5128',
+                Necromancer = '@#5129',
+                Barbarian = '@#5130',
+                Sorceress = '@#5131',
+                Paladin = '@#5132',
+                Druid = '@#2518', -- 22518 in d2r json
+                Assassin = '@#2519', -- 22519 in d2r json
+            }
+            local selectedClass
+            local function onUpdate(class)
+                selectedClass = class
+                if class == nil then
+                    node.data.children.ClassTitle.caption = ''
+                    node.data.children.ClassDescription.caption = ''
+                else
+                    node.data.children.ClassTitle.caption = class
+                    node.data.children.ClassDescription.caption = Language:translate(classicDescriptions[class])
+                    local names = layout.fields[class:lower() .. 'Names']
+                    node.data.children.InputText.caption = names[math.random(#names)]
+                end
+                local showOk = selectedClass ~= nil
+                for _, name in ipairs({'ToGame', 'HardcoreLabel', 'HardcoreCheckbox', 'ExpansionLabel', 'ExpansionCheckbox', 'LadderLabel', 'LadderToggle', 'NameLabel', 'InputBackground', 'InputText'}) do
+                    if node.data.children[name] ~= nil then
+                        node.data.children[name].active = showOk
+                    end
+                end
+            end
+            onUpdate(nil)
+            -- TODO send message the other way around, without the panel reaching into the child
+            node.data.children.CharacterContainer.data.onUpdateSelected = onUpdate
+            node.data.children.ToMainMenu:onActivate(function()
+                SetScreen(Screen.CHARACTER_SELECTION)
+            end)
+        end
+    end,
+
+    InputTextBoxWidget = function(layout, hd, palette)
+        -- TODO make it editable, use various fields from layout
+        local label = abyss.createLabel(SystemFonts.FntFormal12)
+        local align = or_else(layout.fields.fontStyle.alignment, {})
+        local hAlign = or_else(align.h, "left")
+        local vAlign = or_else(align.v, "center")
+        label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
+        return label
     end,
 
     ToggleButtonWidget = function(layout, hd, palette)
@@ -341,6 +565,8 @@ local TYPES = {
             button.checked = not button.checked
         end)
         button:setSegments(1, 1)
+        local w, h = image:getFrameSize(0, 1)
+        button:setFixedSize(w, h)
         return button
     end,
 
@@ -451,6 +677,7 @@ local function translate(layout, hd, palette, parent)
     if layout.children ~= nil then
         node.data.children = {}
         node.data.anonymous_children = {}
+        local children = {}
         for _, child in ipairs(layout.children) do
             local childNode = translate(child, hd, palette, node)
             if child.name ~= nil then
@@ -458,7 +685,23 @@ local function translate(layout, hd, palette, parent)
             else
                 table.insert(node.data.anonymous_children, childNode)
             end
+            table.insert(children, childNode)
             node:appendChild(childNode)
+        end
+        -- add references to grandchildren
+        -- Conflicts are resolved in this way:
+        -- 1. name of direct child overrides everything
+        -- 2. name of first grandchild found with this name (perhaps it should be last instead?)
+        -- Grandgrandchild of first child overrides grandchild of second child
+        -- I don't know whether this is the right order
+        for _, child in ipairs(children) do
+            if child.data.children ~= nil then
+                for name, grandchild in pairs(child.data.children) do
+                    if node.data.children[name] == nil then
+                        node.data.children[name] = grandchild
+                    end
+                end
+            end
         end
     end
     if postprocess ~= nil then
@@ -533,14 +776,10 @@ function TYPES.WaypointsPanel(layout, hd, palette)
     end
 end
 
-function LayoutLoader:isSupported() return _supported end
 function LayoutLoader:getProfileSD() return _profileSD end
 function LayoutLoader:getProfileHD() return _profileHD end
 
 function LayoutLoader:load(name, palette)
-    if not _supported then
-        return nil
-    end
     local layout = readLayout(name)
     local hd = name:lower():match('hd.json$')
     resolveReferences(layout, cond(hd, _profileHD, _profileSD))
@@ -548,11 +787,6 @@ function LayoutLoader:load(name, palette)
 end
 
 function LayoutLoader:initialize()
-    if not abyss.fileExists('/data/global/ui/layouts/_profilehd.json') then
-        _supported = false
-        return
-    end
-    _supported = true
     _profileSD = readResolvedProfile('sd')
     _profileHD = readResolvedProfile('hd')
     --TODO 'asian', 'lv' profiles

@@ -128,3 +128,26 @@ function dump(o)
       return tostring(o)
    end
 end
+
+function dumplayout()
+    local function output(node, offset)
+        local x, y = node:getPosition()
+        local line = node:nodeType() .. " X=" .. dump(x) .. " Y="..dump(y) .. " Active=" .. dump(node.active)
+        if node.data.layout ~= nil then
+            line = line .. " Layout type=" .. node.data.layout.type .. " name=" .. or_else(node.data.layout.name, "(nil)")
+        end
+        local label = node:castToLabel()
+        if label ~= nil then
+            line = line .. " text: " .. label.caption
+        end
+        for i = 1, offset do
+            line = "    " .. line
+        end
+        abyss.log("info", line)
+        local children = node:getChildren()
+        for _, child in ipairs(children) do
+            output(child, offset+1)
+        end
+    end
+    output(abyss.getRootNode(), 0)
+end
