@@ -4,6 +4,29 @@ local Language = {}
 local _id, _code, _hdcode, _name, _languageDefs, _strings
 _languageDefs = require('common/enum/language')
 
+local function loadD2RStrings()
+    --TODO load other json files from this directory
+    if not abyss.fileExists('/data/local/lng/strings/ui.json') then
+        return
+    end
+    local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
+    for _, data in ipairs(json) do
+        _strings[data.Key] = data[_hdcode]
+    end
+end
+
+local function loadTblFile(path)
+    for key, value in pairs(abyss.loadTbl(Language:i18nPath(path))) do
+        _strings[key] = value
+    end
+end
+
+local function loadTblStrings()
+    loadTblFile(ResourceDefs.StringTable)
+    loadTblFile(ResourceDefs.ExpansionStringTable)
+    loadTblFile(ResourceDefs.PatchStringTable)
+end
+
 --- Sets the language based on the name.
 --- @param languageName string # The language name
 function Language:setLanguage(languageName)
@@ -11,6 +34,7 @@ function Language:setLanguage(languageName)
     _code = _languageDefs.LanguageCodes[_id]
     _hdcode = _languageDefs.LanguageHdCodes[_id]
     _name = _languageDefs.LanguageNames[_id]
+    _strings = {}
 
     for langName, langId in pairs(_languageDefs.Languages) do
         if string.lower(langName) == string.lower(languageName) then
@@ -18,9 +42,8 @@ function Language:setLanguage(languageName)
             _code = _languageDefs.LanguageCodes[_id]
             _hdcode = _languageDefs.LanguageHdCodes[_id]
             _name = _languageDefs.LanguageNames[_id]
-            _strings = {}
-            Language:loadTblStrings()
-            Language:loadD2RStrings()
+            loadTblStrings()
+            loadD2RStrings()
             return
         end
     end
@@ -39,29 +62,6 @@ function Language:autoDetect()
     end
 end
 
-function Language:loadD2RStrings()
-    --TODO load other json files from this directory
-    if not abyss.fileExists('/data/local/lng/strings/ui.json') then
-        return
-    end
-    local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
-    for _, data in ipairs(json) do
-        _strings[data.Key] = data[_hdcode]
-    end
-end
-
-function Language:loadTblFile(path)
-    for key, value in pairs(abyss.loadTbl(Language:i18nPath(path))) do
-        _strings[key] = value
-    end
-end
-
-function Language:loadTblStrings()
-    Language:loadTblFile(ResourceDefs.StringTable)
-    Language:loadTblFile(ResourceDefs.ExpansionStringTable)
-    Language:loadTblFile(ResourceDefs.PatchStringTable)
-end
-
 function Language:id()
     return _id
 end
@@ -74,8 +74,13 @@ function Language:code()
     return _code
 end
 
-function Language:string(code)
-    return _strings[code]
+-- Replaces takes "@foo @bar" and replaces @... with their translation
+function Language:translate(str)
+    return str:gsub('@(%w+)', function(code)
+        return _strings[code]
+    end):gsub('@(#%d+)', function(code)
+        return _strings[code]
+    end)
 end
 
 function Language:hdaudioPath(originalPath)

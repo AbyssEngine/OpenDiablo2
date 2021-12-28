@@ -31,6 +31,8 @@ for i in pairs(cascs) do
     end)
 end
 
+abyss.addLoaderProvider("filesystem", "./fallback-data")
+
 local mpqs = Split(abyss.getConfig("OpenDiablo2", "MPQs"), ",")
 for i in pairs(mpqs) do
     local mpqPath = MPQRoot .. "/" .. mpqs[i]
