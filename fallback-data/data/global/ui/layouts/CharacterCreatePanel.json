@@ -1,0 +1,165 @@
+{
+    "type": "CharacterCreatePanel", "name": "CharacterCreatePanel",
+    "fields": {
+        "anchor": { "x": 0.5 },
+        "amazonNames": ["Amka"],
+        "assassinNames": ["Aska"],
+        "barbarianNames": ["Varvar"],
+        "druidNames": ["Druid"],
+        "necromancerNames": ["Necr"],
+        "paladinNames": ["Palych"],
+        "sorceressNames": ["Sorca"],
+    },
+    "children": [{
+        "type": "GridImageWidget", "name": "background",
+        "fields": {
+            "rect": { "x": -400 },
+            "filename": "FrontEnd/charactercreationscreenEXP",
+            "frames": 12,
+            "rows": 3,
+        }
+    }, {
+        "type": "CharacterCreateContainerWidget", "name": "CharacterContainer",
+        "children": [{
+            "type": "CharacterCreateWidget", "name": "Amazon",
+            "fields": {
+                "rect": { "x": -300, "y": 337, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/amazon/amnu1", "speedMultiplier": 3 },
+                    "onHover": { "basePath": "FrontEnd/amazon/amnu2", "speedMultiplier": 3 },
+                    "onSelect": { "basePath": "FrontEnd/amazon/amfw" },
+                    "selected": { "basePath": "FrontEnd/amazon/amnu3", "speedMultiplier": 2 },
+                    "onUnselect": { "basePath": "FrontEnd/amazon/ambw" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Barbarian",
+            "fields": {
+                "rect": { "x": 0, "y": 330, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/barbarian/banu1", "speedMultiplier": 2 },
+                    "onHover": { "basePath": "FrontEnd/barbarian/banu2", "speedMultiplier": 2 },
+                    "onSelect": { "basePath": "FrontEnd/barbarian/bafw", "overlayPath": "FrontEnd/barbarian/bafws" },
+                    "selected": { "basePath": "FrontEnd/barbarian/banu3", "speedMultiplier": 1 },
+                    "onUnselect": { "basePath": "FrontEnd/barbarian/babw" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Necromancer",
+            "fields": {
+                "rect": { "x": -99, "y": 333, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/necromancer/nenu1", "speedMultiplier": 3 },
+                    "onHover": { "basePath": "FrontEnd/necromancer/nenu2", "speedMultiplier": 3 },
+                    "onSelect": { "basePath": "FrontEnd/necromancer/nefw", "overlayPath": "FrontEnd/necromancer/nefws", "overlayBlendMode": "black" },
+                    "selected": { "basePath": "FrontEnd/necromancer/nenu3", "overlayPath": "FrontEnd/necromancer/nenu3s", "overlayBlendMode": "black", "speedMultiplier": 2 },
+                    "onUnselect": { "basePath": "FrontEnd/necromancer/nebw", "overlayPath": "FrontEnd/necromancer/nebws", "overlayBlendMode": "black" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Assassin",
+            "fields": {
+                "rect": { "x": -168, "y": 364, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/assassin/asnu1", "speedMultiplier": 3 },
+                    "onHover": { "basePath": "FrontEnd/assassin/asnu2", "speedMultiplier": 3 },
+                    "onSelect": { "basePath": "FrontEnd/assassin/asfw" },
+                    "selected": { "basePath": "FrontEnd/assassin/asnu3", "speedMultiplier": 2 },
+                    "onUnselect": { "basePath": "FrontEnd/assassin/asbw" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Paladin",
+            "fields": {
+                "rect": { "x": 121, "y": 339, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/paladin/panu1", "speedMultiplier": 2 },
+                    "onHover": { "basePath": "FrontEnd/paladin/panu2", "speedMultiplier": 2 },
+                    "onSelect": { "basePath": "FrontEnd/paladin/pafw",  "overlayPath": "FrontEnd/paladin/pafws" },
+                    "selected": { "basePath": "FrontEnd/paladin/panu3", "speedMultiplier": 2 },
+                    "onUnselect": { "basePath": "FrontEnd/paladin/pabw" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Sorceress",
+            "fields": {
+                "rect": { "x": 226, "y": 353, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/sorceress/sonu1", "speedMultiplier": 2 },
+                    "onHover": { "basePath": "FrontEnd/sorceress/sonu2", "speedMultiplier": 2 },
+                    "onSelect": { "basePath": "FrontEnd/sorceress/sofw",  "overlayPath": "FrontEnd/sorceress/sofws", "overlayBlendMode": "black" },
+                    "selected": { "basePath": "FrontEnd/sorceress/sonu3", "overlayPath": "FrontEnd/sorceress/sonu3s", "overlayBlendMode": "black" },
+                    "onUnselect": { "basePath": "FrontEnd/sorceress/sobw",  "overlayPath": "FrontEnd/sorceress/sobws", "overlayBlendMode": "black" },
+                },
+            }
+        }, {
+            "type": "CharacterCreateWidget", "name": "Druid",
+            "fields": {
+                "rect": { "x": 320, "y": 370, },
+                "stateAnimations": {
+                    "base": { "basePath": "FrontEnd/druid/dznu1", "speedMultiplier": 2 },
+                    "onHover": { "basePath": "FrontEnd/druid/dznu2", "speedMultiplier": 2 },
+                    "onSelect": { "basePath": "FrontEnd/druid/dzfw" },
+                    "selected": { "basePath": "FrontEnd/druid/dznu3", "speedMultiplier": 2 },
+                    "onUnselect": { "basePath": "FrontEnd/druid/dzbw" },
+                },
+            }
+        }]
+    }, {
+        "type": "TextBoxWidget", "name": "ClassTitle",
+        "fields": {
+            "rect": { "x": -400, "y": 110, "width": 800, "height": 50 },
+            "style": {
+                "alignment": { "h": "center" },
+            },
+        }
+    }, {
+        "type": "TextBoxWidget", "name": "ClassDescription",
+        "fields": {
+            "rect": { "x": -150, "y": 146, "width": 300, "height": 50 },
+            "style": {
+                "alignment": { "h": "center" },
+            },
+        }
+    }, {
+        "type": "ImageWidget", "name": "InputBackground",
+        "fields": {
+            "rect": { "x": -100, "y": 494 },
+            "filename": "FrontEnd/textbox"
+        },
+    }, {
+        "type": "InputTextBoxWidget", "name": "InputText",
+        "fields":  {
+            "rect": { "x": -93, "y": 495, "width": 165, "height": 22 },
+            "maxStringLength": 15,
+            "fontStyle": {
+                "alignment": { "v": "top" },
+            },
+        }
+    }, {
+        "type": "TextBoxWidget", "name": "NameLabel",
+        "fields": {
+            "rect": { "x": -99, "y": 475, "width": 200, "height": 50 },
+            "text": "@#5125",
+            "style": {
+                "fontColor": { "r": 199, "g": 179, "b": 119 }
+            },
+        }
+    }, {
+        "type": "ButtonWidget", "name": "ToMainMenu",
+        "fields": {
+            "rect": { "x": -365, "y": 537 },
+            "filename": "FrontEnd/MediumSelButtonBlank",
+            "textString": "@#5101",
+            "pressedFrame": 1,
+            "textColor": { "r": 255, "g": 255, "b": 255 },
+        }
+    }, {
+        "type": "AnimatedImageWidget", "name": "Campfire",
+        "fields": {
+            "rect": { "x": -23, "y": 211 },
+            "filename": "FrontEnd/fire",
+            "blendMode": "black"
+        },
+    }]
+}
