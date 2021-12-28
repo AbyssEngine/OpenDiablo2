@@ -1,8 +1,8 @@
 --- Creates a new Language object.
 --- @class Language
 local Language = {}
-local _id, _code, _hdcode, _name, _languageDefs, _strings
-_languageDefs = require('common/enum/language')
+local _languageDefs = require('common/enum/language')
+local _code, _3code, _name, _strings
 
 local function loadD2RStrings()
     --TODO load other json files from this directory
@@ -11,12 +11,17 @@ local function loadD2RStrings()
     end
     local json = ReadJsonAsTable('/data/local/lng/strings/ui.json')
     for _, data in ipairs(json) do
-        _strings[data.Key] = data[_hdcode]
+        _strings[data.Key] = data[_code]
     end
 end
 
 local function loadTblFile(path)
-    for key, value in pairs(abyss.loadTbl(Language:i18nPath(path))) do
+    local filename = Language:i18nPath(path)
+    if not abyss.fileExists(filename) then
+        abyss.log("warn", "Classic translation file not found: " .. filename)
+        return
+    end
+    for key, value in pairs(abyss.loadTbl(filename)) do
         _strings[key] = value
     end
 end
@@ -28,42 +33,35 @@ local function loadTblStrings()
 end
 
 --- Sets the language based on the name.
---- @param languageName string # The language name
-function Language:setLanguage(languageName)
-    _id = 0x00
-    _code = _languageDefs.LanguageCodes[_id]
-    _hdcode = _languageDefs.LanguageHdCodes[_id]
-    _name = _languageDefs.LanguageNames[_id]
+--- @param code string # The language code, as used in D2R, e.g. "ruRU"
+function Language:setLanguage(code)
+    _code = code
+    _3code = _languageDefs.Language3Codes[code]
+    _name = _languageDefs.LanguageNames[code]
     _strings = {}
 
-    for langName, langId in pairs(_languageDefs.Languages) do
-        if string.lower(langName) == string.lower(languageName) then
-            _id = langId
-            _code = _languageDefs.LanguageCodes[_id]
-            _hdcode = _languageDefs.LanguageHdCodes[_id]
-            _name = _languageDefs.LanguageNames[_id]
-            loadTblStrings()
-            loadD2RStrings()
-            return
-        end
+    if _name == nil then
+        abyss.log("warn", "Invalid language: " .. code .. ".")
+        return
     end
 
-    abyss.log("warn", "Invalid language: " .. languageName .. ". Attempting to auto-detect.")
+    loadTblStrings()
+    loadD2RStrings()
 end
 
 --- Auto detect the langauge based on files in the path
 function Language:autoDetect()
-    _id = 0x00
-    for langName, langId in pairs(_languageDefs.Languages) do
-        if abyss.fileExists("/data/local/ui/" .. _languageDefs.LanguageCodes[langId] .. "/2dsound.dc6") then
-            Language:setLanguage(_languageDefs.LanguageNames[langId])
+    for langCode, _ in pairs(_languageDefs.LanguageNames) do
+        if abyss.fileExists("/data/local/ui/" .. _languageDefs.Language3Codes[langCode] .. "/2dsound.dc6") then
+            Language:setLanguage(langCode)
             return
         end
     end
+    Language:setLanguage("enUS")
 end
 
-function Language:id()
-    return _id
+function Language:code3()
+    return _3code
 end
 
 function Language:name()
@@ -84,10 +82,10 @@ function Language:translate(str)
 end
 
 function Language:hdaudioPath(originalPath)
-    if _id == 0x00 then
+    if _code == "enUS" then
         return originalPath
     else
-        return "/locales/audio/" .. _hdcode .. originalPath
+        return "/locales/audio/" .. _code .. originalPath
     end
 end
 
@@ -95,8 +93,8 @@ end
 --- @param originalPath string # The path to convert.
 --- @return string # The converted path.
 function Language:i18nPath(originalPath)
-    local path =  originalPath:gsub("{LANG_FONT}", _languageDefs.LanguageFontNames[_id])
-    path = path:gsub("{LANG}", _languageDefs.LanguageCodes[_id])
+    local path =  originalPath:gsub("{LANG_FONT}", or_else(_languageDefs.LanguageFontNames[_code], 'LATIN'))
+    path = path:gsub("{LANG}", or_else(_3code, 'eng'))
     return path
 end
 

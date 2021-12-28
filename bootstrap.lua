@@ -15,8 +15,6 @@
 -- OpenDiablo2 Bootstrap Script
 ------------------------------------------------------------------------------------------------------------------------
 
-ResurrectedMode = abyss.getConfig("OpenDiablo2", "Resurrected") == "1"
-
 require 'common/globals'
 
 ------------------------------------------------------------------------------------------------------------------------
@@ -54,16 +52,15 @@ for _, name in ipairs(ResourceDefs.Palettes) do
 ------------------------------------------------------------------------------------------------------------------------
 -- Detect the language
 ------------------------------------------------------------------------------------------------------------------------
-local configLanguageName = abyss.getConfig("OpenDiablo2", "Language")
+local configLanguageCode = abyss.getConfig("OpenDiablo2", "Language")
 
-if configLanguageName ~= "auto" then
-    Language:setLanguage(configLanguageName)
+if configLanguageCode ~= "auto" then
+    Language:setLanguage(configLanguageCode)
 else
     Language:autoDetect()
 end
 
-local languageName = Language:name()
-abyss.log("info", "System language has been set to " .. languageName .. ".")
+abyss.log("info", "System language has been set to " .. or_else(Language:name(), '<invalid>') .. ".")
 
 
 ------------------------------------------------------------------------------------------------------------------------

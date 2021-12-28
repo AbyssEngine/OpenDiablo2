@@ -209,7 +209,7 @@ function MainMenu:createCinematicsWindow(main)
                 if abyss.fileExists("/data/global/video/" .. item.hd .. ".webm") then
                     abyss.playVideoAndAudio("/data/global/video/" .. item.hd .. ".webm", Language:hdaudioPath("/data/local/video/" .. item.hd .. ".flac"))
                 else
-                    abyss.playVideo("/data/local/video/" .. Language:code() .. "/" .. item.bik)
+                    abyss.playVideo("/data/local/video/" .. Language:code3() .. "/" .. item.bik)
                 end
             end
         end)
