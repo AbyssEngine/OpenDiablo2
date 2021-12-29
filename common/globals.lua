@@ -37,6 +37,9 @@ function LoadGlobals()
 end
 
 function LoadSoundEffect(handle)
+    if SoundEffects[handle] == nil then
+        return nil
+    end
     local attempts = {}
     local redirect = SoundEffects[handle].Redirect
     if redirect ~= nil and redirect ~= "" then

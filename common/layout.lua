@@ -387,6 +387,15 @@ local TYPES = {
                 end
             end
         end
+        local sfxSelect = LoadSoundEffect('cursor_' .. layout.name:lower() .. '_select')
+        local sfxUnselect = LoadSoundEffect('cursor_' .. layout.name:lower() .. '_deselect')
+        -- druid and assassin didn't have the sounds.txt records before d2r
+        if sfxSelect == nil then
+            sfxSelect = abyss.createSoundEffect("/data/global/sfx/Cursor/intro/" .. layout.name:lower() .. " select.wav")
+        end
+        if sfxUnselect == nil then
+            sfxUnselect = abyss.createSoundEffect("/data/global/sfx/Cursor/intro/" .. layout.name:lower() .. " deselect.wav")
+        end
         local finishAnimationCb = function() end
         character.data.onSelect.data.base:onAnimationFinished(function()
             setState('selected')
@@ -402,6 +411,7 @@ local TYPES = {
         character.data.gotoSelect = function(cb)
             if character.data.state == 'base' then
                 finishAnimationCb = cb
+                sfxSelect:play()
                 setState('onSelect')
             else
                 cb()
@@ -412,6 +422,7 @@ local TYPES = {
                 cb()
             else
                 finishAnimationCb = cb
+                sfxUnselect:play()
                 setState('onUnselect')
             end
         end
