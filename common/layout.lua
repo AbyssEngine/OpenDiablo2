@@ -494,29 +494,15 @@ local TYPES = {
     CharacterCreatePanel = function(layout, hd, palette)
         local node = abyss.createNode()
         return node, function()
-            local descriptions
-            if ResurrectedMode then
-                descriptions = {
-                    Amazon = '@strAmazonDesc',
-                    Necromancer = '@strNecroDesc',
-                    Barbarian = '@strBarbDesc',
-                    Sorceress = '@strSorcDesc',
-                    Paladin = '@strPalDesc',
-                    Druid = '@strDruDesc',
-                    Assassin = '@strAssDesc',
-                }
-            else
-                descriptions = {
-                    -- non-exp tbl codes match codes in d2r json
-                    Amazon = '@#5128',
-                    Necromancer = '@#5129',
-                    Barbarian = '@#5130',
-                    Sorceress = '@#5131',
-                    Paladin = '@#5132',
-                    Druid = '@#2518', -- 22518 in d2r json
-                    Assassin = '@#2519', -- 22519 in d2r json
-                }
-            end
+            local descriptions = {
+                Amazon = '@strAmazonDesc#5128',
+                Necromancer = '@strNecroDesc#5129',
+                Barbarian = '@strBarbDesc#5130',
+                Sorceress = '@strSorcDesc#5131',
+                Paladin = '@strPalDesc#5132',
+                Druid = '@strDruDesc#2518',
+                Assassin = '@strAssDesc#2519',
+            }
             local selectedClass
             local function onUpdate(class)
                 selectedClass = class

@@ -78,6 +78,11 @@ end
 -- numeric code only uses tbl files, text code tries json file first, then tbl,
 -- because the numeric code in json doesn't always match the numeric code in
 -- tbl, and some strings are only accessible in tbl via number
+--
+-- TODO consider automaically mapping the code to json too.
+-- So far, seems like numbers in the 5xxx range are the same, but numbers in
+-- 2xxx range are prepended with another 2, turning e.g. 2519 into 22519 in
+-- json
 function Language:translate(str)
     local m, _, code, num = str:find('^@(%w+)(#%d+)$')
     if m == nil then
