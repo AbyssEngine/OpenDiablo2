@@ -74,26 +74,26 @@ function MainMenu:initialize()
     self.cinematicsDialog = self:createCinematicsWindow(self)
 
     -- Menu Buttons
-    self.btnSinglePlayer = CreateButton(ButtonTypes.Wide, 264, 290, "Single Player", function()
+    self.btnSinglePlayer = CreateButton(ButtonTypes.Wide, 264, 290, "@strStartMenu1#5106", function()
         SetScreen(Screen.CHARACTER_SELECTION)
         -- TODO
     end)
 
-    self.btnLocalNetplay = CreateButton(ButtonTypes.Wide, 264, 330, "Local NetPlay", function()
+    self.btnLocalNetplay = CreateButton(ButtonTypes.Wide, 264, 330, "LOCAL NETPLAY", function()
         dumplayout()
         -- TODO
     end)
 
-    self.btnMapEngineDebug = CreateButton(ButtonTypes.Wide, 264, 400, "Map Engine Test", function()
+    self.btnMapEngineDebug = CreateButton(ButtonTypes.Wide, 264, 400, "MAP ENGINE TEST", function()
         SetScreen(Screen.MAP_ENGINE_TEST)
     end)
 
-    self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "Credits", function()
+    self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "@#5110", function()
         SetScreen(Screen.CREDITS)
     end)
 
     local this = self;
-    self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "Cinematics", function()
+    self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "@#5111", function()
         this.cinematicsDialog.show()
         this.btnSinglePlayer.active = false
         this.btnLocalNetplay.active = false
@@ -103,7 +103,7 @@ function MainMenu:initialize()
         this.btnMapEngineDebug.active = false
     end)
 
-    self.btnExitGame = CreateButton(ButtonTypes.Wide, 264, 500, "Exit to Desktop", function()
+    self.btnExitGame = CreateButton(ButtonTypes.Wide, 264, 500, "@strexitentiregame#5109", function()
         abyss.shutdown()
     end)
 
@@ -165,36 +165,36 @@ function MainMenu:createCinematicsWindow(main)
     end
 
     result.lblHeader = abyss.createLabel(SystemFonts.Fnt30)
-    result.lblHeader.caption = "Select Cinematics"
+    result.lblHeader.caption = Language:translate("@strselectcinematics#5114")
     result.lblHeader:setPosition(163, cond(showHD, 10, 20))
     result.lblHeader:setAlignment("middle", "start")
 
     local files = {{
-        name = "THE SISTER'S LAMENT",
+        name = "@act1X",
         bik = "d2intro640x292.bik",
         hd = "d2intro",
     }, {
-        name = "DESERT JOURNEY",
+        name = "@act2X",
         bik = "Act02start640x292.bik",
         hd = "act2/act02start",
     }, {
-        name = "MEPHISTO'S JUNGLE",
+        name = "@act3X",
         bik = "Act03start640x292.bik",
         hd = "act3/act03start",
     }, {
-        name = "ENTER HELL",
+        name = "@act4X",
         bik = "Act04start640x292.bik",
         hd = "act4/act04start",
     }, {
-        name = "TERROR'S END",
+        name = "@strepilogueX",
         bik = "Act04end640x292.bik",
         hd = "act4/act04end",
     }, {
-        name = "SEARCH FOR BAAL",
+        name = "@act5X",
         bik = "D2x_Intro_640x292.bik",
         hd = "d2x_intro",
     }, {
-        name = "DESTRUCTION'S END",
+        name = "@strlastcinematic",
         bik = "D2x_Out_640x292.bik",
         hd = "act5/d2x_out",
     }}
@@ -209,7 +209,7 @@ function MainMenu:createCinematicsWindow(main)
                 if abyss.fileExists("/data/global/video/" .. item.hd .. ".webm") then
                     abyss.playVideoAndAudio("/data/global/video/" .. item.hd .. ".webm", Language:hdaudioPath("/data/local/video/" .. item.hd .. ".flac"))
                 else
-                    abyss.playVideo("/data/local/video/" .. Language:code() .. "/" .. item.bik)
+                    abyss.playVideo("/data/local/video/" .. Language:code3() .. "/" .. item.bik)
                 end
             end
         end)

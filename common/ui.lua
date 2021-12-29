@@ -29,7 +29,6 @@ function InitUI()
             TextVerticalSpacing = 4,
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
-            Uppercase           = true,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Wide = {
@@ -40,7 +39,6 @@ function InitUI()
             TextOffset          = { X =   0, Y =  -3 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
-            Uppercase           = true,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 2 }
         },
         Medium = {
@@ -51,7 +49,6 @@ function InitUI()
             TextOffset          = { X =   0, Y =  -2 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
-            Uppercase           = true,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Short = {
@@ -62,7 +59,6 @@ function InitUI()
             TextOffset          = { X =   0, Y =  -5 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
-            Uppercase           = true,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Checkbox = {
@@ -73,7 +69,6 @@ function InitUI()
             TextOffset          = { X =  20, Y =  -5 },
             TextColor           = TextColor.White,
             LabelBlend          = "none",
-            Uppercase           = false,
             FrameIndexes        = { normal = 0, hover = 3, pressed = 1, checkednormal = 4, checkedhover = 6, checkedpressed = 5, disabled = 2 }
         }
     }
@@ -85,7 +80,7 @@ end
 -- @buttonType The type of button to create
 -- @param x The x position of the button
 -- @param y The y position of the button
--- @param text The text to display on the button
+-- @param text The text to display on the button, prefer translateable @text instead of English value
 function CreateButton(buttonSpec, x, y, text, onActivate)
     local label = abyss.createLabel(buttonSpec.Font)
     label:setAlignment("middle", "middle")
@@ -97,11 +92,7 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     result:appendChild(label)
     result:setSegments(buttonSpec.Segments.X, buttonSpec.Segments.Y)
     result:setFixedSize(buttonSpec.FixedSize.X, buttonSpec.FixedSize.Y)
-    if buttonSpec.Uppercase then
-        label.caption = text:upper()
-    else
-        label.caption = text
-    end
+    label.caption = Language:translate(text)
     label.blendMode = buttonSpec.LabelBlend
     result:setPosition(x, y)
     result:setPressedOffset(-2, 2)

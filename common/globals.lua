@@ -12,6 +12,8 @@ IsOnButton = false
 ShowTrademarkScreen = true
 
 function LoadGlobals()
+    ResurrectedMode = abyss.fileExists('/data/local/lng/strings/ui.json')
+
     -- Load the fonts
     SystemFonts = {
          FntFormal12 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal12), ResourceDefs.Palette.Static),
@@ -23,6 +25,7 @@ function LoadGlobals()
          Fnt30 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font30), ResourceDefs.Palette.Static),
          Fnt42 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font42), ResourceDefs.Palette.Static),
     }
+    --SystemFonts.FntFormal12 = abyss.createTtfFont('/data/hd/ui/fonts/blizzardglobaltcunicode.ttf', 16, 'none')
 
     CursorSprite = CreateUniqueSpriteFromFile(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)
     CursorSprite.blendMode = "blend"
@@ -34,6 +37,9 @@ function LoadGlobals()
 end
 
 function LoadSoundEffect(handle)
+    if SoundEffects[handle] == nil then
+        return nil
+    end
     local attempts = {}
     local redirect = SoundEffects[handle].Redirect
     if redirect ~= nil and redirect ~= "" then

@@ -150,7 +150,7 @@
         "fields": {
             "rect": { "x": -365, "y": 537 },
             "filename": "FrontEnd/MediumSelButtonBlank",
-            "textString": "@#5101",
+            "textString": "@strExit#5101",
             "pressedFrame": 1,
             "textColor": { "r": 255, "g": 255, "b": 255 },
         }
