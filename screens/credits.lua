@@ -15,7 +15,7 @@ function Credits:initialize()
     self.rootNode:removeAllChildren()
     abyss.resetMouseState()
 
-    self.btnExit = CreateButton(ButtonTypes.Medium, 33, 543, "Exit", function()
+    self.btnExit = CreateButton(ButtonTypes.Medium, 33, 543, "@strExit#5101", function()
         SetScreen(Screen.MAIN_MENU)
     end)
 

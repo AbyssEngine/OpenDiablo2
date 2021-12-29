@@ -39,31 +39,34 @@ function CharacterSelection:initialize()
     self.lblHeroTitle.caption = "Selected Hero"
 
     -- new character button
-    self.btnNewCharacter = CreateButton(ButtonTypes.Tall, newCharBtnX, newCharBtnY, "Create New\nCharacter", function()
+    -- TODO @strCreateNewCharacter#5273 when we can wrap words
+    self.btnNewCharacter = CreateButton(ButtonTypes.Tall, newCharBtnX, newCharBtnY, "CREATE NEW\nCHARACTER", function()
         SetScreen(Screen.CHARACTER_CREATION)
         -- Todo
     end)
 
     -- convert character to expanson
-    self.btnConvertCharacter = CreateButton(ButtonTypes.Tall, convertCharBtnX, convertCharBtnY, "Convert To\nExpansion", function()
+    -- TODO @strlaunchconverttoexp#2742 when we can wrap words
+    self.btnConvertCharacter = CreateButton(ButtonTypes.Tall, convertCharBtnX, convertCharBtnY, "CONVERT TO\nEXPANSION", function()
         -- Todo
     end)
     self.btnConvertCharacter.disabled=true
 
     -- delete character button
-    self.btnDeleteCharacter = CreateButton(ButtonTypes.Tall, deleteCharBtnX, deleteCharBtnY, "Delete\nCharacter", function()
+    -- TODO @strlaunchdeletecharexp#2744 when we can wrap words
+    self.btnDeleteCharacter = CreateButton(ButtonTypes.Tall, deleteCharBtnX, deleteCharBtnY, "DELETE\nCHARACTER", function()
         --self.deleteCharacterDialog.show()
         -- this is currently broken willfix laer
     end)
     self.btnDeleteCharacter.disabled=true
 
     -- ok button to enter game
-    self.btnOk = CreateButton(ButtonTypes.Medium, okBtnX, okBtnY, "Ok", function()
+    self.btnOk = CreateButton(ButtonTypes.Medium, okBtnX, okBtnY, "@strOk#5102", function()
         -- Todo
     end)
 
     -- exit button to return to main menu
-    self.btnExit = CreateButton(ButtonTypes.Medium, 33, 543, "Exit", function()
+    self.btnExit = CreateButton(ButtonTypes.Medium, 33, 543, "@strExit#5101", function()
         SetScreen(Screen.MAIN_MENU)
     end)
 

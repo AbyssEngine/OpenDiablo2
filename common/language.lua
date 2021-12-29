@@ -72,13 +72,32 @@ function Language:code()
     return _code
 end
 
--- Replaces takes "@foo @bar" and replaces @... with their translation
+-- Takes string such as "@foo","@bar#nnn" or "@#nnn" and replaces it with their translation
+-- nnn is the number; mostly it's for compatibility with MPQs, as not all keys there are strings.
+-- @text#nnn form uses text if available, and falls back to nnn
+-- numeric code only uses tbl files, text code tries json file first, then tbl,
+-- because the numeric code in json doesn't always match the numeric code in
+-- tbl, and some strings are only accessible in tbl via number
 function Language:translate(str)
-    return str:gsub('@(%w+)', function(code)
-        return _strings[code]
-    end):gsub('@(#%d+)', function(code)
-        return _strings[code]
-    end)
+    local m, _, code, num = str:find('^@(%w+)(#%d+)$')
+    if m == nil then
+        m, _, num = str:find('^@(#%d+)$')
+    end
+    if m == nil then
+        m, _, code = str:find('^@(%w+)$')
+    end
+    if m == nil then
+        return str
+    end
+    local result = _strings[code]
+    if result ~= nil then
+        return result
+    end
+    result = _strings[num]
+    if result ~= nil then
+        return result
+    end
+    return str
 end
 
 function Language:hdaudioPath(originalPath)
