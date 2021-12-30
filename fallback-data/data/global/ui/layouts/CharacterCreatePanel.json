@@ -106,9 +106,20 @@
             }
         }]
     }, {
+        "type": "TextBoxWidget",
+        "fields": {
+            "rect": { "x": -400, "y": 20, "width": 800, "height": 50 },
+            "fontType": "30pt",
+            "text": "@strSelectHeroClass#5127",
+            "style": {
+                "alignment": { "h": "center" }
+            }
+        }
+    }, {
         "type": "TextBoxWidget", "name": "ClassTitle",
         "fields": {
             "rect": { "x": -400, "y": 110, "width": 800, "height": 50 },
+            "fontType": "30pt",
             "style": {
                 "alignment": { "h": "center" },
             },
@@ -116,6 +127,7 @@
     }, {
         "type": "TextBoxWidget", "name": "ClassDescription",
         "fields": {
+            "fontType": "16pt",
             "rect": { "x": -150, "y": 146, "width": 300, "height": 50 },
             "style": {
                 "alignment": { "h": "center" },
@@ -132,6 +144,7 @@
         "fields":  {
             "rect": { "x": -93, "y": 495, "width": 165, "height": 22 },
             "maxStringLength": 15,
+            "fontType": "12ptF",
             "fontStyle": {
                 "alignment": { "v": "top" },
             },
@@ -141,6 +154,7 @@
         "fields": {
             "rect": { "x": -99, "y": 475, "width": 200, "height": 50 },
             "text": "@#5125",
+            "fontType": "16pt",
             "style": {
                 "fontColor": { "r": 199, "g": 179, "b": 119 }
             },
@@ -152,6 +166,7 @@
             "filename": "FrontEnd/MediumSelButtonBlank",
             "textString": "@strExit#5101",
             "pressedFrame": 1,
+            "fontType": "10ptE",
             "textColor": { "r": 255, "g": 255, "b": 255 },
         }
     }, {
