@@ -4,6 +4,8 @@ local LOWEND_HD = true
 
 local _profileSD
 local _profileHD
+local _globalDataSD
+local _globalDataHD
 
 local LayoutLoader = {
 }
@@ -17,7 +19,32 @@ function LayoutLoader:new()
 end
 
 local LAYOUTS_DIR = '/data/global/ui/layouts/'
---LAYOUTS_DIR = '/var/tmp/d2runpack/data' .. LAYOUTS_DIR
+
+local SD_FONTS = {
+    ["10ptE"] = SystemFonts.FntExocet10,
+    ["8ptE"]  = SystemFonts.FntExocet8,
+    ["30pt"]  = SystemFonts.Fnt30,
+    ["16pt"]  = SystemFonts.Fnt16,
+    ["12ptF"] = SystemFonts.FntFormal12,
+    ["11ptF"] = SystemFonts.FntFormal11,
+}
+
+local HD_FONT
+
+local function loadFont(fontType, hd)
+    if hd then
+        if HD_FONT == nil then
+            HD_FONT = abyss.createTtfFont('/data/hd/ui/fonts/Formal436bt.ttf', 16, 'none')
+        end
+        return HD_FONT
+        -- TODO use LanguageFontRemapper from GlobalData
+        -- /data/hd/ui/fonts/Formal436bt.ttf
+        -- /data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf
+        -- /data/hd/ui/fonts/BlizzardGlobal-v5_81.ttf
+        -- etc
+    end
+    return SD_FONTS[fontType]
+end
 
 local function imageFilename(image, hd)
     if image:sub(1, 1) == '\\' then
@@ -252,14 +279,14 @@ local TYPES = {
     end,
 
     TextBoxWidget = function(layout)
-        local label = abyss.createLabel(SystemFonts.FntFormal12)
+        local label = abyss.createLabel(loadFont(layout.fields.fontType))
         label.caption = Language:translate(or_else(layout.fields.text, 'text'))
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "center")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
-        if layout.fields.style.fontColor ~= nil then
-            local color = layout.fields.style.fontColor
+        local color = layout.fields.style.fontColor
+        if color ~= nil then
             label:setColorMod(color.r, color.g, color.b)
         end
         return label, function()
@@ -300,11 +327,18 @@ local TYPES = {
         button:setFixedSize(w, h)
         if layout.fields.textString ~= nil then
             local w, h = image:getFrameSize(normalFrame, 1)
-            local label = abyss.createLabel(SystemFonts.FntFormal12)
+            local label = abyss.createLabel(loadFont(layout.fields.fontType, hd))
             label:setPosition(math.floor(w/2), math.floor(h/2))
             label.caption = Language:translate(layout.fields.textString)
             label:setAlignment("middle", "middle")
             button:appendChild(label)
+            local color = layout.fields.textColor
+            if color ~= nil then
+                if color.a == -1 then
+                    label.blendMode = "multiply"
+                end
+                label:setColorMod(color.r, color.g, color.b)
+            end
             button.data.label = label
         end
         return button
@@ -544,7 +578,7 @@ local TYPES = {
 
     InputTextBoxWidget = function(layout, hd, palette)
         -- TODO make it editable, use various fields from layout
-        local label = abyss.createLabel(SystemFonts.FntFormal12)
+        local label = abyss.createLabel(loadFont(layout.fields.fontType, hd))
         local align = or_else(layout.fields.fontStyle.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "center")
@@ -621,6 +655,7 @@ local TYPES = {
                 tab.currentFrameIndex = layout.fields.inactiveFrames[i]
             end
             if layout.fields.textStrings ~= nil then
+                -- TODO verify font
                 local label = abyss.createLabel(SystemFonts.FntFormal12)
                 label.caption = layout.fields.textStrings[i]
                 label:setAlignment('middle', 'end')
@@ -633,6 +668,12 @@ local TYPES = {
         end
         return bar
     end,
+
+    -- Not real widgets
+    GlobalData = function() return abyss.createNode() end,
+    LanguageFontRemapper = function() return abyss.createNode() end,
+    SpriteColoringHelper = function() return abyss.createNode() end,
+    ShowItemsParameters = function() return abyss.createNode() end,
 }
 TYPES.MiniMenuToggleWidget = TYPES.ImageWidget
 
@@ -747,6 +788,7 @@ function TYPES.WaypointsPanel(layout, hd, palette)
                 template = CurrentButton
             end
             local row = translate(template, hd, palette, node)
+            -- TODO verify font
             local label = abyss.createLabel(SystemFonts.FntFormal12)
             label.caption = 'Waypoint N ' .. i
             label:setAlignment('start', 'middle')
@@ -790,7 +832,8 @@ function LayoutLoader:initialize()
     _profileSD = readResolvedProfile('sd')
     _profileHD = readResolvedProfile('hd')
     --TODO 'asian', 'lv' profiles
-    --TODO read globaldata and globaldatahd
+    _globalDataSD = self:load('GlobalData.json')
+    _globalDataHD = self:load('GlobalDataHD.json')
 end
 
 return LayoutLoader
