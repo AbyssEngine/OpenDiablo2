@@ -334,12 +334,11 @@ local TYPES = {
             button:appendChild(label)
             local color = layout.fields.textColor
             if color ~= nil then
-                if color.a == -1 then
-                    label.blendMode = "multiply"
-                end
+                label.blendMode = "multiply"
                 label:setColorMod(color.r, color.g, color.b)
             end
             button.data.label = label
+            button:setPressedOffset(-2, 2)
         end
         return button
     end,
