@@ -465,6 +465,7 @@ local TYPES = {
     CharacterCreateContainerWidget = function(layout, hd, palette)
         local input = abyss.createInputListener()
         input.data.onUpdateSelected = function() end
+        input.data.onUpdateHover = function() end
         return input, function()
             local classes = {}
             for name, child in pairs(input.data.children) do
@@ -499,6 +500,7 @@ local TYPES = {
                         input.data.children[classes[i]].data.onHover.active = overThis
                     end
                 end
+                input.data.onUpdateHover(overClass)
             end)
             local inputBlocked = 0
             input:onMouseButton(function(button, isPressed)
@@ -548,14 +550,20 @@ local TYPES = {
                 Assassin = '@strAssDesc#2519',
             }
             local selectedClass
-            local function onUpdate(class)
-                selectedClass = class
-                if class == nil then
+            local function onHover(class)
+                local detailsClass = or_else(selectedClass, class)
+                if detailsClass == nil then
                     node.data.children.ClassTitle.caption = ''
                     node.data.children.ClassDescription.caption = ''
                 else
-                    node.data.children.ClassTitle.caption = Language:translate('@' .. class)
-                    node.data.children.ClassDescription.caption = Language:translate(descriptions[class])
+                    node.data.children.ClassTitle.caption = Language:translate('@' .. detailsClass)
+                    node.data.children.ClassDescription.caption = Language:translate(descriptions[detailsClass])
+                end
+            end
+            local function onUpdate(class)
+                selectedClass = class
+                onHover(class)
+                if class ~= nil then
                     local names = layout.fields[class:lower() .. 'Names']
                     node.data.children.InputText.caption = names[math.random(#names)]
                 end
@@ -569,6 +577,7 @@ local TYPES = {
             onUpdate(nil)
             -- TODO send message the other way around, without the panel reaching into the child
             node.data.children.CharacterContainer.data.onUpdateSelected = onUpdate
+            node.data.children.CharacterContainer.data.onUpdateHover = onHover
             node.data.children.ToMainMenu:onActivate(function()
                 SetScreen(Screen.CHARACTER_SELECTION)
             end)
