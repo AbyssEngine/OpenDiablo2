@@ -3,19 +3,14 @@ function InitUI()
     local imgButtonWideBlank = abyss.loadImage(ResourceDefs.WideButtonBlank, ResourceDefs.Palette.Sky)
     local imgButtonShortBlank = abyss.loadImage(ResourceDefs.ShortButtonBlank, ResourceDefs.Palette.Sky)
     local imgButtonMediumBlank = abyss.loadImage(ResourceDefs.MediumButtonBlank, ResourceDefs.Palette.Sky)
-    local imgCheckbox
-    if abyss.fileExists("/data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite") then
-        imgCheckbox = abyss.loadImage("/data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite", "")
-    else
-        -- TODO do something for non-D2R. Currently this is used only for D2R though.
-        imgCheckbox = imgButtonShortBlank
-    end
+    local imgCheckbox = abyss.loadImage(ResourceDefs.Checkbox, ResourceDefs.Palette.Fechar)
 
     TextColor = {
         --blackHalfOpacity = 0x0000007f
         LightBrown = { R = 188, G = 168, B = 140 },
         LightGreen = { R = 24, G = 255, B = 0 },
         White = { R = 255, G = 255, B = 255 },
+        Yellowish = { R = 199, G = 179, B = 119 },
 
     }
 
@@ -25,8 +20,6 @@ function InitUI()
             Image               = imgButtonTallBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 168, Y =  60 },
-            TextOffset          = { X =   0, Y =  -5 },
-            TextVerticalSpacing = 4,
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
@@ -36,7 +29,6 @@ function InitUI()
             Image               = imgButtonWideBlank,
             Segments            = { X =   2, Y =   1 },
             FixedSize           = { X = 272, Y =  35 },
-            TextOffset          = { X =   0, Y =  -3 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 2 }
@@ -46,7 +38,6 @@ function InitUI()
             Image               = imgButtonMediumBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 128, Y =  35 },
-            TextOffset          = { X =   0, Y =  -2 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
@@ -56,20 +47,21 @@ function InitUI()
             Image               = imgButtonShortBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 135, Y =  25 },
-            TextOffset          = { X =   0, Y =  -5 },
             TextColor           = TextColor.White,
             LabelBlend          = "multiply",
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Checkbox = {
-            Font                = SystemFonts.FntFormal12,
+            Font                = SystemFonts.Fnt16,
             Image               = imgCheckbox,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 135, Y =  25 },
-            TextOffset          = { X =  20, Y =  -5 },
-            TextColor           = TextColor.White,
+            TextOffset          = { X =  20, Y =  -1 },
+            TextColor           = TextColor.Yellowish,
             LabelBlend          = "none",
-            FrameIndexes        = { normal = 0, hover = 3, pressed = 1, checkednormal = 4, checkedhover = 6, checkedpressed = 5, disabled = 2 }
+            FrameIndexes        = { normal = 0, hover = 0, pressed = 0, checkednormal = 1, checkedhover = 1, checkedpressed = 1 }
+            -- indexes for /data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite
+            --FrameIndexes        = { normal = 0, hover = 3, pressed = 1, checkednormal = 4, checkedhover = 6, checkedpressed = 5, disabled = 2 }
         }
     }
 
@@ -84,7 +76,7 @@ end
 function CreateButton(buttonSpec, x, y, text, onActivate)
     local label = abyss.createLabel(buttonSpec.Font)
     label:setAlignment("middle", "middle")
-    label:setPosition(math.floor(buttonSpec.FixedSize.X / 2) + buttonSpec.TextOffset.X, math.floor(buttonSpec.FixedSize.Y / 2) + buttonSpec.TextOffset.Y)
+    label:setPosition(math.floor(buttonSpec.FixedSize.X / 2), math.floor(buttonSpec.FixedSize.Y / 2))
     label:setColorMod(buttonSpec.TextColor.R, buttonSpec.TextColor.G, buttonSpec.TextColor.B)
     if buttonSpec.TextVerticalSpacing ~= nil then label.verticalSpacing = buttonSpec.TextVerticalSpacing end
     local result = abyss.createButton(buttonSpec.Image)
@@ -117,8 +109,15 @@ end
 function CreateCheckbox(x, y, text)
     local btn
     btn = CreateButton(ButtonTypes.Checkbox, x, y, text, function()
+    end)
+    btn:onPressed(function()
         btn.checked = not btn.checked
     end)
+    btn:setPressedOffset(0, 0)
+    local w, h = ButtonTypes.Checkbox.Image:getFrameSize(0, ButtonTypes.Checkbox.Segments.X)
+    btn:setFixedSize(w, h)
+    btn.data.label:setAlignment("start", "start")
+    btn.data.label:setPosition(ButtonTypes.Checkbox.TextOffset.X, ButtonTypes.Checkbox.TextOffset.Y)
 
     return btn
 end
