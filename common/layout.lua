@@ -283,7 +283,7 @@ local TYPES = {
         label.caption = Language:translate(or_else(layout.fields.text, 'text'))
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
-        local vAlign = or_else(align.v, "center")
+        local vAlign = or_else(align.v, "top")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         local color = layout.fields.style.fontColor
         if color ~= nil then
@@ -589,7 +589,7 @@ local TYPES = {
         local label = abyss.createLabel(loadFont(layout.fields.fontType, hd))
         local align = or_else(layout.fields.fontStyle.alignment, {})
         local hAlign = or_else(align.h, "left")
-        local vAlign = or_else(align.v, "center")
+        local vAlign = or_else(align.v, "top")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         return label
     end,

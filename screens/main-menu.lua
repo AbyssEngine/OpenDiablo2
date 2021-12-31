@@ -20,7 +20,7 @@ function MainMenu:initialize()
     self.lblVersion = abyss.createLabel(SystemFonts.FntFormal12)
     self.lblVersion:setPosition(790, 0)
     self.lblVersion.caption = "OpenDiablo II v0.01"
-    self.lblVersion:setAlignment("end", "middle")
+    self.lblVersion:setAlignment("end", "start")
 
     -- Disclaimer Label
     self.lblDisclaimer = abyss.createLabel(SystemFonts.FntFormal10)
@@ -199,7 +199,7 @@ function MainMenu:createCinematicsWindow(main)
         hd = "act5/d2x_out",
     }}
 
-    local y = cond(showHD, 50, 70)
+    local y = cond(showHD, 60, 70)
 
     for _, item in ipairs(files) do
         local btn = CreateButton(ButtonTypes.Wide, 30, y, item.name, function()
@@ -220,7 +220,7 @@ function MainMenu:createCinematicsWindow(main)
         y = y + 40
     end
 
-    result.btnToggleHD = CreateCheckbox(97, 333, "HD video")
+    result.btnToggleHD = CreateCheckbox(120, 343, "HD video")
     if showHD then
         result.btnToggleHD.checked = true
         result.window:appendChild(result.btnToggleHD)
