@@ -10,9 +10,13 @@ function InitUI()
         LightBrown = { R = 188, G = 168, B = 140 },
         LightGreen = { R = 24, G = 255, B = 0 },
         White = { R = 255, G = 255, B = 255 },
+        Black = { R = 0, G = 0, B = 0 },
         Yellowish = { R = 199, G = 179, B = 119 },
 
     }
+
+    -- They use different blend mode
+    local buttonTextColor = cond(SpriteFontIsActuallyTTF, TextColor.Black, TextColor.White )
 
     ButtonTypes = {
         Tall = {
@@ -20,8 +24,7 @@ function InitUI()
             Image               = imgButtonTallBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 168, Y =  60 },
-            TextColor           = TextColor.White,
-            LabelBlend          = "multiply",
+            TextColor           = buttonTextColor,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Wide = {
@@ -29,8 +32,7 @@ function InitUI()
             Image               = imgButtonWideBlank,
             Segments            = { X =   2, Y =   1 },
             FixedSize           = { X = 272, Y =  35 },
-            TextColor           = TextColor.White,
-            LabelBlend          = "multiply",
+            TextColor           = buttonTextColor,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 2 }
         },
         Medium = {
@@ -38,8 +40,7 @@ function InitUI()
             Image               = imgButtonMediumBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 128, Y =  35 },
-            TextColor           = TextColor.White,
-            LabelBlend          = "multiply",
+            TextColor           = buttonTextColor,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Short = {
@@ -47,8 +48,7 @@ function InitUI()
             Image               = imgButtonShortBlank,
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 135, Y =  25 },
-            TextColor           = TextColor.White,
-            LabelBlend          = "multiply",
+            TextColor           = buttonTextColor,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Checkbox = {
@@ -58,7 +58,6 @@ function InitUI()
             FixedSize           = { X = 135, Y =  25 },
             TextOffset          = { X =  20, Y =  -1 },
             TextColor           = TextColor.Yellowish,
-            LabelBlend          = "none",
             FrameIndexes        = { normal = 0, hover = 0, pressed = 0, checkednormal = 1, checkedhover = 1, checkedpressed = 1 }
             -- indexes for /data/hd/global/ui/lobby/creategame/creategame_advancedcheckbox.lowend.sprite
             --FrameIndexes        = { normal = 0, hover = 3, pressed = 1, checkednormal = 4, checkedhover = 6, checkedpressed = 5, disabled = 2 }
@@ -85,7 +84,6 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     result:setSegments(buttonSpec.Segments.X, buttonSpec.Segments.Y)
     result:setFixedSize(buttonSpec.FixedSize.X, buttonSpec.FixedSize.Y)
     label.caption = Language:translate(text)
-    label.blendMode = buttonSpec.LabelBlend
     result:setPosition(x, y)
     result:setPressedOffset(-2, 2)
     result:onActivate(onActivate)

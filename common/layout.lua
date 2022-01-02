@@ -25,6 +25,7 @@ local SD_FONTS = {
     ["8ptE"]  = SystemFonts.FntExocet8,
     ["30pt"]  = SystemFonts.Fnt30,
     ["16pt"]  = SystemFonts.Fnt16,
+    ["6pt"]  = SystemFonts.FntSucker,
     ["12ptF"] = SystemFonts.FntFormal12,
     ["11ptF"] = SystemFonts.FntFormal11,
 }
@@ -44,6 +45,13 @@ local function loadFont(fontType, hd)
         -- etc
     end
     return SD_FONTS[fontType]
+end
+
+local function defaultFontColor(fontType)
+    if fontType == "30pt" then
+        return { r = 199, g = 179, b = 119 }
+    end
+    return { r = 0xFF, g = 0xFF, b = 0xFF }
 end
 
 local function imageFilename(image, hd)
@@ -279,19 +287,24 @@ local TYPES = {
     end,
 
     TextBoxWidget = function(layout)
-        local label = abyss.createLabel(loadFont(layout.fields.fontType))
+        local fontType = or_else(layout.fields.fontType, "16pt")
+        local label = abyss.createLabel(loadFont(fontType))
         label.caption = Language:translate(or_else(layout.fields.text, 'text'))
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "top")
         label:setAlignment(ALIGN_MAPPING[hAlign], ALIGN_MAPPING[vAlign])
         local color = layout.fields.style.fontColor
-        if color ~= nil then
-            label:setColorMod(color.r, color.g, color.b)
+        if color == nil then
+            color = defaultFontColor(fontType)
         end
+        label:setColorMod(color.r, color.g, color.b)
         return label, function()
             if align.h == "center" then
                 move_by(label, {x=math.floor(layout.fields.rect.width/2)})
+            end
+            if align.v == "center" then
+                move_by(label, {y=math.floor(layout.fields.rect.height/2)})
             end
         end
     end,
@@ -334,8 +347,12 @@ local TYPES = {
             button:appendChild(label)
             local color = layout.fields.textColor
             if color ~= nil then
-                label.blendMode = "multiply"
-                label:setColorMod(color.r, color.g, color.b)
+                if SpriteFontIsActuallyTTF then
+                    -- TODO figure something out
+                    label:setColorMod(0, 0, 0)
+                else
+                    label:setColorMod(color.r, color.g, color.b)
+                end
             end
             button.data.label = label
             button:setPressedOffset(-2, 2)

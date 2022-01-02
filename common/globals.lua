@@ -15,20 +15,62 @@ function LoadGlobals()
     ResurrectedMode = abyss.fileExists('/data/local/lng/strings/ui.json')
 
     -- Load the fonts
-    SystemFonts = {
-         FntFormal12 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal12), ResourceDefs.Palette.Static, true),
-         FntFormal11 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal11), ResourceDefs.Palette.Static, true),
-         FntFormal10 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontFormal10), ResourceDefs.Palette.Static, true),
-         FntExocet8 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontExocet8), ResourceDefs.Palette.Static, false),
-         FntExocet10 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontExocet10), ResourceDefs.Palette.Static, false),
-         FntRidiculous = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontRidiculous), ResourceDefs.Palette.Static, false),
-         FntSucker = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.FontSucker), ResourceDefs.Palette.Static, false),
-         Fnt16 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font16), ResourceDefs.Palette.Static, false),
-         Fnt24 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font24), ResourceDefs.Palette.Static, false),
-         Fnt30 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font30), ResourceDefs.Palette.Static, false),
-         Fnt42 = abyss.createSpriteFont(Language:i18nPath(ResourceDefs.Font42), ResourceDefs.Palette.Static, false),
-    }
-    --SystemFonts.FntFormal12 = abyss.createTtfFont('/data/hd/ui/fonts/blizzardglobaltcunicode.ttf', 16, 'none')
+    SystemFonts = {}
+    SpriteFontIsActuallyTTF = false
+    -- D2R doesn't have Cyrillic sprite font, so if Russian is selected, try sprite font, and fallback to TTF font (which looks more ugly on the old-style buttons).
+    -- TODO use LanguageFontRemapper from GlobalData
+    local function loadFormal(size)
+        local filename = Language:i18nPath(ResourceDefs['FontFormal' .. tostring(size)])
+        if abyss.fileExists(filename .. '.dc6') then
+            return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, true, 'blend')
+        end
+        SpriteFontIsActuallyTTF = true
+        return abyss.createTtfFont('/data/hd/ui/fonts/philosopher-bolditalic.ttf', math.floor(size * 1.5), 'none')
+    end
+    local function loadFnt(size)
+        local filename = Language:i18nPath(ResourceDefs['Font' .. tostring(size)])
+        if abyss.fileExists(filename .. '.dc6') then
+            return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'blend')
+        end
+        SpriteFontIsActuallyTTF = true
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 1.0), 'none')
+    end
+    local function loadExocet(size)
+        local filename = Language:i18nPath(ResourceDefs['FontExocet' .. tostring(size)])
+        if abyss.fileExists(filename .. '.dc6') then
+            return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'multiply')
+        end
+        SpriteFontIsActuallyTTF = true
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 1.7), 'none')
+    end
+    local function loadSucker()
+        local filename = Language:i18nPath(ResourceDefs.FontSucker)
+        if abyss.fileExists(filename .. '.dc6') then
+            return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, true, 'blend')
+        end
+        SpriteFontIsActuallyTTF = true
+        return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobalTCUnicode.ttf', 10, 'none')
+        --return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobal-v5_81.ttf', 10, 'none')
+    end
+    local function loadRidiculous()
+        local filename = Language:i18nPath(ResourceDefs.FontRidiculous)
+        if abyss.fileExists(filename .. '.dc6') then
+            return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'multiply')
+        end
+        SpriteFontIsActuallyTTF = true
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', 13, 'none')
+    end
+    SystemFonts.FntFormal10 = loadFormal(10)
+    SystemFonts.FntFormal11 = loadFormal(11)
+    SystemFonts.FntFormal12 = loadFormal(12)
+    SystemFonts.FntSucker = loadSucker()
+    SystemFonts.FntRidiculous = loadRidiculous()
+    SystemFonts.FntExocet8 = loadExocet(8)
+    SystemFonts.FntExocet10 = loadExocet(10)
+    SystemFonts.Fnt16 = loadFnt(16)
+    SystemFonts.Fnt24 = loadFnt(24)
+    SystemFonts.Fnt30 = loadFnt(30)
+    SystemFonts.Fnt42 = loadFnt(42)
 
     CursorSprite = CreateUniqueSpriteFromFile(ResourceDefs.CursorDefault, ResourceDefs.Palette.Sky)
     CursorSprite.blendMode = "blend"

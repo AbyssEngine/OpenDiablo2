@@ -22,12 +22,25 @@ function MainMenu:initialize()
     self.lblVersion.caption = "OpenDiablo II v0.01"
     self.lblVersion:setAlignment("end", "start")
 
-    -- Disclaimer Label
-    self.lblDisclaimer = abyss.createLabel(SystemFonts.FntFormal10)
-    self.lblDisclaimer.caption = "OpenDiablo II is neither developed by, nor endorsed by Blizzard or its parent company Activision"
-    self.lblDisclaimer:setPosition(400, 580)
-    self.lblDisclaimer:setAlignment("middle", "start")
-    self.lblDisclaimer:setColorMod(0xFF, 0xFF, 0x8C)
+    -- Disclaimer Labels
+    self.lblDisclaimer1 = abyss.createLabel(SystemFonts.FntFormal12)
+    --self.lblDisclaimer1.caption = Language:translate("@strcopyrightinfo#5104")
+    self.lblDisclaimer1.caption = Language:translate("@strcopyrightinfoX#1882")
+    self.lblDisclaimer1:setPosition(400, 480)
+    self.lblDisclaimer1:setAlignment("middle", "start")
+    self.lblDisclaimer1:setColorMod(0xE5, 0xC6, 0x9B)
+
+    self.lblDisclaimer2 = abyss.createLabel(SystemFonts.FntFormal12)
+    self.lblDisclaimer2.caption = Language:translate("@strallrightsreserved#5105")
+    self.lblDisclaimer2:setPosition(400, 500)
+    self.lblDisclaimer2:setAlignment("middle", "start")
+    self.lblDisclaimer2:setColorMod(0xE5, 0xC6, 0x9B)
+
+    self.lblDisclaimer3 = abyss.createLabel(SystemFonts.FntFormal12)
+    self.lblDisclaimer3.caption = "OpenDiablo II is neither developed by,\nnor endorsed by Blizzard or its parent company Activision"
+    self.lblDisclaimer3:setPosition(400, 540)
+    self.lblDisclaimer3:setAlignment("middle", "start")
+    self.lblDisclaimer3:setColorMod(0xFF, 0xFF, 0x8C)
 
     -- Trademark Screen
     self.trademarkBg = CreateUniqueSpriteFromFile(ResourceDefs.TrademarkScreen, ResourceDefs.Palette.Sky)
@@ -88,12 +101,12 @@ function MainMenu:initialize()
         SetScreen(Screen.MAP_ENGINE_TEST)
     end)
 
-    self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "@#5110", function()
+    self.btnCredits = CreateButton(ButtonTypes.Short, 264, 472, "@strGameCredits#5110", function()
         SetScreen(Screen.CREDITS)
     end)
 
     local this = self;
-    self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "@#5111", function()
+    self.btnCinematics = CreateButton(ButtonTypes.Short, 401, 472, "@strGameCinematics#5111", function()
         this.cinematicsDialog.show()
         this.btnSinglePlayer.active = false
         this.btnLocalNetplay.active = false
@@ -108,8 +121,10 @@ function MainMenu:initialize()
     end)
 
     -- Append all nodes to the scene graph
+    self.trademarkBg:appendChild(self.lblDisclaimer1)
+    self.trademarkBg:appendChild(self.lblDisclaimer2)
+    self.trademarkBg:appendChild(self.lblDisclaimer3)
     self.mainBg:appendChild(self.lblVersion)
-    self.mainBg:appendChild(self.lblDisclaimer)
     self.mainBg:appendChild(self.btnSinglePlayer)
     self.mainBg:appendChild(self.btnLocalNetplay)
     self.mainBg:appendChild(self.btnExitGame)
@@ -226,7 +241,7 @@ function MainMenu:createCinematicsWindow(main)
         result.window:appendChild(result.btnToggleHD)
     end
 
-    result.btnCancel = CreateButton(ButtonTypes.Medium, 100, 375, "CANCEL", function()
+    result.btnCancel = CreateButton(ButtonTypes.Medium, 100, 375, "@strCancel#5103", function()
         result.main.btnSinglePlayer.active = true
         result.main.btnLocalNetplay.active = true
         result.main.btnExitGame.active = true
