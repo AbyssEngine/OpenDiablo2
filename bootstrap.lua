@@ -21,47 +21,134 @@ require 'common/globals'
 -- Create load providers for all of the available MPQs and CASCs
 ------------------------------------------------------------------------------------------------------------------------
 
-local cascs = Split(abyss.getConfig("OpenDiablo2", "CASCs"), ",")
-for i in pairs(cascs) do
-    abyss.log("info", string.format("Loading CASC %s...", cascs[i]))
-    pcall(function()
-        abyss.addLoaderProvider("casc", cascs[i])
-    end)
-end
+local function loadGameData()
+    local baseDataDir = abyss.getConfig("OpenDiablo2", "BASE_DATA_DIR")
 
-abyss.addLoaderProvider("filesystem", "./fallback-data")
+    local casc, mpq
 
-local mpqs = Split(abyss.getConfig("OpenDiablo2", "MPQs"), ",")
-for i in pairs(mpqs) do
-    local mpqPath = MPQRoot .. "/" .. mpqs[i]
-    local loadStr = string.format("Loading MPQ %s...", mpqPath)
-    abyss.log("info", loadStr)
-    pcall(function()
-        abyss.addLoaderProvider("mpq", mpqPath)
-    end)
+    local function loadBaseCASC()
+        local errored = false
+        local missingCASCs = {}
+        local erroredCASCs = {}
+
+        if abyss.fileExists(".disableCASC") then
+            local missingText = "D2R CASC LOADING DISABLED BY FILE: .disableCASC"
+            return { loaded = false, data={missing = {missingText}, errored = erroredCASCs} }
+        end
+
+        local cascs = Split(abyss.getConfig("OpenDiablo2", "CASCs"), ",")
+        for _, _casc in ipairs(cascs) do
+            abyss.log("info", string.format("Loading CASC %s...", baseDataDir .. "/"  .. _casc))
+            local loaded = pcall(function()
+                abyss.addLoaderProvider("casc", baseDataDir .. "/"  .. _casc)
+            end)
+            if not loaded then
+                abyss.log("error", string.format("Possible corrupt or missing CASC: %s", baseDataDir .. "/" .. _casc))
+                table.insert(erroredCASCs, baseDataDir .. "/" .. _casc)
+                errored = true
+            end
+        end
+        return {loaded = not errored, data={missing = missingCASCs, errored = erroredCASCs}}
+    end
+
+    local function loadBaseMPQs()
+        local errored = false
+        local toLoadMPQs = {}
+        local missingMPQs = {}
+        local erroredMPQs = {}
+
+        if abyss.fileExists(".disableMPQ") then
+            local missingText = "MPQ LOADING DISABLED BY FILE: .disableMPQ"
+            return { loaded = false, data={missing = {missingText}, errored = erroredMPQs} }
+        end
+
+        local mpqFolderNames = Split(abyss.getConfig("OpenDiablo2", "MPQs"), ",")
+
+        for i in pairs(mpqFolderNames) do
+            local mpqPath = baseDataDir .. "/" .. mpqFolderNames[i]
+            local mpqLoadOrderFileName = mpqPath .. "/" .. ".loadorder"
+            local file = io.open (mpqLoadOrderFileName, "r")
+            local fileData = file:read("a")
+            file:close()
+            local mpqFiles = Split(fileData, ",")
+            for _, mpqFile in ipairs(mpqFiles) do
+                if file_exists(mpqPath .. "/" .. mpqFile) then
+                    table.insert(toLoadMPQs,mpqPath .. "/" .. mpqFile)
+                else
+                    table.insert(missingMPQs, mpqPath .. "/" .. mpqFile)
+                    errored = true
+                end
+            end
+        end
+
+        -- If no files are missing then really load them
+        for _, _mpq in ipairs(toLoadMPQs) do
+            local mpqPath = baseDataDir .. "/" .. _mpq
+            local loadStr = string.format("Loading MPQ %s...", _mpq)
+            abyss.log("info", loadStr)
+            local loaded = pcall(function() abyss.addLoaderProvider("mpq", _mpq) end)
+            if not loaded then
+                table.insert(erroredMPQs, _mpq)
+                abyss.log("error", string.format("Possible corrupt MPQ: %s", _mpq))
+                errored = true
+            end
+        end
+        local result = {loaded = not errored, data={ missing = missingMPQs, errored = erroredMPQs}}
+        return result
+    end
+
+    abyss.addLoaderProvider("filesystem", "./DATA/FS-fallback")
+    casc = loadBaseCASC()
+    mpq = loadBaseMPQs()
+
+    local resultData = { missing = {}, errored = {}}
+    for _,obj in ipairs(casc.data.missing) do table.insert(resultData.missing, obj) end
+    for _,obj in ipairs(casc.data.errored) do table.insert(resultData.errored, obj) end
+    for _,obj in ipairs(mpq.data.missing) do table.insert(resultData.missing, obj) end
+    for _,obj in ipairs(mpq.data.errored) do table.insert(resultData.errored, obj) end
+
+    return casc.loaded or mpq.loaded, {message = resultData}
 end
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Load in all of the palettes
 ------------------------------------------------------------------------------------------------------------------------
-for _, name in ipairs(ResourceDefs.Palettes) do
-    local lineLog = string.format("Loading Palette: %s...", name[1])
-    abyss.log("info", lineLog)
-    abyss.createPalette(name[1], name[2]) end
+local function loadPalettes()
+    for _, name in ipairs(ResourceDefs.Palettes) do
+        local lineLog = string.format("Loading Palette: %s...", name[1])
+        abyss.log("info", lineLog)
+        abyss.createPalette(name[1], name[2])
+    end
+end
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Detect the language
 ------------------------------------------------------------------------------------------------------------------------
-local configLanguageCode = abyss.getConfig("OpenDiablo2", "Language")
+local function detectLanguage()
+    local configLanguageCode = abyss.getConfig("OpenDiablo2", "Language")
 
-if configLanguageCode ~= "auto" then
-    Language:setLanguage(configLanguageCode)
-else
-    Language:autoDetect()
+    if configLanguageCode ~= "auto" then
+        Language:setLanguage(configLanguageCode)
+    else
+        Language:autoDetect()
+    end
+
+    abyss.log("info", "System language has been set to " .. Language:name() or '<invalid>' .. ".")
 end
 
-abyss.log("info", "System language has been set to " .. or_else(Language:name(), '<invalid>') .. ".")
+------------------------------------------------------------------------------------------------------------------------
+-- Actually load everything
+------------------------------------------------------------------------------------------------------------------------
 
+local loaded, data = loadGameData()
+if not loaded then
+    local ErrorScreen = require("screens/internal-error")
+    data.header = "Crash"
+    ErrorScreen:new(data)
+    return
+end
+loadPalettes()
+detectLanguage()
 
 ------------------------------------------------------------------------------------------------------------------------
 -- Load the global objects
@@ -72,8 +159,7 @@ LoadGlobals()
 ------------------------------------------------------------------------------------------------------------------------
 -- Play Startup Videos
 ------------------------------------------------------------------------------------------------------------------------
-
-function StartGame()
+local function StartGame()
     abyss.setCursor(CursorSprite, 1, -24)
     abyss.showSystemCursor(true)
     SetScreen(Screen.MAIN_MENU)

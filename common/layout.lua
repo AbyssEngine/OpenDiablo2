@@ -14,7 +14,7 @@ LayoutLoader.__index = LayoutLoader
 function LayoutLoader:new()
     local this = {}
     setmetatable(this, self)
-    self:initialize()
+    this:initialize()  -- Init the _new_ loader not the parent object
     return this
 end
 

@@ -1,3 +1,4 @@
+print = function (message) abyss.log("info", message); end;
 require ('common/util')
 require ('common/ui')
 require ('screens/screens')
@@ -7,7 +8,6 @@ MusicDefs = require('common/enum/music')
 RegionDefs = require('common/enum/region')
 ResourceDefs = require("common/enum/resource")
 BasePath = abyss.getConfig("#Abyss", "BasePath")
-MPQRoot = abyss.getConfig("OpenDiablo2", "MPQRoot")
 IsOnButton = false
 ShowTrademarkScreen = true
 
