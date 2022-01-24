@@ -1,10 +1,4 @@
-function stringToArray(arr, creditsString)
-    for line in creditsString:gmatch("([^\n]*)\n?") do
-        table.insert(arr, line)
-    end
-end
-
-function setLabelProperties(this, creditsLabel, index)
+local function setLabelProperties(this, creditsLabel, index)
     creditsLabel:setPosition(400, index * 30)
     creditsLabel:setAlignment("middle", "start")
     creditsLabel:onUpdate(
@@ -28,7 +22,7 @@ function setLabelProperties(this, creditsLabel, index)
                     creditsLabel.caption = creditsline
                 else
                     -- remove the label since there no more credits lines
-                    this.rootNode:removeChild(creditsLabel)
+                    abyss.getRootNode():removeChild(creditsLabel)
                     creditsLabel = nil
                 end
                 this.creditLineOffset = this.creditLineOffset + 1
@@ -47,8 +41,8 @@ function Credits:new()
 end
 
 function Credits:initialize()
-    self.rootNode = abyss.getRootNode()
-    self.rootNode:removeAllChildren()
+    local rootNode = abyss.getRootNode()
+    rootNode:removeAllChildren()
     abyss.resetMouseState()
 
     self.btnExit =
@@ -66,13 +60,13 @@ function Credits:initialize()
     self.mainBg = CreateUniqueSpriteFromFile(ResourceDefs.CreditsBackground, ResourceDefs.Palette.Sky)
     self.mainBg:setCellSize(4, 3)
 
-    self.rootNode:appendChild(self.mainBg)
+    rootNode:appendChild(self.mainBg)
     self.mainBg:appendChild(self.btnExit)
 
     -- Credits
     self.creditLineOffset = 1
     self.creditsLines = {}
-    stringToArray(self.creditsLines, abyss.utf16To8(abyss.loadString(Language:i18nPath(ResourceDefs.CreditsText))))
+    self.creditsLines = Split(abyss.utf16To8(abyss.loadString(Language:i18nPath(ResourceDefs.CreditsText))), "\n")
     self.labelPool = {}
     local this = self
     -- Populating the pool
@@ -80,7 +74,7 @@ function Credits:initialize()
         local creditsLabel = abyss.createLabel(SystemFonts.FntFormal12)
         setLabelProperties(this, creditsLabel, i)
         table.insert(self.labelPool, creditsLabel)
-        self.rootNode:appendChild(creditsLabel)
+        rootNode:appendChild(creditsLabel)
     end
 end
 
