@@ -13,11 +13,11 @@ local function setLabelProperties(this, creditsLabel, index)
                     if string.find(creditsline, "*") then
                         -- red text without first * and last \n
                         creditsline = string.sub(creditsline, 2, -2)
-                        creditsLabel:setColorMod(TextColor.Red.R, TextColor.Red.G, TextColor.Red.B)
+                        setLabelColor(creditsLabel, TextColor.Red)
                     else
                         -- white text without first * and last \n
                         creditsline = string.sub(creditsline, 1, -2)
-                        creditsLabel:setColorMod(TextColor.White.R, TextColor.White.G, TextColor.White.B)
+                        setLabelColor(creditsLabel, TextColor.Gold)
                     end
                     creditsLabel.caption = creditsline
                 else
@@ -33,12 +33,19 @@ end
 local Credits = {}
 Credits.__index = Credits
 
+function setLabelColor(label, color)
+    return label:setColorMod(color.R, color.G, color.B)
+end
+
 function Credits:new()
     local this = {}
     setmetatable(this, self)
     self:initialize()
     return this
 end
+
+--default to 2 columns when possible otherwise center last name in section.
+--header and section text seperated by one empty line
 
 function Credits:initialize()
     local rootNode = abyss.getRootNode()
@@ -71,7 +78,7 @@ function Credits:initialize()
     local this = self
     -- Populating the pool
     for i = 1, 21 do
-        local creditsLabel = abyss.createLabel(SystemFonts.FntFormal12)
+        local creditsLabel = abyss.createLabel(SystemFonts.FntFormal10)
         setLabelProperties(this, creditsLabel, i)
         table.insert(self.labelPool, creditsLabel)
         rootNode:appendChild(creditsLabel)

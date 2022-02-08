@@ -5,14 +5,16 @@ function InitUI()
     local imgButtonMediumBlank = abyss.loadImage(ResourceDefs.MediumButtonBlank, ResourceDefs.Palette.Sky)
     local imgCheckbox = abyss.loadImage(ResourceDefs.Checkbox, ResourceDefs.Palette.Fechar)
 
+    -- Colors do not render correctly due to gamma issues in the engine
     TextColor = {
         --blackHalfOpacity = 0x0000007f
-        LightBrown = { R = 188, G = 168, B = 140 },
-        LightGreen = { R = 24, G = 255, B = 0 },
-        White = { R = 255, G = 255, B = 255 },
-        Red = { R = 255, G = 0, B = 0},
-        Black = { R = 0, G = 0, B = 0 },
-        Yellowish = { R = 199, G = 179, B = 119 },
+        LightBrown = { R = 188, G = 168, B = 140, A = 255 },
+        LightGreen = { R = 24,  G = 255, B = 0,   A = 255 },
+        White      = { R = 255, G = 255, B = 255, A = 255 },
+        Red        = { R = 219, G = 63,  B = 61,  A = 255 },
+        Black      = { R = 0,   G = 0,   B = 0,   A = 255 },
+        Gold       = { R = 200, G = 170, B = 140, A = 255 }, 
+        Yellowish  = { R = 199, G = 179, B = 119, A = 255 },
 
     }
 
