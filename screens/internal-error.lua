@@ -8,19 +8,20 @@ local ErrorScreen = {
 ErrorScreen.__index = ErrorScreen
 local rootNode, lblError
 
-
 local function initialize(data)
     rootNode = abyss.getRootNode()
     local header = data.header or "UNSPECIFIED"
     local message = "\n"
-    if type(data.message) == "table" then
-        message = message .. "\tThe following are missing:\n"
-        for _,v in ipairs(data.message.missing) do
-            message = message .. "\t\t" .. v .. "\r\n"
-        end
-        message = message .. "\tThe following have failed to load:\n"
-        for _,v in ipairs(data.message.errored) do
-            message = message .. "\t\t" .. v .. "\n"
+    if (data.errortype == "bootstrap") then
+        if type(data.message) == "table" then
+            message = message .. "\tThe following are missing:\n"
+            for _,v in ipairs(data.message.missing) do
+                message = message .. "\t\t" .. v .. "\r\n"
+            end
+            message = message .. "\tThe following have failed to load:\n"
+            for _,v in ipairs(data.message.errored) do
+                message = message .. "\t\t" .. v .. "\n"
+            end
         end
     end
     --/abyss-embedded/Hack-Regular.ttf
