@@ -97,9 +97,9 @@ local function loadGameData()
         return result
     end
 
+    abyss.addLoaderProvider("filesystem", "./DATA/FS-fallback")
     casc = loadBaseCASC()
     mpq = loadBaseMPQs()
-    abyss.addLoaderProvider("filesystem", "./DATA/FS-fallback")
 
     local resultData = { missing = {}, errored = {}}
     for _,obj in ipairs(casc.data.missing) do table.insert(resultData.missing, obj) end
