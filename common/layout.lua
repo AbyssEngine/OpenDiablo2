@@ -325,6 +325,10 @@ local TYPES = {
     end,
 
     ButtonWidget = function(layout, hd, palette)
+        if layout.fields.filename == 'PANEL\\buysellbtn' or layout.fields.filename == 'FrontEnd\\XLMediumButtonBlank' then
+            -- TODO this file throws an exception in dc6 parsing now
+            return abyss.createNode()
+        end
         local image = abyss.loadImage(imageFilename(layout.fields.filename, hd), palette)
         local button = abyss.createButton(image)
         button.data.image = image
@@ -676,16 +680,11 @@ local TYPES = {
                 tab.currentFrameIndex = layout.fields.inactiveFrames[i]
             end
             if layout.fields.textStrings ~= nil then
-                -- TODO hd uses different font
-                local label = abyss.createLabel(SystemFonts.Fnt16)
-                label.caption = Language:translate(layout.fields.textStrings[i])
-                label:setAlignment('middle', 'middle')
+                -- TODO verify font
+                local label = abyss.createLabel(SystemFonts.FntFormal12)
+                label.caption = layout.fields.textStrings[i]
+                label:setAlignment('middle', 'end')
                 label:setPosition(math.floor(layout.fields.tabSize.x/2), math.floor(layout.fields.tabSize.y/2))
-                if i == activeTab then
-                    label:setColorMod(199, 179, 119)
-                else
-                    label:setColorMod(255, 255, 255)
-                end
                 tab.data.label = label
                 tab:appendChild(label)
             end
