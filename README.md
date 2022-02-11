@@ -3,6 +3,8 @@
 [![Discord](https://img.shields.io/discord/515518620034662421?label=Discord&style=flat)](https://discord.gg/pRy8tdc)
 [![Twitch Status](https://img.shields.io/twitch/status/essial?style=flat)](https://www.twitch.tv/essial)
 
+Join us on IRC: [irc.libera.chat #opendiablo2](https://web.libera.chat/#opendiablo2)
+
 # OpenDiablo2
 OpenDiablo2 is an implementation of Diablo 2 in AbyssEngine.
 
