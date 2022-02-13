@@ -144,9 +144,13 @@ local loaded, data = loadGameData()
 if not loaded then
     local ErrorScreen = require("screens/internal-error")
     data.header = "Crash"
+    data.errortype = "bootstrap"
     ErrorScreen:new(data)
     return
 end
+loaded = nil
+data = nil
+
 loadPalettes()
 detectLanguage()
 
