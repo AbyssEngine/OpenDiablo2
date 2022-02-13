@@ -25,6 +25,7 @@ function InitUI()
             Segments            = { X =   1, Y =   1 },
             FixedSize           = { X = 168, Y =  60 },
             TextColor           = buttonTextColor,
+            Wrap                = true,
             FrameIndexes        = { ["normal"] = 0, ["pressed"] = 1 }
         },
         Wide = {
@@ -83,7 +84,11 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     result:appendChild(label)
     result:setSegments(buttonSpec.Segments.X, buttonSpec.Segments.Y)
     result:setFixedSize(buttonSpec.FixedSize.X, buttonSpec.FixedSize.Y)
-    label.caption = Language:translate(text)
+    if SpriteFontIsActuallyTTF then
+        label.caption = '<b>' .. Language:translate(text) .. '</b>'
+    else
+        label.caption = Language:translate(text)
+    end
     result:setPosition(x, y)
     result:setPressedOffset(-2, 2)
     result:onActivate(onActivate)
@@ -96,6 +101,9 @@ function CreateButton(buttonSpec, x, y, text, onActivate)
     result:onMouseLeave(function()
         IsOnButton=false
     end)
+    if buttonSpec.Wrap then
+        label.maxWidth = buttonSpec.FixedSize.X
+    end
 
     for k, v in pairs(buttonSpec.FrameIndexes) do
         result:setFrameIndex(k, v)
