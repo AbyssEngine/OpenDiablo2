@@ -13,7 +13,7 @@ This game requires the [Abyss Engine](https://github.com/AbyssEngine/AbyssEngine
 Please note that we only support users who are using an official and legally owned copy of the original game (not D2 Resurrected). If you do not have a copy of the game and/or do not use a Windows computer, it is recommend that you purchase the Windows edition of the [Diablo 2](https://us.shop.battle.net/en-us/product/diablo-ii) and [LOD Expansion](https://us.shop.battle.net/en-us/product/diablo-ii-lord-of-destruction) from the Blizzard store directly, and install/patch it on another machine, or in a virtual machine in order to obtain the MPQ files. MPQs/disks downloaded from unofficial sources tend to have mods/changes that are not supported.
 
 # General Information
-This project is currently very early stages of development, and is not in a playable state yet. The game is being developed in tandem with the Abyss Engine, though all contributors are encouraged to help directly with this project instead of the core engine itself.
+This project is currently in very early stages of development, and is not in a playable state yet. The game is being developed in tandem with the Abyss Engine, though all contributors are encouraged to help directly with this project instead of the core engine itself.
 
 Current Features:
 * Main Menu
@@ -32,7 +32,7 @@ Todo:
 1. Download OpenDiablo2 to a folder (or clone the repo)
 1. Copy the data files over from the copy of Diablo II you have. You need to do at least one of the following:
    1. If you have good old Diablo II (latest LOD patch required), copy the MPQs from the game's installation folder into the DATA\MPQ-D2 folder of this project (there should be 11 MPQs).
-      * DO NOT DELETE THE `.loadorder` file from this folder, it should be a hidden file on most systems. 
+      * DO NOT DELETE THE `.loadorder` file from this folder, it should be a hidden file on most systems.
    1. If you have Resurrected, copy Data/ and .build.info files from it into D2RData folder of this project. Speficially, the file structure should be like this:
       * DATA/CASC-D2R/.build.info
       * DATA/CASC-D2R/Data/indices
