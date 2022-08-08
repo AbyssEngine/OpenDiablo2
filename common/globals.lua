@@ -25,7 +25,7 @@ function LoadGlobals()
             return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, true, 'blend')
         end
         SpriteFontIsActuallyTTF = true
-        return abyss.createTtfFont('/data/hd/ui/fonts/philosopher-bolditalic.ttf', math.floor(size * 1.2), 'slight')
+        return abyss.createTtfFont('/data/hd/ui/fonts/philosopher-bolditalic.ttf', math.floor(size * 1.5), 'none')
     end
     local function loadFnt(size)
         local filename = Language:i18nPath(ResourceDefs['Font' .. tostring(size)])
@@ -33,7 +33,7 @@ function LoadGlobals()
             return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'blend')
         end
         SpriteFontIsActuallyTTF = true
-        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 0.8), 'none')
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 1.0), 'none')
     end
     local function loadExocet(size)
         local filename = Language:i18nPath(ResourceDefs['FontExocet' .. tostring(size)])
@@ -41,7 +41,7 @@ function LoadGlobals()
             return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'multiply')
         end
         SpriteFontIsActuallyTTF = true
-        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 1.4), 'none')
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', math.floor(size * 1.7), 'none')
     end
     local function loadSucker()
         local filename = Language:i18nPath(ResourceDefs.FontSucker)
@@ -49,8 +49,8 @@ function LoadGlobals()
             return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, true, 'blend')
         end
         SpriteFontIsActuallyTTF = true
-        return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobal-v5_81.ttf', 10, 'none')
-        --return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobalTCUnicode.ttf', 8, 'none')
+        return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobalTCUnicode.ttf', 10, 'none')
+        --return abyss.createTtfFont('/data/hd/ui/fonts/BlizzardGlobal-v5_81.ttf', 10, 'none')
     end
     local function loadRidiculous()
         local filename = Language:i18nPath(ResourceDefs.FontRidiculous)
@@ -58,7 +58,7 @@ function LoadGlobals()
             return abyss.createSpriteFont(filename, ResourceDefs.Palette.Static, false, 'multiply')
         end
         SpriteFontIsActuallyTTF = true
-        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', 10, 'none')
+        return abyss.createTtfFont('/data/hd/ui/fonts/ExocetBlizzardOT-Medium.otf', 13, 'none')
     end
     SystemFonts.FntFormal10 = loadFormal(10)
     SystemFonts.FntFormal11 = loadFormal(11)

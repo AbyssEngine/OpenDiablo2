@@ -26,20 +26,18 @@ function MainMenu:initialize()
     self.lblDisclaimer1 = abyss.createLabel(SystemFonts.FntFormal12)
     --self.lblDisclaimer1.caption = Language:translate("@strcopyrightinfo#5104")
     self.lblDisclaimer1.caption = Language:translate("@strcopyrightinfoX#1882")
-    self.lblDisclaimer1:setPosition(400, 470)
+    self.lblDisclaimer1:setPosition(400, 480)
     self.lblDisclaimer1:setAlignment("middle", "start")
     self.lblDisclaimer1:setColorMod(0xE5, 0xC6, 0x9B)
 
     self.lblDisclaimer2 = abyss.createLabel(SystemFonts.FntFormal12)
     self.lblDisclaimer2.caption = Language:translate("@strallrightsreserved#5105")
-    self.lblDisclaimer2.maxWidth = 500
-    self.lblDisclaimer2:setPosition(400, 490)
+    self.lblDisclaimer2:setPosition(400, 500)
     self.lblDisclaimer2:setAlignment("middle", "start")
     self.lblDisclaimer2:setColorMod(0xE5, 0xC6, 0x9B)
 
     self.lblDisclaimer3 = abyss.createLabel(SystemFonts.FntFormal12)
     self.lblDisclaimer3.caption = "OpenDiablo II is neither developed by,\nnor endorsed by Blizzard or its parent company Activision"
-    self.lblDisclaimer3.maxWidth = 500
     self.lblDisclaimer3:setPosition(400, 540)
     self.lblDisclaimer3:setAlignment("middle", "start")
     self.lblDisclaimer3:setColorMod(0xFF, 0xFF, 0x8C)
