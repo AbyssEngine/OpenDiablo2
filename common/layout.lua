@@ -290,9 +290,6 @@ local TYPES = {
         local fontType = or_else(layout.fields.fontType, "16pt")
         local label = abyss.createLabel(loadFont(fontType))
         label.caption = Language:translate(or_else(layout.fields.text, 'text'))
-        if or_else(layout.fields.style.options, {}).lineWrap then
-            label.maxWidth = layout.fields.rect.width
-        end
         local align = or_else(layout.fields.style.alignment, {})
         local hAlign = or_else(align.h, "left")
         local vAlign = or_else(align.v, "top")
@@ -345,11 +342,7 @@ local TYPES = {
             local w, h = image:getFrameSize(normalFrame, 1)
             local label = abyss.createLabel(loadFont(layout.fields.fontType, hd))
             label:setPosition(math.floor(w/2), math.floor(h/2))
-            if SpriteFontIsActuallyTTF then
-                label.caption = '<b>' .. Language:translate(layout.fields.textString) .. '</b>'
-            else
-                label.caption = Language:translate(layout.fields.textString)
-            end
+            label.caption = Language:translate(layout.fields.textString)
             label:setAlignment("middle", "middle")
             button:appendChild(label)
             local color = layout.fields.textColor
