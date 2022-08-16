@@ -25,8 +25,8 @@ local function initialize(data)
         end
     end
     --/abyss-embedded/Hack-Regular.ttf
-    local f30 = abyss.createTtfFont('/abyss-embedded/Hack-Regular.ttf', math.floor(30 * 1.0), 'light')
-    local f15 = abyss.createTtfFont('/abyss-embedded/Hack-Regular.ttf', math.floor(15 * 1.0), 'light')
+    local f30 = abyss.createTtfFont('/abyss-embedded/Hack-Regular.ttf', math.floor(30 * 1.0), 'slight')
+    local f15 = abyss.createTtfFont('/abyss-embedded/Hack-Regular.ttf', math.floor(15 * 1.0), 'slight')
 
     Label:new{
         parent = rootNode,
