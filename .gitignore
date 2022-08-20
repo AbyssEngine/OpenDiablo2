@@ -61,4 +61,6 @@ dkms.conf
 d2*.mpq
 *_d2.mpq
 mpqs/extracted/
+DATA/MPQ-D2/extracted/
 tags
+/.disable*
