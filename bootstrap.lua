@@ -68,7 +68,7 @@ local function loadGameData()
             local mpqPath = baseDataDir .. "/" .. mpqFolderNames[i]
             local mpqLoadOrderFileName = mpqPath .. "/" .. ".loadorder"
             local file = io.open (mpqLoadOrderFileName, "r")
-            local fileData = file:read("a")
+            local fileData = file:read("*a")
             file:close()
             local mpqFiles = Split(fileData, ",")
             for _, mpqFile in ipairs(mpqFiles) do
